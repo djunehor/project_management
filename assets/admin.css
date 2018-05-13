@@ -1,0 +1,19 @@
+
+.col-1{
+	width:50%;
+	margin-left:-15px;
+}
+.col-2{
+	width:50%;
+	margin-left:51%;
+	margin-top:-8%;
+}
+.mod{
+	display:none;
+}
+.line{
+	border :none;
+ 	border-top: 3px solid #0090E0; 
+ 	background-color:#FFFFFF; 
+ 	height: 1px;
+}

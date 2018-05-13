@@ -1,0 +1,209 @@
+
+.custom-navbar {
+	padding:30px 0px !important;	
+}
+#home {
+	padding:0;	
+}
+.delay-1 {
+    animation-delay: 300ms;
+}
+.delay-2 {
+    animation-delay: 600ms;
+}
+.delay-3 {
+    animation-delay: 1200ms;
+}
+.delay-4 {
+    animation-delay: 1500ms;
+}
+.boot-slider {
+    overflow: hidden;
+    position: relative;
+}
+.boot-slider img {
+    background-size: cover;
+    width: 100%;
+}
+.carousel-fade .carousel-inner .item {
+    max-height: 700px;
+    opacity: 0.8;
+    transition-property: opacity;
+}
+.carousel-fade .carousel-inner .active {
+    opacity: 1;
+}
+.carousel-fade .carousel-inner .active.left, .carousel-fade .carousel-inner .active.right {
+    left: 0;
+    opacity: 0;
+    z-index: 1;
+}
+.carousel-fade .carousel-inner .next.left, .carousel-fade .carousel-inner .prev.right {
+    opacity: 1;
+}
+.carousel-fade .carousel-inner .item::after {
+    background: rgba(0, 0, 0, 0.5);
+    bottom: 0;
+    content: "";
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+.carousel-fade .carousel-control {
+    z-index: 20;
+}
+.boot-slider .carousel-caption {
+    bottom: inherit;
+    color: #fff;
+    left: 0;
+    margin-top: -165px;
+    position: absolute;
+    right: 0;
+    text-align: center;
+    text-transform: uppercase;
+    top: 50%;
+    z-index: 15;
+}
+.boot-slider .carousel-caption h1 {
+    color: #ffffff;
+    margin-bottom: 40px;
+	font-size:60px;
+}
+.boot-slider .carousel-caption h1 span {
+    font-weight: 600;
+}
+.boot-slider .carousel-caption p {
+    color: #fff;
+    font-size: 20px;
+    margin-bottom: 70px;
+    text-transform: uppercase;
+}
+.learnmore-btn {
+	background-color: transparent;
+	color: #FFF;
+	padding: 10px 35px;
+	border-radius: 0;
+	border: 1px solid #FFF;
+	position: relative;
+	overflow: hidden;
+	letter-spacing:2px;
+	-webkit-transition: all 0.3s ease-in-out 0s;
+	-moz-transition: all 0.3s ease-in-out 0s;
+	-o-transition: all 0.3s ease-in-out 0s;
+	-ms-transition: all 0.3s ease-in-out 0s;
+	transition: all 0.3s ease-in-out 0s;
+
+}
+.learnmore-btn:hover {
+	background-color: #303EA1;
+	color: #FFF;
+	border: 1px solid #303EA1;
+}
+.btn:focus, button:focus {
+    outline: medium none !important;
+}
+.control-one .carousel-control {
+    background-color: #303EA1;
+    background-image: none;
+    color: #FFF;
+    font-size: 40px;
+    height: 50px;
+    line-height: 46px;
+    margin-top: -25px;
+    opacity: 0;
+    text-shadow: none;
+    top: 50%;
+    visibility: hidden;
+    width: 50px;
+	border:1px solid #303EA1;
+}
+.control-one:hover .carousel-control {
+    opacity: 1;
+    visibility: visible;
+}
+.control-one .carousel-control:hover {
+    background-color: transparent;
+    color: #fff;
+	border:1px solid #FFF;
+}
+.control-one .left.carousel-control {
+    left: 30px;
+}
+.control-one .right.carousel-control {
+    right: 30px;
+}
+/* Extra small devices (phones, less than 768px) */
+@media (max-width : 766px) {
+	.boot-slider .controls li{
+		padding:30px 10px;
+	}
+	.boot-slider .controls li span{
+		display:none;
+	}
+	.boot-slider .carousel-caption {
+	  margin-top: -80px;
+	}
+	.boot-slider .carousel-caption h1 {
+	  font-size: 22px;
+	  line-height: 35px;
+	  letter-spacing: 0px;
+	  margin-bottom: 0;	
+	}
+	.boot-slider .carousel-caption p {
+	  font-size: 10px;
+	  margin-bottom: 15px;
+	}
+	.boot-slider .carousel-caption .btn {
+	  font-size: 14px;
+	  padding: 10px 30px;
+	}
+}
+
+/* Landscape Mobile */
+@media only screen and (min-width : 480px) and (max-width : 767px) {
+
+	.boot-slider .controls li{
+		padding:30px 10px;
+	}
+	.boot-slider .controls li span{
+		font-size: 14px;
+		display:block;
+	}
+	.boot-slider .carousel-caption {
+	  margin-top: -95px;
+	}
+	.boot-slider .carousel-caption h1 {
+	  font-size: 33px;
+	  line-height: 56px;
+	}
+	.boot-slider .carousel-caption p {
+	  font-size: 14px;
+	  margin-bottom: 25px;
+	}
+}
+
+
+/* Small devices (tablets, 768px and up) */
+@media (min-width : 768px) and (max-width : 991px) {
+	/*navbar*/
+	.navbar-default .navbar-nav>li>a {
+	  padding: 40px 12px;
+	}
+	.navbar-default.sticky .navbar-nav>li>a {
+	  padding: 20px 12px;
+	}
+
+	.boot-slider .controls li{
+		padding:30px 10px;
+	}
+	.boot-slider .carousel-caption {
+	  margin-top: -142px;
+	}
+	.boot-slider .carousel-caption h1 {
+	  font-size: 60px;
+	  line-height: 44px;
+	  letter-spacing: -3px;
+	  margin-bottom: 30px;
+	}
+}

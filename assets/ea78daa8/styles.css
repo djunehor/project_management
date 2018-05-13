@@ -1,0 +1,83 @@
+
+.images-area-admin {
+	/*padding: 5px;*/
+	border: 1px solid #4F81BD;
+	margin-bottom: 5px;
+}
+
+.image-item, .image-item-apartment-guestad {
+	float: left;
+	margin: 5px;
+}
+
+.image-item-apartment-guestad {
+    width: 120px;
+    height: 100px;
+}
+
+.image-drag-area {
+	cursor: move;
+	background-color: #C9E0ED;
+	width: 15px;
+	height: 130px;
+	float: left;
+}
+
+.image-link-item, .image-link-item-apartment-guestad {
+	float: left;
+	width: 150px;
+	height: 100px;
+	margin: 5px 10px 5px 5px;
+	text-align: center;
+}
+
+.image-link-item-apartment-guestad {
+    width: 100px;
+    height: 75px;
+}
+
+.image-delete, .deleteImageLinkGuestAd {
+	width: 100%;
+	padding: 10px 0;
+}
+
+.image-comment-input {
+	height: 120px;
+	padding: 0;
+	/*margin-left: 170px;*/
+	float: left;
+}
+
+.image-comment-input textarea {
+	width: 190px;
+	height: 130px;
+	margin-bottom: 0px;
+}
+
+.image-item {
+	width: 410px;
+	margin: 3px;
+	border: 1px solid #C9E0ED;
+	height: 140px;
+	max-height: 140px;
+	overflow: hidden;
+	float: left;
+	background-color: #ffffff;
+}
+
+.images-area .ui-sortable-placeholder {
+	border: 1px dotted black;
+	visibility: visible !important;
+	width: 400px !important;
+	margin: 3px;
+	background-color: #fffade;
+	height: 155px;
+	max-height: 161px;
+	float: left;
+}
+
+.images-area .ui-sortable-placeholder * { visibility: hidden; }
+
+.image-seo-input {
+    padding-top: 8px;
+}

@@ -1,0 +1,112 @@
+/*general*/
+img{
+	border: none;
+}
+a.more{
+	background: url("../images/next.png") 115px 14px no-repeat #f26e50;
+	padding: 12px 44px 10px 20px;
+}
+a.more:hover{
+	background: url("../images/next.png") 115px 14px no-repeat #f29580;
+}
+a.back{
+	background: url("../images/prev.png") 20px 14px no-repeat #f26e50;
+	padding: 12px 20px 10px 38px;
+}
+a.back:hover{
+	background: url("../images/prev.png") 20px 14px no-repeat #f29580;
+}
+.back_to_results a{
+	background: none repeat scroll 0 0 #3AA1BE;
+	margin: 0;
+	padding: 10px 0 12px;
+	text-align: center;
+	width: 100%;
+}
+
+.search_options input[type="submit"]{
+	background: url("../images/update.png") no-repeat 150px 10px #F26E50;
+}
+.search_options input[type="submit"]:hover{
+	background: url("../images/update.png") 150px 10px no-repeat #f29580;
+}
+
+#home_preview .more_rooms a.more{
+	padding: 12px 82px 10px 68px;
+	background: url("../images/cross.png") 153px 12px no-repeat #F26E50;
+}
+#home_preview .more_rooms a.more:hover{
+	background: url("../images/cross.png") 153px 12px no-repeat #f29580;
+}
+.home_preview a.add{
+	height: 20px;
+	width: 20px;
+	background: url("../images/add.png") 0px -1px no-repeat #F26E50;
+	border-radius: 2px;
+	margin: 0 0px 0 10px;
+	position: relative;
+	top: -2px;
+}
+.home_preview a.add:hover{
+	background: url("../images/add.png") 0px -1px no-repeat #f29580;
+}
+
+.tabs{
+	top: -40px;
+}
+
+#primary .widget .widget_info input[type="email"]{
+	top: 0px;
+}
+#primary .widget .widget_info input[type="submit"]{
+	margin-top: 7px;
+	margin-left: 5px;
+	margin-right: -5px;
+}
+
+#home_info_full .home_content_full .tabs{
+	top: -57px;
+}
+
+/*login*/
+#login{
+	margin-left: 50%;
+	position: relative;
+	left: -150px;
+}
+#login .tab_block{
+	border: 3px solid #D9D9D9 !important;
+	display: none;
+}
+#login .tab_block.active{
+	display: block;
+}
+#login .tab_block input{
+	height: 45px;
+}
+#login .tabs{
+	left: -3px;
+	top: -50px;
+	z-index: 2;
+}
+#login .tab{
+	float: left;
+}
+#login .tab.active{
+	border: 3px solid #D9D9D9;
+	border-bottom: none;
+}
+#login .cover{
+	display: none;
+}
+#login .tab_block .login{
+	margin-right: -20px;
+}
+#login .tab_block .right input{
+    background: #F26E50;
+    color: #FFF;
+    border: none;
+	margin: 0;
+	padding: 11px 22px;
+	width: auto;
+}

@@ -1,0 +1,63 @@
+.main_div_of_the_poll_answer{	
+	vertical-align: top;
+	overflow: hidden;
+	position: relative;
+}
+.main_div_of_the_poll_answer:hover{
+	vertical-align: top;
+	overflow:hidden;
+	position: relative;
+}
+.pracents_of_the_poll {
+	height: 100%;
+	position: absolute;
+}
+.poll_answer_title{
+	position: relative;
+}
+.polllabel{
+	float: left;
+}
+.poll_div_voted_count{
+	float: right;
+	position:relative;
+}
+.poll_span_voted_count{
+	position:relative;
+	display: none;
+}
+.div_with_ceckbox_or_select{
+	display:table;
+}
+.radio_or_select_span{
+	vertical-align:middle;
+	display:table-cell !important;
+	width:auto !important;
+}
+.div_only_answer{
+	display:table-cell !important;
+	width:100%;
+}
+.wpdevartpoll >div{
+	margin:0px !important;
+}
+.poll_widget *,.wpdevartpoll *{
+	box-sizing: content-box !important;
+	transition: all 0.1s ease;	
+}
+.wpdevartpoll .poll_span_voted_count{
+	vertical-align:top !important;	
+}
+.wpdevartpoll .radio_or_select_span{
+	float:none !important;
+}
+.wpdevartpoll *{
+	line-height:1 !important;
+	
+}
+.main_div_of_the_poll_answer:hover{
+	cursor:pointer;
+}
+.radio_or_select_span input:hover{
+	cursor:pointer;
+}

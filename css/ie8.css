@@ -1,0 +1,74 @@
+img{
+	border: none;
+}
+#page > header #site-navigation ul.children {
+	top: 99%;
+}
+#heading .search input[type="text"]{
+	position: relative;
+	top: -30px;
+}
+.tabs{
+	top: -42px;
+}
+.tab_wrapper{
+	border-top: 3px solid #D9D9D9;
+	border-bottom: 3px solid #D9D9D9;
+}
+.tab_block{
+	margin-bottom: 0;
+}
+.home_content_full{
+	border: 3px solid #D9D9D9 !important;
+}
+#home_info_full .home_content_full .tabs{
+	top: -60px;
+	left: -8px;
+}
+.tab_block input[type="submit"]{
+	padding: 0;
+	margin: 0;
+	position: relative;
+	top: 21px;
+}
+#primary .widget .widget_info input{
+	margin: 0;
+}
+#primary .widget .widget_info input[type="submit"]{
+	position: relative;
+	top: 9px;
+}
+.search_options input.min, .search_options input.max{
+	display: inline;
+	width: 10px;
+}
+/*login*/
+#login{
+	margin-left: 50%;
+	position: relative;
+	left: -150px;
+}
+#login .tab_block{
+	display: none;
+}
+#login .tab_block.active{
+	display: block;
+}
+#login .tab_block input{
+	height: 45px;
+}
+#login .tabs{
+	left: -3px;
+	top: -47px;
+	z-index: 2;
+}
+#login .tab{
+	float: left;
+}
+.tab.active{
+	border: 3px solid #D9D9D9;
+	border-bottom: none;
+}
+#login .cover{
+	display: none;
+}
