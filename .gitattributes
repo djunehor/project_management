@@ -2,3 +2,7 @@
 *.css linguist-vendored
 *.scss linguist-vendored
 *.js linguist-vendored
+css/* linguist-vendored
+js/* linguist-vendored
+assets/* linguist-vendored
+fonts/* linguist-vendored
