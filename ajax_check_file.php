@@ -10,7 +10,7 @@ switch ($type) {
         $imageFileType = strtolower(pathinfo($file, PATHINFO_EXTENSION));
         $filename = pathinfo($file, PATHINFO_BASENAME);
         if (!in_array($imageFileType, ['jpg', 'jpeg', 'png', 'gif'])) {
-            $error .= "Invalid File: Only 'jpg','jpeg','png','gif' allowed! File is " . $filename;
+            $error .= "Invalid File: Only 'jpg','jpeg','png','gif' allowed! File is ".$filename;
         } elseif (preg_match('/ /', $filename)) {
             $error .= 'Invalid Filename: File name should not contain space!';
         }

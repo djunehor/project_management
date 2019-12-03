@@ -25,7 +25,7 @@ include '../views/employee_header.php'; ?>
                         <a href="" class="tx-white-8 hover-white"><i class="icon ion-android-more-horizontal"></i></a>
                     </div><!-- card-header -->
                     <div class="d-flex align-items-center justify-content-between">
-                        <h3 class="mg-b-0 tx-white tx-lato tx-bold"><?php echo mysqli_num_rows(mysqli_query($con, "SELECT * FROM $assigned_table WHERE employeeEmail='" . $employee['email'] . "'")); ?></h3>
+                        <h3 class="mg-b-0 tx-white tx-lato tx-bold"><?php echo mysqli_num_rows(mysqli_query($con, "SELECT * FROM $assigned_table WHERE employeeEmail='".$employee['email']."'")); ?></h3>
                     </div><!-- card-body -->
                     <!--     <div class="d-flex align-items-center justify-content-between mg-t-15 bd-t bd-white-2 pd-t-10">
                            <div>
@@ -47,7 +47,7 @@ include '../views/employee_header.php'; ?>
                     </div><!-- card-header -->
                     <div class="d-flex align-items-center justify-content-between">
 
-                        <h3 class="mg-b-0 tx-white tx-lato tx-bold"><?php echo mysqli_num_rows(mysqli_query($con, "SELECT * FROM $assigned_table WHERE employeeEmail='" . $employee['email'] . "' AND astatus=1")); ?></h3>
+                        <h3 class="mg-b-0 tx-white tx-lato tx-bold"><?php echo mysqli_num_rows(mysqli_query($con, "SELECT * FROM $assigned_table WHERE employeeEmail='".$employee['email']."' AND astatus=1")); ?></h3>
                     </div><!-- card-body -->
                     <!--     <div class="d-flex align-items-center justify-content-between mg-t-15 bd-t bd-white-2 pd-t-10">
                            <div>
@@ -69,7 +69,7 @@ include '../views/employee_header.php'; ?>
                     </div><!-- card-header -->
                     <div class="d-flex align-items-center justify-content-between">
 
-                        <h3 class="mg-b-0 tx-white tx-lato tx-bold"><?php echo mysqli_num_rows(mysqli_query($con, "SELECT * FROM $assigned_table WHERE employeeEmail='" . $employee['email'] . "' AND astatus=3")); ?></h3>
+                        <h3 class="mg-b-0 tx-white tx-lato tx-bold"><?php echo mysqli_num_rows(mysqli_query($con, "SELECT * FROM $assigned_table WHERE employeeEmail='".$employee['email']."' AND astatus=3")); ?></h3>
                     </div><!-- card-body -->
                     <!--    <div class="d-flex align-items-center justify-content-between mg-t-15 bd-t bd-white-2 pd-t-10">
                           <div>
@@ -91,7 +91,7 @@ include '../views/employee_header.php'; ?>
                     </div><!-- card-header -->
                     <div class="d-flex align-items-center justify-content-between">
 
-                        <h3 class="mg-b-0 tx-white tx-lato tx-bold"><?php echo mysqli_num_rows(mysqli_query($con, "SELECT * FROM $task_table INNER JOIN $assigned_table WHERE $task_table.taskID=(SELECT taskID FROM $assigned_table WHERE employeeEmail='" . $employee['email'] . "') AND ($assigned_table.startDate+($task_table.duration*3600))<'" . time() . "'")); ?></h3>
+                        <h3 class="mg-b-0 tx-white tx-lato tx-bold"><?php echo mysqli_num_rows(mysqli_query($con, "SELECT * FROM $task_table INNER JOIN $assigned_table WHERE $task_table.taskID=(SELECT taskID FROM $assigned_table WHERE employeeEmail='".$employee['email']."') AND ($assigned_table.startDate+($task_table.duration*3600))<'".time()."'")); ?></h3>
                     </div><!-- card-body -->
                     <!--      <div class="d-flex align-items-center justify-content-between mg-t-15 bd-t bd-white-2 pd-t-10">
                             <div>
@@ -125,7 +125,7 @@ include '../views/employee_header.php'; ?>
                         <tbody>
                         <?php
                         $q7 = mysqli_query($con, "SELECT * FROM $assigned_table INNER JOIN $task_table
-ON $assigned_table.taskID=$task_table.taskID WHERE employeeEmail='" . $employee['email'] . "' AND $assigned_table.astatus=3");
+ON $assigned_table.taskID=$task_table.taskID WHERE employeeEmail='".$employee['email']."' AND $assigned_table.astatus=3");
                         while ($v = mysqli_fetch_assoc($q7)) {
                             ?>
                             <tr>
@@ -134,13 +134,13 @@ ON $assigned_table.taskID=$task_table.taskID WHERE employeeEmail='" . $employee[
                                        class="tx-inverse tx-14 tx-medium d-block"><?php echo $v['ttitle']; ?></a>
                                 </td>
                                 <td class="tx-12">
-                                    <?php echo date('d-M-Y', $v['startDate']) . ' to ' . date('d-M-Y', $v['eDate']); ?>
+                                    <?php echo date('d-M-Y', $v['startDate']).' to '.date('d-M-Y', $v['eDate']); ?>
                                 </td>
                                 <td class="tx-12">
-                                    <?php echo $v['duration'] . ' hours'; ?>
+                                    <?php echo $v['duration'].' hours'; ?>
                                 </td>
                                 <td class="tx-12">
-                                    <?php echo $v['eDate'] - $v['startDate'] . ' hours'; ?>
+                                    <?php echo $v['eDate'] - $v['startDate'].' hours'; ?>
                                 </td>
                                 <td><?php echo number_format($v['eCost']); ?></td>
                             </tr>
@@ -170,7 +170,7 @@ ON $assigned_table.taskID=$task_table.taskID WHERE employeeEmail='" . $employee[
                         <tbody>
                         <?php
                         $q2 = mysqli_query($con, "SELECT * FROM $assigned_table INNER JOIN $task_table
-ON $assigned_table.taskID=$task_table.taskID WHERE employeeEmail='" . $employee['email'] . "' AND $assigned_table.astatus=0");
+ON $assigned_table.taskID=$task_table.taskID WHERE employeeEmail='".$employee['email']."' AND $assigned_table.astatus=0");
                         while ($v = mysqli_fetch_assoc($q2)) {
                             ?>
                             <tr>
@@ -182,10 +182,10 @@ ON $assigned_table.taskID=$task_table.taskID WHERE employeeEmail='" . $employee[
 					<?php echo html_entity_decode(htmlspecialchars_decode(substr($v['tdetail'], 0, 50))); ?>
 					</td> -->
                                 <td class="tx-12">
-                                    <?php echo time_elapsed_string('@' . $v['startDate']); ?>
+                                    <?php echo time_elapsed_string('@'.$v['startDate']); ?>
                                 </td>
                                 <td class="tx-12">
-                                    <?php echo $v['duration'] . ' hours'; ?>
+                                    <?php echo $v['duration'].' hours'; ?>
                                 </td>
                                 <td class="tx-12">
                                     <?php echo date('d-M-Y', ($v['startDate'] + ($v['duration'] * 3600))); ?>
@@ -218,7 +218,7 @@ ON $assigned_table.taskID=$task_table.taskID WHERE employeeEmail='" . $employee[
                         </thead>
                         <tbody>
                         <?php
-                        $q6 = mysqli_query($con, "SELECT * FROM tasks INNER JOIN assigned WHERE tasks.taskID=(SELECT taskID FROM assigned WHERE employeeEmail='" . $employee['email'] . "') AND (assigned.startDate+(tasks.duration*3600))<" . time() . '');
+                        $q6 = mysqli_query($con, "SELECT * FROM tasks INNER JOIN assigned WHERE tasks.taskID=(SELECT taskID FROM assigned WHERE employeeEmail='".$employee['email']."') AND (assigned.startDate+(tasks.duration*3600))<".time().'');
                         while ($m = mysqli_fetch_assoc($q6)) {
                             ?>
                             <tr>
@@ -226,7 +226,7 @@ ON $assigned_table.taskID=$task_table.taskID WHERE employeeEmail='" . $employee[
                                     <a href="ViewTask?id=<?php echo $m['taskID']; ?>"><?php echo $m['ttitle']; ?></a>
                                 </td>
                                 <td><?php echo date('d-M-Y', ($m['startDate'] + ($m['duration'] * 3600))); ?></td>
-                                <td><?php echo time_elapsed_string('@' . (time() - ($m['startDate'] + ($m['duration'] * 3600)))); ?></td>
+                                <td><?php echo time_elapsed_string('@'.(time() - ($m['startDate'] + ($m['duration'] * 3600)))); ?></td>
                             </tr>
                             <?php
                         } ?>
@@ -259,7 +259,7 @@ ON $assigned_table.taskID=$task_table.taskID WHERE employeeEmail='" . $employee[
                                     <a class="tx-inverse tx-14 tx-medium d-block"><?php echo $l['adetail']; ?></a>
                                     <!--   <span class="tx-11 d-block"><span class="square-8 bg-danger mg-r-5 rounded-circle"></span> 20 remaining</span>  -->
                                 </td>
-                                <td class="valign-middle"> <?php echo time_elapsed_string('@' . $l['addDate']); ?></td>
+                                <td class="valign-middle"> <?php echo time_elapsed_string('@'.$l['addDate']); ?></td>
 
                             </tr>
                             <?php

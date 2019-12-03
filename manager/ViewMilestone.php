@@ -42,8 +42,8 @@ $omo = mysqli_fetch_assoc(mysqli_query($con, "SELECT * FROM $milestone_table INN
                 <tr>
                     <td><a href="ViewProject?id=<?php echo $omo['projectID']; ?>"><?php echo $omo['title']; ?></a></td>
                     <td><?php echo date('d-M-Y', $omo['startDate']); ?></td>
-                    <td><?php echo 'NGN ' . number_format($omo['budget']); ?></td>
-                    <td><?php $s = mysqli_fetch_assoc(mysqli_query($con, "SELECT detail FROM $tag_table WHERE tagID='" . $omo['tagID'] . "'"));
+                    <td><?php echo 'NGN '.number_format($omo['budget']); ?></td>
+                    <td><?php $s = mysqli_fetch_assoc(mysqli_query($con, "SELECT detail FROM $tag_table WHERE tagID='".$omo['tagID']."'"));
                         echo $s['detail']; ?></td>
                 </tr>
                 </tbody>
@@ -69,16 +69,16 @@ $omo = mysqli_fetch_assoc(mysqli_query($con, "SELECT * FROM $milestone_table INN
                 </thead>
                 <tbody>
                 <?php
-                $g = mysqli_query($con, "SELECT * FROM $task_table WHERE projectID='" . $omo['projectID'] . "'");
+                $g = mysqli_query($con, "SELECT * FROM $task_table WHERE projectID='".$omo['projectID']."'");
                 while ($o = mysqli_fetch_assoc($g)) {
                     ?>
                     <tr class="<?php echo $o['taskID']; ?>">
                         <td><?php echo $o['taskID']; ?></td>
                         <td><a href="ViewTask?id=<?php echo $o['taskID']; ?>"><?php echo $o['ttitle']; ?></a></td>
                         <td><?php echo substr(html_entity_decode(htmlspecialchars_decode($o['tdetail'])), 0, 50); ?></td>
-                        <td><?php echo $o['duration'] . ' hours'; ?></td>
-                        <td><?php $s = mysqli_fetch_assoc(mysqli_query($con, "SELECT * FROM $assigned_table LEFT JOIN $status_table ON $assigned_table.astatus=$status_table.statusID WHERE taskID='" . $o['taskID'] . "'"));
-                            echo $s['sdetail'] ? $s['sdetail'] : 'Not Assigned'; ?></td>
+                        <td><?php echo $o['duration'].' hours'; ?></td>
+                        <td><?php $s = mysqli_fetch_assoc(mysqli_query($con, "SELECT * FROM $assigned_table LEFT JOIN $status_table ON $assigned_table.astatus=$status_table.statusID WHERE taskID='".$o['taskID']."'"));
+                    echo $s['sdetail'] ? $s['sdetail'] : 'Not Assigned'; ?></td>
 
                         <td><?php echo $s['startDate'] ? date('d-M-Y', $s['startDate']) : 'Not Assigned'; ?></td>
                         <td><?php echo $s['employeeEmail'] ? $s['employeeEmail'] : 'Not Assigned'; ?></td>
@@ -114,14 +114,14 @@ $omo = mysqli_fetch_assoc(mysqli_query($con, "SELECT * FROM $milestone_table INN
                 <tbody>
                 <tr>
                     <?php
-                    $l = mysqli_query($con, "SELECT * FROM $activity_table WHERE projectID='" . $omo['projectID'] . "'");
+                    $l = mysqli_query($con, "SELECT * FROM $activity_table WHERE projectID='".$omo['projectID']."'");
                     while ($f = mysqli_fetch_assoc($l)) {
-                    ?>
+                        ?>
                     <td><?php echo html_entity_decode(htmlspecialchars_decode($f['adetail'])); ?></td>
                     <td><?php echo date('d-M-Y g:i a', $f['addDate']); ?></td>
                 </tr>
                 <?php
-                } ?>
+                    } ?>
                 </tbody>
             </table>
             <script src="../lib/jquery/jquery.js"></script>

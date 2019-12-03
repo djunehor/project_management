@@ -49,8 +49,8 @@ ON $project_table.projectStatus=$status_table.statusID WHERE managerID='$manager
                             <td><?php echo substr(html_entity_decode(htmlspecialchars_decode($v['detail'])), 0, 100); ?>
                                 ...
                             </td>
-                            <td><?php echo '&#x20A6;' . number_format($v['budget']); ?></td>
-                            <td><?php echo date('d M Y', $v['startDate']) . ' to ' . date('d M Y', $v['endDate']); ?></td>
+                            <td><?php echo '&#x20A6;'.number_format($v['budget']); ?></td>
+                            <td><?php echo date('d M Y', $v['startDate']).' to '.date('d M Y', $v['endDate']); ?></td>
                             <td><?php echo $v['sdetail']; ?></td>
                             <?php if ($v['projectStatus'] == 0) { ?>
                                 <td>

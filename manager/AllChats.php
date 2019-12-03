@@ -33,15 +33,15 @@ include '../views/manager_header.php'; ?>
                         <th></th>
                     </tr>
                     <?php
-                    $tabla = mysqli_query($con, "SELECT * FROM $chat_table where senderID='" . $manager['email'] . "' OR recipientID='" . $manager['email'] . "' GROUP BY chatID DESC limit 50");
+                    $tabla = mysqli_query($con, "SELECT * FROM $chat_table where senderID='".$manager['email']."' OR recipientID='".$manager['email']."' GROUP BY chatID DESC limit 50");
                     while ($registro = mysqli_fetch_array($tabla)) {
                         echo '
-<tr class="' . $registro['chatID'] . '">
-<td>' . $registro['recipientID'] . '</td>
-<td>' . html_entity_decode(htmlspecialchars_decode($registro['message'])) . '</td>
-<td>' . date('M j Y, g:i a', $registro['sendDate']) . '</td>
-<td><a class="btn btn-info" href="ViewChat?id=' . $registro['chatID'] . '">View Chat</a></td>
-<td><button onclick="del_chat(this.value)" id="btnDelete" type="submit" value="' . $registro['chatID'] . '" class="btn btn-danger">Delete</button></td>               
+<tr class="'.$registro['chatID'].'">
+<td>'.$registro['recipientID'].'</td>
+<td>'.html_entity_decode(htmlspecialchars_decode($registro['message'])).'</td>
+<td>'.date('M j Y, g:i a', $registro['sendDate']).'</td>
+<td><a class="btn btn-info" href="ViewChat?id='.$registro['chatID'].'">View Chat</a></td>
+<td><button onclick="del_chat(this.value)" id="btnDelete" type="submit" value="'.$registro['chatID'].'" class="btn btn-danger">Delete</button></td>               
 </tr>';
                     }
                     ?>

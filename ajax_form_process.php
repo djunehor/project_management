@@ -12,7 +12,7 @@ switch ($type) {
         if (!is_int($password)) {
             $error = 'Invalid ChatID';
         }
-        $fpy = mysqli_query($con, "DELETE FROM $chat_table WHERE ID='$password'") or die('Error: ' . mysqli_error($con));
+        $fpy = mysqli_query($con, "DELETE FROM $chat_table WHERE ID='$password'") or die('Error: '.mysqli_error($con));
         break;
 
     case 'load_chat':
@@ -43,11 +43,11 @@ switch ($type) {
         } else {
             $status = 'Offline';
         }
-        echo '<h6 class="card-body-title">Chat with ' . $dad . '</h6><i>(' . $status . ')</i>';
+        echo '<h6 class="card-body-title">Chat with '.$dad.'</h6><i>('.$status.')</i>';
         while ($f = mysqli_fetch_array($mum)) {
             echo '<div ';
             if ($f['senderID'] == $senderid) {
-                echo 'style="text-align:right;" class="alert alert-success"><button style="float:right;" class="btn btn-danger btn-icon rounded-circle mg-r-5 mg-b-10" onclick="del_message(this.value)" name="btnDelete" value="' . $f['ID'] . '">Delete</button>';
+                echo 'style="text-align:right;" class="alert alert-success"><button style="float:right;" class="btn btn-danger btn-icon rounded-circle mg-r-5 mg-b-10" onclick="del_message(this.value)" name="btnDelete" value="'.$f['ID'].'">Delete</button>';
             } else {
                 echo 'class="alert alert-danger">';
             }
@@ -56,9 +56,9 @@ switch ($type) {
                 echo substr(html_entity_decode(htmlspecialchars_decode($f['message'])), 3, -8);
             }
             if (!empty($f['attachment'])) {
-                echo '<a target="_blank" href="' . $f['attachment'] . '"><img src="' . $f['attachment'] . '" width="50px" height="50px">View/Download Image</a>';
+                echo '<a target="_blank" href="'.$f['attachment'].'"><img src="'.$f['attachment'].'" width="50px" height="50px">View/Download Image</a>';
             }
-            echo '<br><small>' . time_elapsed_string('@' . $f['sendDate']) . '</small></div>';
+            echo '<br><small>'.time_elapsed_string('@'.$f['sendDate']).'</small></div>';
         }
         $ltime = time();
         if ($utype == 1) {
@@ -85,7 +85,7 @@ switch ($type) {
             $message = htmlentities(htmlspecialchars($message));
             if (!empty($_FILES['fileToUpload']['name'])) {
                 $uploaddir = '../uploads/';
-                $uploadfile = $uploaddir . basename($_FILES['fileToUpload']['name']);
+                $uploadfile = $uploaddir.basename($_FILES['fileToUpload']['name']);
                 $imageFileType = pathinfo($uploadfile, PATHINFO_EXTENSION);
                 move_uploaded_file($_FILES['fileToUpload']['tmp_name'], $uploadfile);
             } else {
@@ -114,16 +114,16 @@ switch ($type) {
             $error .= 'Please enter a valid email!';
         } elseif (mysqli_num_rows(mysqli_query($con, "select * from $employee_table where email='$recipient'")) != 1) {
             $error .= 'User Not Found!';
-        } elseif (mysqli_num_rows(mysqli_query($con, "select * from $chat_table where recipientID='$password' and senderID='" . $_SESSION['managerID'] . "'")) > 0) {
-            $chatID = mysqli_fetch_assoc(mysqli_query($con, "select chatID from $chat_table where recipientID='$password' and senderID='" . $_SESSION['managerID'] . "' limit 1"));
-            $error .= 'You have an existing chat with this user! <a target="_blank" href="ViewChat?id=' . $chatID . '">Continue Chat</a>';
+        } elseif (mysqli_num_rows(mysqli_query($con, "select * from $chat_table where recipientID='$password' and senderID='".$_SESSION['managerID']."'")) > 0) {
+            $chatID = mysqli_fetch_assoc(mysqli_query($con, "select chatID from $chat_table where recipientID='$password' and senderID='".$_SESSION['managerID']."' limit 1"));
+            $error .= 'You have an existing chat with this user! <a target="_blank" href="ViewChat?id='.$chatID.'">Continue Chat</a>';
         } else {
             if (!empty($_FILES['fileToUpload']['name'])) {
                 $uploaddir = '../uploads/';
-                $uploadfile = $uploaddir . basename($_FILES['fileToUpload']['name']);
+                $uploadfile = $uploaddir.basename($_FILES['fileToUpload']['name']);
                 $imageFileType = pathinfo($uploadfile, PATHINFO_EXTENSION);
                 if (move_uploaded_file($_FILES['fileToUpload']['tmp_name'], $uploadfile)) {
-                    $result .= 'File <b>' . $_FILES['fileToUpload']['name'] . '</b> successfully uploaded.';
+                    $result .= 'File <b>'.$_FILES['fileToUpload']['name'].'</b> successfully uploaded.';
                 }
             } else {
                 $uploadfile = '';
@@ -132,19 +132,19 @@ switch ($type) {
             //generate PIN
             $chatid = strtoupper(bin2hex(openssl_random_pseudo_bytes(8)));
             $ss3 = mysqli_fetch_assoc(mysqli_query($con, "select email from $employee_table where email='$recipient'"));
-            $sql = mysqli_query($con, "INSERT INTO $chat_table(chatID,senderID,recipientID,message,sendDate,attachment) VALUES('$chatid','$senderid','" . $ss3['email'] . "','$message', '$datetime','$uploadfile')");
+            $sql = mysqli_query($con, "INSERT INTO $chat_table(chatID,senderID,recipientID,message,sendDate,attachment) VALUES('$chatid','$senderid','".$ss3['email']."','$message', '$datetime','$uploadfile')");
 
             if ($sql) {
-                $result .= ' Chat Started Successfully. <a href="ViewChat?id=' . $chatid . '">Start Conversation</a>';
-                $detail = 'New Chat with <b>' . $recipient . '</b> was started';
+                $result .= ' Chat Started Successfully. <a href="ViewChat?id='.$chatid.'">Start Conversation</a>';
+                $detail = 'New Chat with <b>'.$recipient.'</b> was started';
                 ActivityLog($con, $detail, $managerid);
             } else {
-                $error .= 'Insert Error: ' . mysqli_error($con);
+                $error .= 'Insert Error: '.mysqli_error($con);
             }
         }
 
         if (isset($error)) {
-            echo 'Error: ' . $error;
+            echo 'Error: '.$error;
         } else {
             echo $result;
         }
@@ -174,17 +174,17 @@ switch ($type) {
             $reg_time = time();
             $insert5 = mysqli_query($con, "INSERT INTO $assigned_table(employeeEmail,taskID,startDate,comment) VALUES ('$email','$taskid','$reg_time','$comment')");
             if (!$insert5) {
-                $error = 'Insert Error - ' . mysqli_error($con);
+                $error = 'Insert Error - '.mysqli_error($con);
             } else {
                 $select4 = mysqli_fetch_assoc(mysqli_query($con, "SELECT * FROM $task_table WHERE taskID='$taskid'"));
                 //$update5 = mysqli_fetch_assoc(mysqli_query($con,"UPDATE $task_table SET status=2 WHERE taskID='$taskid'"));
-                $detail = 'Task <b>' . $select4['title'] . '</b> was assigned to ' . $email . ' by ' . $managername;
+                $detail = 'Task <b>'.$select4['title'].'</b> was assigned to '.$email.' by '.$managername;
                 ActivityLog($con, $detail, $managerid, $projectid);
-                $result = 'Task <b>' . $select4['title'] . '</b> was successfully assigned to ' . $email;
+                $result = 'Task <b>'.$select4['title'].'</b> was successfully assigned to '.$email;
             }
         }
         if (isset($error)) {
-            echo 'Error: ' . $error;
+            echo 'Error: '.$error;
         } else {
             echo $result;
         }
@@ -223,25 +223,25 @@ switch ($type) {
                 //Make sure we have a filepath
                 if ($tmpFilePath != '') {
                     //Setup our new file path
-                    $newFilePath[] = '../uploads/' . $_FILES['upload']['name'][$i];
+                    $newFilePath[] = '../uploads/'.$_FILES['upload']['name'][$i];
                     //Upload the file into the temp dir
                     move_uploaded_file($tmpFilePath, $newFilePath);
                 }
-                $result .= ' ' . $filename . ' was uploaded successfully ';
+                $result .= ' '.$filename.' was uploaded successfully ';
             }
             $reg_time = time();
             $update7 = mysqli_query($con, "UPDATE $assigned_table SET eCost='$tcost',ecomment='$tcomment',astatus=3,eDate='$reg_time',eCost='$cost',ephoto='$newFilePath[0]',ephoto2='$newFilePath[1]',ephoto3='$newFilePath[2]' WHERE taskID='$taskid' and employeeEmail='$employeeid'");
             if (!$update7) {
-                $error = 'Update Error - ' . mysqli_error($con);
+                $error = 'Update Error - '.mysqli_error($con);
             } else {
                 $select9 = mysqli_fetch_assoc(mysqli_query($con, "SELECT * FROM $task_table WHERE taskID='$taskid'"));
-                $detail = 'Task <b>' . $select9['ttitle'] . '</b> was completed by ' . $employeeid;
+                $detail = 'Task <b>'.$select9['ttitle'].'</b> was completed by '.$employeeid;
                 ProjectLog($con, $detail, $projectid, $managerid);
-                $result = 'Task <b>' . $select9['ttitle'] . '</b> has been marked as complete';
+                $result = 'Task <b>'.$select9['ttitle'].'</b> has been marked as complete';
             }
         }
         if (isset($error)) {
-            echo 'Error: ' . $error;
+            echo 'Error: '.$error;
         } else {
             echo $result;
         }
@@ -270,15 +270,15 @@ switch ($type) {
             $reg_time = time();
             $insert4 = mysqli_query($con, "INSERT INTO $task_table (ttitle,tdetail,milestoneID,projectID,duration,dependID,addDate,managerID) VALUES ('$title','$desc','$milestoneid','$projectid','$duration','$depend','$reg_time','$managerid')");
             if (!$insert4) {
-                $error = 'Insert Error - ' . mysqli_error($con);
+                $error = 'Insert Error - '.mysqli_error($con);
             } else {
-                $detail = 'New Task <b>' . $title . '</b> was created';
+                $detail = 'New Task <b>'.$title.'</b> was created';
                 ActivityLog($con, $detail, $projectid, $managerid);
                 $result = 'New Task was added successfully';
             }
         }
         if (isset($error)) {
-            echo 'Error: ' . $error;
+            echo 'Error: '.$error;
         } else {
             echo $result;
         }
@@ -317,24 +317,24 @@ switch ($type) {
                     $owo = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
                     $size = $_FILES['upload']['size'][$i];
                     if (!in_array($owo, ['jpg', 'jpeg', 'png', 'gif'])) {
-                        echo 'Error: Invalid File <b>' . $filename . "</b> - Only 'jpg','jpeg','png','gif' allowed!";
+                        echo 'Error: Invalid File <b>'.$filename."</b> - Only 'jpg','jpeg','png','gif' allowed!";
                         exit();
                     } elseif ((number_format(($size / 1024 / 1024), 2)) > 2) {
-                        echo 'Error: Maximum filesize is 2MB. <b>' . $filename . '</b> is ' . number_format(($size / 1024 / 1024), 2) . ' MB';
+                        echo 'Error: Maximum filesize is 2MB. <b>'.$filename.'</b> is '.number_format(($size / 1024 / 1024), 2).' MB';
                         exit();
                     }
                     //Make sure we have a filepath
                     if ($tmpFilePath != '') {
                         //Setup our new file path
-                        $newFilePath = '../uploads/' . $_FILES['upload']['name'][$i];
+                        $newFilePath = '../uploads/'.$_FILES['upload']['name'][$i];
 
                         //Upload the file into the temp dir
                         if (move_uploaded_file($tmpFilePath, $newFilePath)) {
-                            $file[] = 'uploads/' . $_FILES['upload']['name'][$i];
+                            $file[] = 'uploads/'.$_FILES['upload']['name'][$i];
                         }
                     }
                 }
-                $result .= ' ' . $total . ' file(s) have been uploaded. ';
+                $result .= ' '.$total.' file(s) have been uploaded. ';
             }
             $reg_time = time();
             $insert4 = mysqli_query($con, "INSERT INTO $apartment_table(
@@ -344,15 +344,15 @@ switch ($type) {
 		)
 		");
             if (!$insert4) {
-                $error = 'Insert Error - ' . mysqli_error($con);
+                $error = 'Insert Error - '.mysqli_error($con);
             } else {
-                $detail = 'New Listing <b>' . $title . '</b> was created';
+                $detail = 'New Listing <b>'.$title.'</b> was created';
                 ActivityLog($con, $detail, $managerid);
                 $result = 'New Listing was added successfully';
             }
         }
         if (isset($error)) {
-            echo 'Error: ' . $error;
+            echo 'Error: '.$error;
         } else {
             echo $result;
         }
@@ -378,10 +378,10 @@ switch ($type) {
                 $name = $filearray['name'];
                 $tmpName = $filearray['tmp_name'];
                 $uploaddir = 'uploads/';
-                $uploadfile = $uploaddir . basename($name);
-                $url = '../' . $uploadfile;
+                $uploadfile = $uploaddir.basename($name);
+                $url = '../'.$uploadfile;
                 if (move_uploaded_file($tmpName, $uploadfile)) {
-                    $result = 'File <b>' . $name . '</b> was successfully uploaded!';
+                    $result = 'File <b>'.$name.'</b> was successfully uploaded!';
                 } else {
                     $error = 'File upload failed!';
                 }
@@ -389,15 +389,15 @@ switch ($type) {
             $uptime = time();
             $update = mysqli_query($con, "UPDATE $user_table SET fullname='$fullname', phone='$phone',photo='$url' WHERE managerID='$managerID'");
             if (!$update) {
-                $error = 'Update Error - ' . mysqli_error($con);
+                $error = 'Update Error - '.mysqli_error($con);
             } else {
-                $detail = 'Account <b>' . $fullname . '</b> was updated';
+                $detail = 'Account <b>'.$fullname.'</b> was updated';
                 ActivityLog($con, $detail, $managerID);
                 $result .= ' Profile Updated successfully';
             }
         }
         if (isset($error) && strlen($error) > 10) {
-            echo 'Error: ' . $error;
+            echo 'Error: '.$error;
         } else {
             echo $result;
         }
@@ -431,9 +431,9 @@ switch ($type) {
                     $error = 'File size is exceeding maximum allowed size.';
                 } else {
                     $uploaddir = '../uploads/';
-                    $uploadfile = $uploaddir . basename($name);
+                    $uploadfile = $uploaddir.basename($name);
                     if (move_uploaded_file($tmpName, $uploadfile)) {
-                        $result = 'File <b>' . $name . '</b> was successfully uploaded!';
+                        $result = 'File <b>'.$name.'</b> was successfully uploaded!';
                     } else {
                         $error = 'File upload failed!';
                     }
@@ -442,15 +442,15 @@ switch ($type) {
             $uptime = time();
             $update2 = mysqli_query($con, "UPDATE $employee_table SET fullname='$fullname', phone='$phone',photo='$uploadfile',website='$website',jobDesc='$jobdesc' WHERE employeeID='$employeeID'");
             if (!$update2) {
-                $error = 'Update Error - ' . mysqli_error($con);
+                $error = 'Update Error - '.mysqli_error($con);
             } else {
-                $detail = 'Account <b>' . $fullname . '</b> was updated';
+                $detail = 'Account <b>'.$fullname.'</b> was updated';
                 ActivityLog($con, $detail, $employeeID, $type = 1);
                 $result .= ' Profile Updated successfully';
             }
         }
         if (isset($error) && strlen($error) > 10) {
-            echo 'Error: ' . $error;
+            echo 'Error: '.$error;
         } else {
             echo $result;
         }
@@ -481,21 +481,21 @@ switch ($type) {
             $error = 'Title Already Exist';
         } else {
             $reg_time = time();
-            $m = mysqli_fetch_assoc(mysqli_query($con, "SELECT fullname from $user_table where managerID='" . $_SESSION['managerID'] . "'"));
+            $m = mysqli_fetch_assoc(mysqli_query($con, "SELECT fullname from $user_table where managerID='".$_SESSION['managerID']."'"));
             $managername = $m['fullname'];
-            $insert = mysqli_query($con, "INSERT INTO $project_table (title,detail,startDate,endDate,addDate,budget,projectStatus,managerID) VALUES ('$title','$desc','$startdate','$enddate','$reg_time','$budget','$status','" . $_SESSION['managerID'] . "')");
+            $insert = mysqli_query($con, "INSERT INTO $project_table (title,detail,startDate,endDate,addDate,budget,projectStatus,managerID) VALUES ('$title','$desc','$startdate','$enddate','$reg_time','$budget','$status','".$_SESSION['managerID']."')");
             if (!$insert) {
-                $error = 'Insert Error - ' . mysqli_error($con);
+                $error = 'Insert Error - '.mysqli_error($con);
             } else {
-                $detail = 'Project <b>' . $title . '</b> was created';
+                $detail = 'Project <b>'.$title.'</b> was created';
                 $f = mysqli_fetch_assoc(mysqli_query($con, "SELECT max(projectID) as id FROM $project_table"));
                 $projectid = $f['id'];
                 ProjectLog($con, $detail, $projectid, $_SESSION['managerID']);
-                $result = 'New Project added successfully by <b>' . $managername . '</b>';
+                $result = 'New Project added successfully by <b>'.$managername.'</b>';
             }
         }
         if (isset($error)) {
-            echo 'Error: ' . $error;
+            echo 'Error: '.$error;
         } else {
             echo $result;
         }
@@ -531,16 +531,16 @@ switch ($type) {
                 $reg_time = time();
                 $insert3 = mysqli_query($con, "INSERT INTO $milestone_table (mtitle,mdetail,startDate,addDate,projectID,tagID,managerID) VALUES ('$title','$desc','$startdate','$reg_time','$projectid','$tag','$managerid')");
                 if (!$insert3) {
-                    $error = 'Insert Error - ' . mysqli_error($con);
+                    $error = 'Insert Error - '.mysqli_error($con);
                 } else {
-                    $detail = 'Milestone <b>' . $title . '</b> was created';
+                    $detail = 'Milestone <b>'.$title.'</b> was created';
                     ProjectLog($con, $detail, $projectid, $managerid);
                     $result = 'New Milestone was added successfully';
                 }
             }
         }
         if (isset($error)) {
-            echo 'Error: ' . $error;
+            echo 'Error: '.$error;
         } else {
             echo $result;
         }
@@ -566,8 +566,8 @@ switch ($type) {
             //session_start();
             $_SESSION['managerID'] = $login['managerID'];
             $last_login = time();
-            $update_login = mysqli_query($con, "UPDATE $user_table SET lastLogin='$last_login' where managerID='" . $_SESSION['managerID'] . "'");
-            $detail = 'New Login from <b>' . $_SERVER['HTTP_USER_AGENT'] . '</b>';
+            $update_login = mysqli_query($con, "UPDATE $user_table SET lastLogin='$last_login' where managerID='".$_SESSION['managerID']."'");
+            $detail = 'New Login from <b>'.$_SERVER['HTTP_USER_AGENT'].'</b>';
             ActivityLog($con, $detail, $_SESSION['managerID']);
             if ($remember == 1) {
                 $cookie_name = 'managerID';
@@ -575,13 +575,13 @@ switch ($type) {
                 setcookie($cookie_name, $cookie_value, time() + (86400 * 30), '/'); // 86400 = 1 day
             }
             if ($login['LastLogin'] < 1) {
-                $result = 'Login Successful. Redirecting to profile page in 3 seconds. <script>window.setTimeout(function(){ window.location = "' . $website_url . '/manager/EditProfile"; },3000)</script>';
+                $result = 'Login Successful. Redirecting to profile page in 3 seconds. <script>window.setTimeout(function(){ window.location = "'.$website_url.'/manager/EditProfile"; },3000)</script>';
             } else {
-                $result = 'Login Successful. Redirecting in 5 seconds. <script>window.setTimeout(function(){ window.location = "' . $website_url . '/manager/"; },5000)</script>';
+                $result = 'Login Successful. Redirecting in 5 seconds. <script>window.setTimeout(function(){ window.location = "'.$website_url.'/manager/"; },5000)</script>';
             }
         }
         if (isset($error)) {
-            echo 'Error: ' . $error;
+            echo 'Error: '.$error;
         } else {
             echo $result;
         }
@@ -607,8 +607,8 @@ switch ($type) {
             //session_start();
             $_SESSION['employeeID'] = $login['employeeID'];
             $last_login = time();
-            $update_login = mysqli_query($con, "UPDATE $employee_table SET lastLogin='$last_login' where employeeID='" . $_SESSION['employeeID'] . "'");
-            $detail = 'New Login from <b>' . $_SERVER['HTTP_USER_AGENT'] . '</b>';
+            $update_login = mysqli_query($con, "UPDATE $employee_table SET lastLogin='$last_login' where employeeID='".$_SESSION['employeeID']."'");
+            $detail = 'New Login from <b>'.$_SERVER['HTTP_USER_AGENT'].'</b>';
             ActivityLog($con, $detail, $_SESSION['employeeID'], $type = 1);
             if ($remember == 1) {
                 $cookie_name = 'employeeID';
@@ -616,13 +616,13 @@ switch ($type) {
                 setcookie($cookie_name, $cookie_value, time() + (86400 * 30), '/'); // 86400 = 1 day
             }
             if ($login['lastLogin'] < 1) {
-                $result = 'Login Successful. Redirecting to profile page in 3 seconds. <script>window.setTimeout(function(){ window.location = "' . $website_url . '/employee/EditProfile"; },3000)</script>';
+                $result = 'Login Successful. Redirecting to profile page in 3 seconds. <script>window.setTimeout(function(){ window.location = "'.$website_url.'/employee/EditProfile"; },3000)</script>';
             } else {
-                $result = 'Login Successful. Redirecting in 5 seconds. <script>window.setTimeout(function(){ window.location = "' . $website_url . '/employee/"; },5000)</script>';
+                $result = 'Login Successful. Redirecting in 5 seconds. <script>window.setTimeout(function(){ window.location = "'.$website_url.'/employee/"; },5000)</script>';
             }
         }
         if (isset($error)) {
-            echo 'Error: ' . $error;
+            echo 'Error: '.$error;
         } else {
             echo $result;
         }
@@ -655,7 +655,7 @@ switch ($type) {
             $date = date('D M Y g:i a', $reg_time);
             $insert = mysqli_query($con, "INSERT INTO $user_table (email,password,addDate) VALUES ('$email','$pword','$reg_time')");
             if (!$insert) {
-                $error = 'Insert Error: ' . mysqli_error($con);
+                $error = 'Insert Error: '.mysqli_error($con);
             } else {
                 $result = 'Registration Successful.';
                 /*
@@ -707,7 +707,7 @@ switch ($type) {
             }
         }
         if (isset($error)) {
-            echo 'Error: ' . $error;
+            echo 'Error: '.$error;
         } else {
             echo $result;
         }
@@ -739,7 +739,7 @@ switch ($type) {
             $date = date('D M Y g:i a', $reg_time);
             $insert = mysqli_query($con, "INSERT INTO $employee_table (email,password,joinDate) VALUES ('$email','$pword','$reg_time')");
             if (!$insert) {
-                $error = 'Insert Error: ' . mysqli_error($con);
+                $error = 'Insert Error: '.mysqli_error($con);
             } else {
                 $result = 'Registration Successful.';
                 //select new user data;
@@ -752,11 +752,11 @@ switch ($type) {
                 //	$actlink = 'http://'.$_SERVER['SERVER_NAME'].'/EmailVerification?a='.$k['employeeID'].'&b='.$k['email_code'];
                 $fullname = '';
                 $token = [
-                    'SITE_URL' => 'http://' . $_SERVER['SERVER_NAME'],
-                    'SITE_NAME' => $option['website_name'],
-                    'USER_NAME' => $fullame,
+                    'SITE_URL'   => 'http://'.$_SERVER['SERVER_NAME'],
+                    'SITE_NAME'  => $option['website_name'],
+                    'USER_NAME'  => $fullame,
                     'USER_EMAIL' => $email,
-                    'SEND_DATE' => date('D M Y g:i a', time()),
+                    'SEND_DATE'  => date('D M Y g:i a', time()),
                 ];
                 $pattern = '[%s]';
                 foreach ($token as $key => $val) {
@@ -764,7 +764,7 @@ switch ($type) {
                 }
                 $emailContent = strtr($tempData['content'], $varMap);
                 require 'phpmail/PHPMailerAutoload.php';
-                $from = 'noreply@' . $_SERVER['SERVER_NAME'];
+                $from = 'noreply@'.$_SERVER['SERVER_NAME'];
                 //$from = $option['sender_email'];
                 //$replyto = $option['reply_email'];
                 $mail = new PHPMailer();
@@ -777,18 +777,18 @@ switch ($type) {
                     $mail->Subject = $tempData['subject'];
                     $mail->Body = $emailContent;
                     $mail->send();
-                    $result .= ' Welcome message sent to <b>' . $email . '</b>';
+                    $result .= ' Welcome message sent to <b>'.$email.'</b>';
 
-                    $detail = 'New sign up as <b>' . $email . '</b>';
+                    $detail = 'New sign up as <b>'.$email.'</b>';
                     ActivityLog($con, $detail, $k['employeeID'], $type = 1);
                 } catch (Exception $e) {
-                    $error .= ' Message could not be sent to ' . $email;
-                    $error .= '<br>Mailer Error: ' . $mail->ErrorInfo;
+                    $error .= ' Message could not be sent to '.$email;
+                    $error .= '<br>Mailer Error: '.$mail->ErrorInfo;
                 }
             }
         }
         if (isset($error)) {
-            echo 'Error: ' . $error;
+            echo 'Error: '.$error;
         } else {
             echo $result;
         }
@@ -809,7 +809,7 @@ switch ($type) {
         } elseif (empty($email) || filter_var($email, FILTER_VALIDATE_EMAIL) === false) {
             $error = 'Enter a valid Email';
         } else {
-            echo SendMail('noreply@' . $_SERVER['SERVER_NAME'], 'Contact Us', 'support@' . $_SERVER['SERVER_NAME'], $message . '<br>Website: ' . $website, $name, 'Support');
+            echo SendMail('noreply@'.$_SERVER['SERVER_NAME'], 'Contact Us', 'support@'.$_SERVER['SERVER_NAME'], $message.'<br>Website: '.$website, $name, 'Support');
         }
         break;
 
@@ -832,7 +832,7 @@ switch ($type) {
         } else {
             $fpy = mysqli_fetch_assoc(mysqli_query($con, "SELECT email FROM $user_table WHERE managerID='$recipient'"));
             $it = mysqli_fetch_assoc(mysqli_query($con, "SELECT name FROM $apartment_table WHERE aID='$listingid'"));
-            echo SendMail('noreply@' . $_SERVER['SERVER_NAME'], 'New Message: ' . $it['name'], $fpy['email'], $message . '<br>Date: ' . date('d M Y g:i a', time()));
+            echo SendMail('noreply@'.$_SERVER['SERVER_NAME'], 'New Message: '.$it['name'], $fpy['email'], $message.'<br>Date: '.date('d M Y g:i a', time()));
         }
         break;
 

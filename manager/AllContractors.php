@@ -44,9 +44,9 @@ include '../views/manager_header.php'; ?>
                         ?>
                         <tr class="<?php echo $v['id']; ?>">
                             <td><a href="ViewTask?id=<?php echo $v['taskID']; ?>"><?php echo $v['ttitle']; ?></a></td>
-                            <td><?php echo $v['duration'] . ' hours'; ?></td>
-                            <td><?php $e = mysqli_fetch_assoc(mysqli_query($con, "SELECT sdetail FROM $status_table WHERE statusID='" . $v['astatus'] . "'"));
-                                echo $e['sdetail']; ?></td>
+                            <td><?php echo $v['duration'].' hours'; ?></td>
+                            <td><?php $e = mysqli_fetch_assoc(mysqli_query($con, "SELECT sdetail FROM $status_table WHERE statusID='".$v['astatus']."'"));
+                        echo $e['sdetail']; ?></td>
                             <td><?php echo $v['fullname']; ?></td>
                             <td>
                                 <a href="ViewContractor?id=<?php echo $v['employeeID']; ?>"><?php echo $v['email']; ?></a>

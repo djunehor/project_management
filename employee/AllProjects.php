@@ -45,7 +45,7 @@ ON $project_table.projectStatus=$status_table.statusID WHERE managerID='$manager
                             <td><?php echo html_entity_decode(htmlspecialchars_decode(substr($v['detail'], 0, 50))); ?>
                                 ...
                             </td>
-                            <td><?php echo 'NGN' . number_format($v['budget']); ?></td>
+                            <td><?php echo 'NGN'.number_format($v['budget']); ?></td>
                             <td><?php echo date('d M Y', $v['startDate']); ?></td>
                             <td><?php echo date('d M Y', $v['endDate']); ?></td>
                             <td><?php echo $v['sdetail']; ?></td>

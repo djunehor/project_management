@@ -49,7 +49,7 @@ WHERE agentID='$managerID'");
                             <td><?php echo substr(html_entity_decode(htmlspecialchars_decode($v['info'])), 0, 100); ?>
                                 ...
                             </td>
-                            <td><?php echo '&#x20A6;' . number_format($v['price']); ?></td>
+                            <td><?php echo '&#x20A6;'.number_format($v['price']); ?></td>
                             <td><?php echo date('d M Y', $v['addDate']); ?></td>
                             <td>
                                 <form action="EditListing?id=<?php echo $v['aID']; ?>">

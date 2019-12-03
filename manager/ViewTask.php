@@ -50,7 +50,7 @@ $omo = mysqli_fetch_assoc(mysqli_query($con, "SELECT * FROM $task_table LEFT JOI
                     <td><?php echo $omo['phone']; ?></td>
                     <td><a href="<?php echo $omo['website']; ?>"><?php echo $omo['website']; ?></a></td>
                     <td><?php echo $omo['sdetail']; ?></td>
-                    <td><?php echo $omo['duration'] . ' hours'; ?></td>
+                    <td><?php echo $omo['duration'].' hours'; ?></td>
                     <td>
                         <button onclick="del_con(this.value)" id="btnDelete" type="submit"
                                 value="<?php echo $omo['employeeEmail']; ?>" class="btn btn-info">Delete

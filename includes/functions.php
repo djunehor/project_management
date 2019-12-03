@@ -20,7 +20,7 @@ function time_elapsed_string($datetime, $full = false)
     ];
     foreach ($string as $k => &$v) {
         if ($diff->$k) {
-            $v = $diff->$k . ' ' . $v . ($diff->$k > 1 ? 's' : '');
+            $v = $diff->$k.' '.$v.($diff->$k > 1 ? 's' : '');
         } else {
             unset($string[$k]);
         }
@@ -30,7 +30,7 @@ function time_elapsed_string($datetime, $full = false)
         $string = array_slice($string, 0, 1);
     }
 
-    return $string ? implode(', ', $string) . ' ago' : 'just now';
+    return $string ? implode(', ', $string).' ago' : 'just now';
 }
 
 function ActivityLog($con, $detail, $id, $type = 0)
@@ -60,8 +60,8 @@ function SendMail($from, $subject, $to, $message, $fromname = '', $toname = '')
         $mail->send();
         $error = ' Message sent';
     } catch (Exception $e) {
-        $error .= 'Error: Message could not be sent to ' . $to;
-        $error .= '<br>Mailer Error: ' . $mail->ErrorInfo;
+        $error .= 'Error: Message could not be sent to '.$to;
+        $error .= '<br>Mailer Error: '.$mail->ErrorInfo;
     }
 
     return $error;
@@ -91,7 +91,7 @@ function pagination($con, $page_id, $query, $ppage = 20)
     }                                //if no page var is given, set start to 0
 
     /* Get data. */
-    $result = mysqli_query($con, $query . " LIMIT $start, $limit");
+    $result = mysqli_query($con, $query." LIMIT $start, $limit");
 
     /* Setup page vars for display. */
     if ($page == 0) {

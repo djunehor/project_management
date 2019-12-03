@@ -33,12 +33,12 @@ include '../views/manager_header.php';
                     <?php
                     $q3 = mysqli_query($con, "SELECT * FROM $activity_table WHERE userID='$managerID' and addDate>=(select lastLogin from $user_table where managerID='$managerID') order by activityID desc LIMIT 5");
                     while ($f = mysqli_fetch_assoc($q3)) {
-                    ?>
+                        ?>
                     <td><?php echo html_entity_decode(htmlspecialchars_decode($f['adetail'])); ?></td>
                     <td><?php echo date('d-M-Y g:i a', $f['addDate']); ?></td>
                 </tr>
                 <?php
-                } ?>
+                    } ?>
                 </tbody>
             </table>
             <script src="../lib/jquery/jquery.js"></script>

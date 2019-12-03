@@ -29,7 +29,7 @@ include '../views/manager_header.php'; ?>
                             <?php
                             $oop = mysqli_query($con, "SELECT * FROM $project_table WHERE managerID='$managerID'");
                             while ($ool = mysqli_fetch_assoc($oop)) {
-                                echo '<option value="' . $ool['projectID'] . '">' . $ool['title'] . '</option>';
+                                echo '<option value="'.$ool['projectID'].'">'.$ool['title'].'</option>';
                             }
                             ?>
                         </select>

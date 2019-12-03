@@ -128,9 +128,9 @@ ON $project_table.projectStatus=$status_table.statusID WHERE managerID='$manager
                                     </div><!-- modal-dialog -->
                                 </div>
                                 <td class="tx-12">
-                                    <?php echo '&#x20A6;' . number_format($v['budget']); ?>
+                                    <?php echo '&#x20A6;'.number_format($v['budget']); ?>
                                 </td>
-                                <td><?php echo date('d M Y', $v['startDate']), ' to ' . date('d M Y', $v['endDate']); ?></td>
+                                <td><?php echo date('d M Y', $v['startDate']), ' to '.date('d M Y', $v['endDate']); ?></td>
                                 <td><?php echo $v['sdetail']; ?></td>
                             </tr>
                             <?php
@@ -157,19 +157,19 @@ ON $project_table.projectStatus=$status_table.statusID WHERE managerID='$manager
                         </thead>
                         <tbody>
                         <?php
-                        $q2 = mysqli_query($con, "SELECT * FROM $chat_table WHERE senderID='" . $manager['email'] . "' OR recipientID='" . $manager['email'] . "' and sendDate>=(select lastLogin from $user_table where managerID='$managerID') GROUP BY chatID DESC LIMIT 5");
+                        $q2 = mysqli_query($con, "SELECT * FROM $chat_table WHERE senderID='".$manager['email']."' OR recipientID='".$manager['email']."' and sendDate>=(select lastLogin from $user_table where managerID='$managerID') GROUP BY chatID DESC LIMIT 5");
                         while ($b = mysqli_fetch_assoc($q2)) {
                             ?>
                             <tr>
                                 <td>
                                     <a href="ViewChat?id=<?php echo strtolower($b['chatID']); ?>"
-                                       class="tx-inverse tx-14 tx-medium d-block"><?php echo $b['message'] ? html_entity_decode(htmlspecialchars_decode(substr($b['message'], 0, 50))) : '<a target="_blank" href="' . $b['attachment'] . '">View Image</a>'; ?></a>
+                                       class="tx-inverse tx-14 tx-medium d-block"><?php echo $b['message'] ? html_entity_decode(htmlspecialchars_decode(substr($b['message'], 0, 50))) : '<a target="_blank" href="'.$b['attachment'].'">View Image</a>'; ?></a>
                                     <!--   <span class="tx-11 d-block"><span class="square-8 bg-danger mg-r-5 rounded-circle"></span> 20 remaining</span>  -->
                                 </td>
                                 <td class="valign-middle"><span
                                             class="tx-success"></span> <?php echo $b['recipientID']; ?></td>
                                 <td class="valign-middle">
-                                    <?php echo time_elapsed_string('@' . $b['sendDate']); ?>
+                                    <?php echo time_elapsed_string('@'.$b['sendDate']); ?>
                                 </td>
                             </tr>
                             <?php
@@ -205,7 +205,7 @@ ON $project_table.projectStatus=$status_table.statusID WHERE managerID='$manager
                                 <td>
                                     <?php echo $m['detail']; ?></span>
                                 </td>
-                                <td><?php echo time_elapsed_string('@' . $m['addDate']); ?></td>
+                                <td><?php echo time_elapsed_string('@'.$m['addDate']); ?></td>
                             </tr>
                             <?php
                         } ?>
@@ -238,7 +238,7 @@ ON $project_table.projectStatus=$status_table.statusID WHERE managerID='$manager
                                     <a class="tx-inverse tx-14 tx-medium d-block"><?php echo $l['adetail']; ?></a>
                                     <!--   <span class="tx-11 d-block"><span class="square-8 bg-danger mg-r-5 rounded-circle"></span> 20 remaining</span>  -->
                                 </td>
-                                <td class="valign-middle"> <?php echo time_elapsed_string('@' . $l['addDate']); ?></td>
+                                <td class="valign-middle"> <?php echo time_elapsed_string('@'.$l['addDate']); ?></td>
 
                             </tr>
                             <?php

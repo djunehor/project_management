@@ -32,14 +32,14 @@ include '../views/employee_header.php'; ?>
                         <th>Action</th>
                     </tr>
                     <?php
-                    $tabla = mysqli_query($con, "SELECT * FROM $chat_table where senderID='" . $employee['email'] . "' OR recipientID='" . $employee['email'] . "' GROUP BY chatID DESC limit 50");
+                    $tabla = mysqli_query($con, "SELECT * FROM $chat_table where senderID='".$employee['email']."' OR recipientID='".$employee['email']."' GROUP BY chatID DESC limit 50");
                     while ($registro = mysqli_fetch_array($tabla)) {
                         echo '
 <tr class="even">
-<td>' . $registro['senderID'] . '</td>
-<td>' . html_entity_decode(htmlspecialchars_decode($registro['message'])) . '</td>
-<td>' . date('M j Y, g:i a', $registro['sendDate']) . '</td>
-<td><a href="ViewChat?id=' . $registro['chatID'] . '">View Chat</a></td>
+<td>'.$registro['senderID'].'</td>
+<td>'.html_entity_decode(htmlspecialchars_decode($registro['message'])).'</td>
+<td>'.date('M j Y, g:i a', $registro['sendDate']).'</td>
+<td><a href="ViewChat?id='.$registro['chatID'].'">View Chat</a></td>
 </tr>';
                     }
                     ?>

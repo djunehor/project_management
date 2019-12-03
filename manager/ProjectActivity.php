@@ -33,12 +33,12 @@ include '../views/manager_header.php';
                     <?php
                     $q6 = mysqli_query($con, "SELECT * FROM $projectlog WHERE managerID='$managerID' order by logID desc limit 100");
                     while ($f = mysqli_fetch_assoc($q6)) {
-                    ?>
+                        ?>
                     <td><?php echo html_entity_decode(htmlspecialchars_decode($f['detail'])); ?></td>
                     <td><?php echo date('d-M-Y g:i a', $f['addDate']); ?></td>
                 </tr>
                 <?php
-                } ?>
+                    } ?>
                 </tbody>
             </table>
             <script src="../lib/jquery/jquery.js"></script>

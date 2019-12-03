@@ -52,7 +52,7 @@ class validateInput
         } else {
             // it's a domain name
             //   php bug - FILTER_VALIDATE_EMAIL doesn't like naked TLD
-            if (!filter_var('user@a.' . $domain, FILTER_VALIDATE_EMAIL)) {
+            if (!filter_var('user@a.'.$domain, FILTER_VALIDATE_EMAIL)) {
                 return false;
             }
             if ($dns_check) {
@@ -151,9 +151,9 @@ class validateFile
         $owo = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
         $size = $file['size'];
         if (!in_array($owo, ['jpg', 'jpeg', 'png', 'gif'])) {
-            $output = 'Invalid File <b>' . $filename . "</b> - Only 'jpg','jpeg','png','gif' allowed!";
+            $output = 'Invalid File <b>'.$filename."</b> - Only 'jpg','jpeg','png','gif' allowed!";
         } elseif ((number_format(($size / 1024 / 1024), 2)) > $max) {
-            $output = "Maximum filesize is $max MB. <b>" . $filename . '</b> is ' . number_format(($size / 1024 / 1024), 2) . ' MB';
+            $output = "Maximum filesize is $max MB. <b>".$filename.'</b> is '.number_format(($size / 1024 / 1024), 2).' MB';
         }
 
         return $output;

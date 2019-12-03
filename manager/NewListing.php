@@ -58,7 +58,7 @@ include '../views/manager_header.php'; ?>
                             <?php
                             $oop = mysqli_query($con, 'SELECT * FROM countries');
                             while ($ool = mysqli_fetch_assoc($oop)) {
-                                echo '<option value="' . $ool['id'] . '">' . $ool['name'] . '</option>';
+                                echo '<option value="'.$ool['id'].'">'.$ool['name'].'</option>';
                             }
                             ?>
                         </select>
@@ -84,7 +84,7 @@ include '../views/manager_header.php'; ?>
                             <?php
                             $h3 = mysqli_query($con, "SELECT * FROM $listing_type");
                             while ($b = mysqli_fetch_assoc($h3)) {
-                                echo '<option value="' . $b['id'] . '">' . $b['ldetail'] . '</option>';
+                                echo '<option value="'.$b['id'].'">'.$b['ldetail'].'</option>';
                             } ?>
                         </select>
                         <br>
@@ -93,7 +93,7 @@ include '../views/manager_header.php'; ?>
                             <?php
                             $h4 = mysqli_query($con, "SELECT * FROM $apartment_type");
                             while ($c = mysqli_fetch_assoc($h4)) {
-                                echo '<option value="' . $c['id'] . '">' . $c['adetail'] . '</option>';
+                                echo '<option value="'.$c['id'].'">'.$c['adetail'].'</option>';
                             } ?>
                         </select>
                     </section>

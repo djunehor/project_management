@@ -6,7 +6,7 @@ if (mysqli_num_rows(mysqli_query($con, "SELECT * FROM $project_table WHERE proje
     exit;
 }
 $omo = mysqli_fetch_assoc(mysqli_query($con, "SELECT * FROM $project_table WHERE projectID='$tid'"));
-$page_name = $omo['title'] . ' | Projects';
+$page_name = $omo['title'].' | Projects';
 include '../views/manager_header.php';
 ?>
     <link href="../lib/font-awesome/css/font-awesome.css" rel="stylesheet">
@@ -44,8 +44,8 @@ include '../views/manager_header.php';
                 <tr>
                     <td><?php echo date('d-M-Y', $omo['startDate']); ?></td>
                     <td><?php echo date('d-M-Y', $omo['endDate']); ?></td>
-                    <td><?php echo '&#x20A6;' . number_format($omo['budget']); ?></td>
-                    <td><?php $s = mysqli_fetch_assoc(mysqli_query($con, "SELECT sdetail FROM $status_table WHERE statusID='" . $omo['status'] . "'"));
+                    <td><?php echo '&#x20A6;'.number_format($omo['budget']); ?></td>
+                    <td><?php $s = mysqli_fetch_assoc(mysqli_query($con, "SELECT sdetail FROM $status_table WHERE statusID='".$omo['status']."'"));
                         echo $s['sdetail']; ?></td>
                     <?php if ($omo['projectStatus'] == 0) { ?>
                         <td>
@@ -75,7 +75,7 @@ include '../views/manager_header.php';
                 </thead>
                 <tbody>
                 <?php
-                $g = mysqli_query($con, "SELECT * FROM $milestone_table WHERE projectID='" . $omo['projectID'] . "'");
+                $g = mysqli_query($con, "SELECT * FROM $milestone_table WHERE projectID='".$omo['projectID']."'");
                 while ($om = mysqli_fetch_assoc($g)) {
                     ?>
                     <tr class="<?php echo $om['milestoneID']; ?>">
@@ -85,8 +85,8 @@ include '../views/manager_header.php';
                         </td>
                         <td><?php echo substr(html_entity_decode(htmlspecialchars_decode($om['mdetail'])), 0, 100); ?></td>
                         <td><?php echo date('d-M-Y', $om['startDate']); ?></td>
-                        <td><?php $s = mysqli_fetch_assoc(mysqli_query($con, "SELECT detail FROM $tag_table WHERE tagID='" . $om['tagID'] . "'"));
-                            echo $s['detail']; ?></td>
+                        <td><?php $s = mysqli_fetch_assoc(mysqli_query($con, "SELECT detail FROM $tag_table WHERE tagID='".$om['tagID']."'"));
+                    echo $s['detail']; ?></td>
                         <td>
                             <form action="EditMilestone?id=<?php echo $om['milestoneID']; ?>">
                                 <button id="btnEdit" type="submit" class="btn btn-info">Edit</button>
@@ -127,16 +127,16 @@ include '../views/manager_header.php';
                 </thead>
                 <tbody>
                 <?php
-                $g = mysqli_query($con, "SELECT * FROM $task_table WHERE projectID='" . $omo['projectID'] . "'");
+                $g = mysqli_query($con, "SELECT * FROM $task_table WHERE projectID='".$omo['projectID']."'");
                 while ($o = mysqli_fetch_assoc($g)) {
                     ?>
                     <tr class="<?php echo $o['taskID']; ?>">
                         <td><?php echo $o['taskID']; ?></td>
                         <td><a href="ViewTask?id=<?php echo $omo['taskID']; ?>"><?php echo $o['ttitle']; ?></a></td>
                         <td><?php echo substr(html_entity_decode(htmlspecialchars_decode($o['tdetail'])), 0, 50); ?></td>
-                        <td><?php echo $o['duration'] . ' hours'; ?></td>
-                        <td><?php $s = mysqli_fetch_assoc(mysqli_query($con, "SELECT * FROM $assigned_table LEFT JOIN $status_table ON $assigned_table.astatus=$status_table.statusID WHERE taskID='" . $o['taskID'] . "'"));
-                            echo $s['sdetail'] ? $s['sdetail'] : 'Not Assigned'; ?></td>
+                        <td><?php echo $o['duration'].' hours'; ?></td>
+                        <td><?php $s = mysqli_fetch_assoc(mysqli_query($con, "SELECT * FROM $assigned_table LEFT JOIN $status_table ON $assigned_table.astatus=$status_table.statusID WHERE taskID='".$o['taskID']."'"));
+                    echo $s['sdetail'] ? $s['sdetail'] : 'Not Assigned'; ?></td>
 
                         <td><?php echo $s['startDate'] ? date('d-M-Y', $s['startDate']) : 'Not Assigned'; ?></td>
                         <td><?php echo $s['employeeEmail'] ? $s['employeeEmail'] : 'Not Assigned'; ?></td>
@@ -171,7 +171,7 @@ include '../views/manager_header.php';
                 </thead>
                 <tbody>
                 <?php
-                $l = mysqli_query($con, "SELECT * FROM $projectlog WHERE projectID='" . $omo['projectID'] . "'");
+                $l = mysqli_query($con, "SELECT * FROM $projectlog WHERE projectID='".$omo['projectID']."'");
                 while ($f = mysqli_fetch_assoc($l)) {
                     ?>
                     <tr>

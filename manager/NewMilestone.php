@@ -36,7 +36,7 @@ include '../views/manager_header.php'; ?>
                             <?php
                             $oop = mysqli_query($con, "SELECT * FROM $project_table WHERE managerID='$managerID' and projectStatus=1");
                             while ($ool = mysqli_fetch_assoc($oop)) {
-                                echo '<option value="' . $ool['projectID'] . '">' . $ool['title'] . '</option>';
+                                echo '<option value="'.$ool['projectID'].'">'.$ool['title'].'</option>';
                             }
                             ?>
                         </select>
@@ -62,7 +62,7 @@ include '../views/manager_header.php'; ?>
                         <?php
                         $oopl = mysqli_query($con, "SELECT * FROM $tag_table");
                         while ($ol = mysqli_fetch_assoc($oopl)) {
-                            echo '<option value="' . $ol['tagID'] . '">' . $ol['detail'] . '</option>';
+                            echo '<option value="'.$ol['tagID'].'">'.$ol['detail'].'</option>';
                         }
                         ?>
                     </select><br>

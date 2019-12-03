@@ -2,11 +2,11 @@
 require '../includes/config.php';
 require '../includes/functions.php';
 if (isset($_SESSION['employeeID'])) {
-    $detail = 'Last seen on <b>' . $_SERVER['HTTP_REFERER'] . '</b>';
+    $detail = 'Last seen on <b>'.$_SERVER['HTTP_REFERER'].'</b>';
     ActivityLog($con, $detail, $_SESSION['employeeID'], $type = 1);
     unset($_SESSION['employeeID']);
 } elseif (isset($_COOKIE['employeeID'])) {
-    $detail = 'Last seen on <b>' . $_SERVER['HTTP_REFERER'] . '</b>';
+    $detail = 'Last seen on <b>'.$_SERVER['HTTP_REFERER'].'</b>';
     ActivityLog($con, $detail, $_COOKIE['employeeID'], $type = 1);
     setcookie('employeeID', '', time() - 3600);
 }

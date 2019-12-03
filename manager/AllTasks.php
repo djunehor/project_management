@@ -45,7 +45,7 @@ include '../views/manager_header.php'; ?>
                             <td><?php echo substr(html_entity_decode(htmlspecialchars_decode($v['tdetail'])), 0, 100); ?>
                                 ...
                             </td>
-                            <td><?php echo $v['duration'] . ' hours'; ?></td>
+                            <td><?php echo $v['duration'].' hours'; ?></td>
                             <td><?php echo $v['employeeEmail'] ? $v['employeeEmail'] : 'Not Assigned'; ?></td>
                             <td>
                                 <form action="EditTask?id=<?php echo $v['tid']; ?>">
