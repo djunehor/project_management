@@ -52,7 +52,7 @@ class validateInput
         } else {
             // it's a domain name
             //   php bug - FILTER_VALIDATE_EMAIL doesn't like naked TLD
-            if (!filter_var('user@a.'.$domain, FILTER_VALIDATE_EMAIL)) {
+            if (!filter_var('user@a.' . $domain, FILTER_VALIDATE_EMAIL)) {
                 return false;
             }
             if ($dns_check) {
@@ -79,32 +79,32 @@ class validateInput
         switch ($type) {
 
             case 0:
-            if (!is_numeric($value) || !ctype_digit($value)) {
-                $output = 'Not a Valid Number';
-            }
-            break;
+                if (!is_numeric($value) || !ctype_digit($value)) {
+                    $output = 'Not a Valid Number';
+                }
+                break;
             case 1:
-            if (!is_numeric($value) || $value < 0) {
-                $output = 'Only positive Numbers allowed';
-            }
-            break;
+                if (!is_numeric($value) || $value < 0) {
+                    $output = 'Only positive Numbers allowed';
+                }
+                break;
             case 2:
-            if (!is_int($value)) {
-                $output = 'Not a Valid Integer';
-            }
-            break;
+                if (!is_int($value)) {
+                    $output = 'Not a Valid Integer';
+                }
+                break;
             case 3:
-            if (!is_int($value) || $value < 0) {
-                $output = 'Not a Valid Integer';
-            }
+                if (!is_int($value) || $value < 0) {
+                    $output = 'Not a Valid Integer';
+                }
             case 4:
-            if (!ctype_digit($value) || $value < 0) {
-                $output = 'Not a Valid Number';
-            }
-            break;
+                if (!ctype_digit($value) || $value < 0) {
+                    $output = 'Not a Valid Number';
+                }
+                break;
             default:
-            $output = 'Invalid argument passed!';
-            break;
+                $output = 'Invalid argument passed!';
+                break;
         }
 
         return $output;
@@ -151,9 +151,9 @@ class validateFile
         $owo = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
         $size = $file['size'];
         if (!in_array($owo, ['jpg', 'jpeg', 'png', 'gif'])) {
-            $output = 'Invalid File <b>'.$filename."</b> - Only 'jpg','jpeg','png','gif' allowed!";
+            $output = 'Invalid File <b>' . $filename . "</b> - Only 'jpg','jpeg','png','gif' allowed!";
         } elseif ((number_format(($size / 1024 / 1024), 2)) > $max) {
-            $output = "Maximum filesize is $max MB. <b>".$filename.'</b> is '.number_format(($size / 1024 / 1024), 2).' MB';
+            $output = "Maximum filesize is $max MB. <b>" . $filename . '</b> is ' . number_format(($size / 1024 / 1024), 2) . ' MB';
         }
 
         return $output;
