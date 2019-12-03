@@ -1,5 +1,5 @@
 <?php
-$page_name = "New Listing";
+$page_name = 'New Listing';
 include '../views/manager_header.php'; ?>
 <link href="../lib/font-awesome/css/font-awesome.css" rel="stylesheet">
     <link href="../lib/Ionicons/css/ionicons.css" rel="stylesheet">
@@ -52,12 +52,11 @@ include '../views/manager_header.php'; ?>
            <label class="form-control-label">Country: <span class="tx-danger">*</span></label>
                 <select onblur="check_state(this.value)" id="project" class="form-control" name="country">
        <?php
-	  $oop  = mysqli_query($con,"SELECT * FROM countries");
-	  while($ool = mysqli_fetch_assoc($oop))
-	  {
-	 echo '<option value="'.$ool['id'].'">'.$ool['name'].'</option>';
-	  }
-	  ?>
+      $oop = mysqli_query($con, 'SELECT * FROM countries');
+      while ($ool = mysqli_fetch_assoc($oop)) {
+          echo '<option value="'.$ool['id'].'">'.$ool['name'].'</option>';
+      }
+      ?>
 			 </select><div class="milestonep" style="display:none"><br></div><div class="milep" style="display:none"><br></div>
 			 <br><div class="address" style="display:none"> <label class="form-control-label">Address: <span class="tx-danger">*</span></label>
                 <textarea class="form-control" name="address" placeholder="Enter address" type="text"></textarea>
@@ -72,20 +71,18 @@ include '../views/manager_header.php'; ?>
                 <label class="form-control-label">Listing Type: <span class="tx-danger">*</span></label>
                 <select class="form-control" name="ltype">
 <?php
-$h3 = mysqli_query($con,"SELECT * FROM $listing_type");
-while($b = mysqli_fetch_assoc($h3))
-{
-echo '<option value="'.$b['id'].'">'.$b['ldetail'].'</option>';
+$h3 = mysqli_query($con, "SELECT * FROM $listing_type");
+while ($b = mysqli_fetch_assoc($h3)) {
+    echo '<option value="'.$b['id'].'">'.$b['ldetail'].'</option>';
 } ?>
 			 </select>
 			 <br>
                 <label class="form-control-label">Apartment Type: <span class="tx-danger">*</span></label>
                 <select class="form-control" name="atype">
 <?php
-$h4 = mysqli_query($con,"SELECT * FROM $apartment_type");
-while($c = mysqli_fetch_assoc($h4))
-{
-echo '<option value="'.$c['id'].'">'.$c['adetail'].'</option>';
+$h4 = mysqli_query($con, "SELECT * FROM $apartment_type");
+while ($c = mysqli_fetch_assoc($h4)) {
+    echo '<option value="'.$c['id'].'">'.$c['adetail'].'</option>';
 } ?>
 			 </select>
             </section><br>

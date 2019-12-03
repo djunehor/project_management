@@ -1,26 +1,24 @@
 <?php
 /**
- * @package dompdf
  * @link    http://dompdf.github.com/
+ *
  * @author  Fabien Ménager <fabien.menager@gmail.com>
  * @license http://www.gnu.org/copyleft/lesser.html GNU Lesser General Public License
  */
+
 namespace Dompdf;
 
 use Dompdf\FrameDecorator\Block;
 use Dompdf\FrameDecorator\Page;
 
 /**
- * The line box class
+ * The line box class.
  *
  * This class represents a line box
  * http://www.w3.org/TR/CSS2/visuren.html#line-box
- *
- * @package dompdf
  */
 class LineBox
 {
-
     /**
      * @var Block
      */
@@ -29,10 +27,10 @@ class LineBox
     /**
      * @var Frame[]
      */
-    protected $_frames = array();
+    protected $_frames = [];
 
     /**
-     * @var integer
+     * @var int
      */
     public $wc = 0;
 
@@ -69,7 +67,7 @@ class LineBox
     /**
      * @var bool[]
      */
-    public $floating_blocks = array();
+    public $floating_blocks = [];
 
     /**
      * @var bool
@@ -77,22 +75,22 @@ class LineBox
     public $br = false;
 
     /**
-     * Class constructor
+     * Class constructor.
      *
      * @param Block $frame the Block containing this line
-     * @param int $y
+     * @param int   $y
      */
     public function __construct(Block $frame, $y = 0)
     {
         $this->_block_frame = $frame;
-        $this->_frames = array();
+        $this->_frames = [];
         $this->y = $y;
 
         $this->get_float_offsets();
     }
 
     /**
-     * Returns the floating elements inside the first floating parent
+     * Returns the floating elements inside the first floating parent.
      *
      * @param Page $root
      *
@@ -108,7 +106,7 @@ class LineBox
 
         // Find nearest floating element
         $p = $this->_block_frame;
-        while ($p->get_style()->float === "none") {
+        while ($p->get_style()->float === 'none') {
             $parent = $p->get_parent();
 
             if (!$parent) {
@@ -124,7 +122,7 @@ class LineBox
 
         $parent = $p;
 
-        $childs = array();
+        $childs = [];
 
         foreach ($floating_frames as $_floating) {
             $p = $_floating->get_parent();
@@ -139,9 +137,6 @@ class LineBox
         return $childs;
     }
 
-    /**
-     *
-     */
     public function get_float_offsets()
     {
         static $anti_infinite_loop = 10000; // FIXME smelly hack
@@ -180,7 +175,7 @@ class LineBox
             $floating_width = $floating_frame->get_margin_width();
 
             if (!$cb_w) {
-                $cb_w = $floating_frame->get_containing_block("w");
+                $cb_w = $floating_frame->get_containing_block('w');
             }
 
             $line_w = $this->get_width();
@@ -192,16 +187,16 @@ class LineBox
 
             // If the child is still shifted by the floating element
             if ($anti_infinite_loop-- > 0 &&
-                $floating_frame->get_position("y") + $floating_frame->get_margin_height() >= $this->y &&
-                $block->get_position("x") + $block->get_margin_width() >= $floating_frame->get_position("x")
+                $floating_frame->get_position('y') + $floating_frame->get_margin_height() >= $this->y &&
+                $block->get_position('x') + $block->get_margin_width() >= $floating_frame->get_position('x')
             ) {
-                if ($float === "left") {
+                if ($float === 'left') {
                     if ($floating_frame_parent === $this->_block_frame) {
                         $inside_left_floating_width += $floating_width;
                     } else {
                         $outside_left_floating_width += $floating_width;
                     }
-                } elseif ($float === "right") {
+                } elseif ($float === 'right') {
                     if ($floating_frame_parent === $this->_block_frame) {
                         $inside_right_floating_width += $floating_width;
                     } else {
@@ -217,12 +212,12 @@ class LineBox
         }
 
         $this->left += $inside_left_floating_width;
-        if ($outside_left_floating_width > 0 && $outside_left_floating_width > ((float)$style->length_in_pt($style->margin_left) + (float)$style->length_in_pt($style->padding_left))) {
-            $this->left += $outside_left_floating_width - (float)$style->length_in_pt($style->margin_left) - (float)$style->length_in_pt($style->padding_left);
+        if ($outside_left_floating_width > 0 && $outside_left_floating_width > ((float) $style->length_in_pt($style->margin_left) + (float) $style->length_in_pt($style->padding_left))) {
+            $this->left += $outside_left_floating_width - (float) $style->length_in_pt($style->margin_left) - (float) $style->length_in_pt($style->padding_left);
         }
         $this->right += $inside_right_floating_width;
-        if ($outside_right_floating_width > 0 && $outside_right_floating_width > ((float)$style->length_in_pt($style->margin_left) + (float)$style->length_in_pt($style->padding_right))) {
-            $this->right += $outside_right_floating_width - (float)$style->length_in_pt($style->margin_right) - (float)$style->length_in_pt($style->padding_right);
+        if ($outside_right_floating_width > 0 && $outside_right_floating_width > ((float) $style->length_in_pt($style->margin_left) + (float) $style->length_in_pt($style->padding_right))) {
+            $this->right += $outside_right_floating_width - (float) $style->length_in_pt($style->margin_right) - (float) $style->length_in_pt($style->padding_right);
         }
     }
 
@@ -245,7 +240,7 @@ class LineBox
     /**
      * @return Frame[]
      */
-    function &get_frames()
+    public function &get_frames()
     {
         return $this->_frames;
     }
@@ -279,15 +274,16 @@ class LineBox
      */
     public function __toString()
     {
-        $props = array("wc", "y", "w", "h", "left", "right", "br");
-        $s = "";
+        $props = ['wc', 'y', 'w', 'h', 'left', 'right', 'br'];
+        $s = '';
         foreach ($props as $prop) {
-            $s .= "$prop: " . $this->$prop . "\n";
+            $s .= "$prop: ".$this->$prop."\n";
         }
-        $s .= count($this->_frames) . " frames\n";
+        $s .= count($this->_frames)." frames\n";
 
         return $s;
     }
+
     /*function __get($prop) {
       if (!isset($this->{"_$prop"})) return;
       return $this->{"_$prop"};

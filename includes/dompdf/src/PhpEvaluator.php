@@ -1,20 +1,18 @@
 <?php
 /**
- * @package dompdf
  * @link    http://dompdf.github.com/
+ *
  * @author  Benj Carson <benjcarson@digitaljunkies.ca>
  * @license http://www.gnu.org/copyleft/lesser.html GNU Lesser General Public License
  */
+
 namespace Dompdf;
 
 /**
- * Executes inline PHP code during the rendering process
- *
- * @package dompdf
+ * Executes inline PHP code during the rendering process.
  */
 class PhpEvaluator
 {
-
     /**
      * @var Canvas
      */
@@ -22,6 +20,7 @@ class PhpEvaluator
 
     /**
      * PhpEvaluator constructor.
+     *
      * @param Canvas $canvas
      */
     public function __construct(Canvas $canvas)
@@ -33,7 +32,7 @@ class PhpEvaluator
      * @param $code
      * @param array $vars
      */
-    public function evaluate($code, $vars = array())
+    public function evaluate($code, $vars = [])
     {
         if (!$this->_canvas->get_dompdf()->getOptions()->getIsPhpEnabled()) {
             return;

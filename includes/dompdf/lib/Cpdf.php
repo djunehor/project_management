@@ -13,38 +13,36 @@
  * @author  Brian Sweeney <eclecticgeek@gmail.com>
  * @author  Fabien Ménager <fabien.menager@gmail.com>
  * @license Public Domain http://creativecommons.org/licenses/publicdomain/
- * @package Cpdf
  */
-use FontLib\Font;
 use FontLib\BinaryStream;
+use FontLib\Font;
 
 class Cpdf
 {
-
     /**
-     * @var integer The current number of pdf objects in the document
+     * @var int The current number of pdf objects in the document
      */
     public $numObj = 0;
 
     /**
      * @var array This array contains all of the pdf objects, ready for final assembly
      */
-    public $objects = array();
+    public $objects = [];
 
     /**
-     * @var integer The objectId (number within the objects array) of the document catalog
+     * @var int The objectId (number within the objects array) of the document catalog
      */
     public $catalogId;
 
     /**
      * @var array Array carrying information about the fonts that the system currently knows about
-     * Used to ensure that a font is not loaded twice, among other things
+     *            Used to ensure that a font is not loaded twice, among other things
      */
-    public $fonts = array();
+    public $fonts = [];
 
     /**
      * @var string The default font metrics file to use if no other font has been loaded.
-     * The path to the directory containing the font metrics should be included
+     *             The path to the directory containing the font metrics should be included
      */
     public $defaultFont = './fonts/Helvetica.afm';
 
@@ -59,43 +57,43 @@ class Cpdf
     public $currentBaseFont = '';
 
     /**
-     * @var integer The number of the current font within the font array
+     * @var int The number of the current font within the font array
      */
     public $currentFontNum = 0;
 
     /**
-     * @var integer
+     * @var int
      */
     public $currentNode;
 
     /**
-     * @var integer Object number of the current page
+     * @var int Object number of the current page
      */
     public $currentPage;
 
     /**
-     * @var integer Object number of the currently active contents block
+     * @var int Object number of the currently active contents block
      */
     public $currentContents;
 
     /**
-     * @var integer Number of fonts within the system
+     * @var int Number of fonts within the system
      */
     public $numFonts = 0;
 
     /**
-     * @var integer Number of graphic state resources used
+     * @var int Number of graphic state resources used
      */
     private $numStates = 0;
 
     /**
      * @var array Number of graphic state resources used
      */
-    private $gstates = array();
+    private $gstates = [];
 
     /**
      * @var array Current color for fill operations, defaults to inactive value,
-     * all three components should be between 0 and 1 inclusive when active
+     *            all three components should be between 0 and 1 inclusive when active
      */
     public $currentColor = null;
 
@@ -107,7 +105,7 @@ class Cpdf
     /**
      * @var string Fill rule (nonzero or evenodd)
      */
-    public $fillRule = "nonzero";
+    public $fillRule = 'nonzero';
 
     /**
      * @var string Current style that lines are drawn in
@@ -117,103 +115,103 @@ class Cpdf
     /**
      * @var array Current line transparency (partial graphics state)
      */
-    public $currentLineTransparency = array("mode" => "Normal", "opacity" => 1.0);
+    public $currentLineTransparency = ['mode' => 'Normal', 'opacity' => 1.0];
 
     /**
-     * array Current fill transparency (partial graphics state)
+     * array Current fill transparency (partial graphics state).
      */
-    public $currentFillTransparency = array("mode" => "Normal", "opacity" => 1.0);
+    public $currentFillTransparency = ['mode' => 'Normal', 'opacity' => 1.0];
 
     /**
      * @var array An array which is used to save the state of the document, mainly the colors and styles
-     * it is used to temporarily change to another state, then change back to what it was before
+     *            it is used to temporarily change to another state, then change back to what it was before
      */
-    public $stateStack = array();
+    public $stateStack = [];
 
     /**
-     * @var integer Number of elements within the state stack
+     * @var int Number of elements within the state stack
      */
     public $nStateStack = 0;
 
     /**
-     * @var integer Number of page objects within the document
+     * @var int Number of page objects within the document
      */
     public $numPages = 0;
 
     /**
      * @var array Object Id storage stack
      */
-    public $stack = array();
+    public $stack = [];
 
     /**
-     * @var integer Number of elements within the object Id storage stack
+     * @var int Number of elements within the object Id storage stack
      */
     public $nStack = 0;
 
     /**
      * an array which contains information about the objects which are not firmly attached to pages
-     * these have been added with the addObject function
+     * these have been added with the addObject function.
      */
-    public $looseObjects = array();
+    public $looseObjects = [];
 
     /**
-     * array contains information about how the loose objects are to be added to the document
+     * array contains information about how the loose objects are to be added to the document.
      */
-    public $addLooseObjects = array();
+    public $addLooseObjects = [];
 
     /**
-     * @var integer The objectId of the information object for the document
-     * this contains authorship, title etc.
+     * @var int The objectId of the information object for the document
+     *          this contains authorship, title etc.
      */
     public $infoObject = 0;
 
     /**
-     * @var integer Number of images being tracked within the document
+     * @var int Number of images being tracked within the document
      */
     public $numImages = 0;
 
     /**
      * @var array An array containing options about the document
-     * it defaults to turning on the compression of the objects
+     *            it defaults to turning on the compression of the objects
      */
-    public $options = array('compression' => true);
+    public $options = ['compression' => true];
 
     /**
-     * @var integer The objectId of the first page of the document
+     * @var int The objectId of the first page of the document
      */
     public $firstPageId;
 
     /**
-     * @var integer The object Id of the procset object
+     * @var int The object Id of the procset object
      */
     public $procsetObjectId;
 
     /**
      * @var array Store the information about the relationship between font families
-     * this used so that the code knows which font is the bold version of another font, etc.
-     * the value of this array is initialised in the constructor function.
+     *            this used so that the code knows which font is the bold version of another font, etc.
+     *            the value of this array is initialised in the constructor function.
      */
-    public $fontFamilies = array();
+    public $fontFamilies = [];
 
     /**
      * @var string Folder for php serialized formats of font metrics files.
-     * If empty string, use same folder as original metrics files.
-     * This can be passed in from class creator.
-     * If this folder does not exist or is not writable, Cpdf will be **much** slower.
-     * Because of potential trouble with php safe mode, folder cannot be created at runtime.
+     *             If empty string, use same folder as original metrics files.
+     *             This can be passed in from class creator.
+     *             If this folder does not exist or is not writable, Cpdf will be **much** slower.
+     *             Because of potential trouble with php safe mode, folder cannot be created at runtime.
      */
     public $fontcache = '';
 
     /**
-     * @var integer The version of the font metrics cache file.
-     * This value must be manually incremented whenever the internal font data structure is modified.
+     * @var int The version of the font metrics cache file.
+     *          This value must be manually incremented whenever the internal font data structure is modified.
      */
     public $fontcacheVersion = 6;
 
     /**
      * @var string Temporary folder.
-     * If empty string, will attempt system tmp folder.
-     * This can be passed in from class creator.
+     *             If empty string, will attempt system tmp folder.
+     *             This can be passed in from class creator.
      */
     public $tmp = '';
 
@@ -233,7 +231,7 @@ class Cpdf
     public $arc4 = '';
 
     /**
-     * @var integer The object Id of the encryption information
+     * @var int The object Id of the encryption information
      */
     public $arc4_objnum = 0;
 
@@ -243,7 +241,7 @@ class Cpdf
     public $fileIdentifier = '';
 
     /**
-     * @var boolean A flag to say if a document is to be encrypted or not
+     * @var bool A flag to say if a document is to be encrypted or not
      */
     public $encrypted = false;
 
@@ -255,34 +253,34 @@ class Cpdf
     /**
      * @var array Array which forms a stack to keep track of nested callback functions
      */
-    public $callback = array();
+    public $callback = [];
 
     /**
-     * @var integer The number of callback functions in the callback array
+     * @var int The number of callback functions in the callback array
      */
     public $nCallback = 0;
 
     /**
      * @var array Store label->id pairs for named destinations, these will be used to replace internal links
-     * done this way so that destinations can be defined after the location that links to them
+     *            done this way so that destinations can be defined after the location that links to them
      */
-    public $destinations = array();
+    public $destinations = [];
 
     /**
      * @var array Store the stack for the transaction commands, each item in here is a record of the values of all the
-     * publiciables within the class, so that the user can rollback at will (from each 'start' command)
-     * note that this includes the objects array, so these can be large.
+     *            publiciables within the class, so that the user can rollback at will (from each 'start' command)
+     *            note that this includes the objects array, so these can be large.
      */
     public $checkpoint = '';
 
     /**
      * @var array Table of Image origin filenames and image labels which were already added with o_image().
-     * Allows to merge identical images
+     *            Allows to merge identical images
      */
-    public $imagelist = array();
+    public $imagelist = [];
 
     /**
-     * @var boolean Whether the text passed in should be treated as Unicode or just local character set.
+     * @var bool Whether the text passed in should be treated as Unicode or just local character set.
      */
     public $isUnicode = false;
 
@@ -292,29 +290,29 @@ class Cpdf
     public $javascript = '';
 
     /**
-     * @var boolean whether the compression is possible
+     * @var bool whether the compression is possible
      */
     protected $compressionReady = false;
 
     /**
      * @var array Current page size
      */
-    protected $currentPageSize = array("width" => 0, "height" => 0);
+    protected $currentPageSize = ['width' => 0, 'height' => 0];
 
     /**
      * @var array All the chars that will be required in the font subsets
      */
-    protected $stringSubsets = array();
+    protected $stringSubsets = [];
 
     /**
      * @var string The target internal encoding
      */
-    static protected $targetEncoding = 'Windows-1252';
+    protected static $targetEncoding = 'Windows-1252';
 
     /**
      * @var array The list of the core fonts
      */
-    static protected $coreFonts = array(
+    protected static $coreFonts = [
         'courier',
         'courier-bold',
         'courier-oblique',
@@ -328,22 +326,22 @@ class Cpdf
         'times-italic',
         'times-bolditalic',
         'symbol',
-        'zapfdingbats'
-    );
+        'zapfdingbats',
+    ];
 
     /**
      * Class constructor
-     * This will start a new document
+     * This will start a new document.
      *
-     * @param array   $pageSize  Array of 4 numbers, defining the bottom left and upper right corner of the page. first two are normally zero.
-     * @param boolean $isUnicode Whether text will be treated as Unicode or not.
-     * @param string  $fontcache The font cache folder
-     * @param string  $tmp       The temporary folder
+     * @param array  $pageSize  Array of 4 numbers, defining the bottom left and upper right corner of the page. first two are normally zero.
+     * @param bool   $isUnicode Whether text will be treated as Unicode or not.
+     * @param string $fontcache The font cache folder
+     * @param string $tmp       The temporary folder
      */
-    function __construct($pageSize = array(0, 0, 612, 792), $isUnicode = false, $fontcache = '', $tmp = '')
+    public function __construct($pageSize = [0, 0, 612, 792], $isUnicode = false, $fontcache = '', $tmp = '')
     {
         $this->isUnicode = $isUnicode;
-        $this->fontcache = rtrim($fontcache, DIRECTORY_SEPARATOR."/\\");
+        $this->fontcache = rtrim($fontcache, DIRECTORY_SEPARATOR.'/\\');
         $this->tmp = ($tmp !== '' ? $tmp : sys_get_temp_dir());
         $this->newDocument($pageSize);
 
@@ -358,7 +356,7 @@ class Cpdf
     }
 
     /**
-     * Document object methods (internal use only)
+     * Document object methods (internal use only).
      *
      * There is about one object method for each type of object in the pdf document
      * Each function has the same call list ($id,$action,$options).
@@ -373,33 +371,34 @@ class Cpdf
      */
 
     /**
-     * Destination object, used to specify the location for the user to jump to, presently on opening
+     * Destination object, used to specify the location for the user to jump to, presently on opening.
      *
      * @param $id
      * @param $action
      * @param string $options
+     *
      * @return string|null
      */
     protected function o_destination($id, $action, $options = '')
     {
         switch ($action) {
             case 'new':
-                $this->objects[$id] = array('t' => 'destination', 'info' => array());
+                $this->objects[$id] = ['t' => 'destination', 'info' => []];
                 $tmp = '';
                 switch ($options['type']) {
                     case 'XYZ':
-                    /** @noinspection PhpMissingBreakStatementInspection */
+                    /* @noinspection PhpMissingBreakStatementInspection */
                     case 'FitR':
-                        $tmp = ' ' . $options['p3'] . $tmp;
+                        $tmp = ' '.$options['p3'].$tmp;
                     case 'FitH':
                     case 'FitV':
                     case 'FitBH':
-                    /** @noinspection PhpMissingBreakStatementInspection */
+                    /* @noinspection PhpMissingBreakStatementInspection */
                     case 'FitBV':
-                        $tmp = ' ' . $options['p1'] . ' ' . $options['p2'] . $tmp;
+                        $tmp = ' '.$options['p1'].' '.$options['p2'].$tmp;
                     case 'Fit':
                     case 'FitB':
-                        $tmp = $options['type'] . $tmp;
+                        $tmp = $options['type'].$tmp;
                         $this->objects[$id]['info']['string'] = $tmp;
                         $this->objects[$id]['info']['page'] = $options['page'];
                 }
@@ -409,27 +408,26 @@ class Cpdf
                 $o = &$this->objects[$id];
 
                 $tmp = $o['info'];
-                $res = "\n$id 0 obj\n" . '[' . $tmp['page'] . ' 0 R /' . $tmp['string'] . "]\nendobj";
+                $res = "\n$id 0 obj\n".'['.$tmp['page'].' 0 R /'.$tmp['string']."]\nendobj";
 
                 return $res;
         }
-
-        return null;
     }
 
     /**
-     * set the viewer preferences
+     * set the viewer preferences.
      *
      * @param $id
      * @param $action
      * @param string|array $options
+     *
      * @return string|null
      */
     protected function o_viewerPreferences($id, $action, $options = '')
     {
         switch ($action) {
             case 'new':
-                $this->objects[$id] = array('t' => 'viewerPreferences', 'info' => array());
+                $this->objects[$id] = ['t' => 'viewerPreferences', 'info' => []];
                 break;
 
             case 'add':
@@ -445,12 +443,12 @@ class Cpdf
                         case 'CenterWindow':
                         case 'DisplayDocTitle':
                         case 'PickTrayByPDFSize':
-                            $o['info'][$k] = (bool)$v;
+                            $o['info'][$k] = (bool) $v;
                             break;
 
                         // Integer keys
                         case 'NumCopies':
-                            $o['info'][$k] = (int)$v;
+                            $o['info'][$k] = (int) $v;
                             break;
 
                         // Name keys
@@ -458,33 +456,33 @@ class Cpdf
                         case 'ViewClip':
                         case 'PrintClip':
                         case 'PrintArea':
-                            $o['info'][$k] = (string)$v;
+                            $o['info'][$k] = (string) $v;
                             break;
 
                         // Named with limited valid values
                         case 'NonFullScreenPageMode':
-                            if (!in_array($v, array('UseNone', 'UseOutlines', 'UseThumbs', 'UseOC'))) {
+                            if (!in_array($v, ['UseNone', 'UseOutlines', 'UseThumbs', 'UseOC'])) {
                                 continue;
                             }
                             $o['info'][$k] = $v;
                             break;
 
                         case 'Direction':
-                            if (!in_array($v, array('L2R', 'R2L'))) {
+                            if (!in_array($v, ['L2R', 'R2L'])) {
                                 continue;
                             }
                             $o['info'][$k] = $v;
                             break;
 
                         case 'PrintScaling':
-                            if (!in_array($v, array('None', 'AppDefault'))) {
+                            if (!in_array($v, ['None', 'AppDefault'])) {
                                 continue;
                             }
                             $o['info'][$k] = $v;
                             break;
 
                         case 'Duplex':
-                            if (!in_array($v, array('None', 'AppDefault'))) {
+                            if (!in_array($v, ['None', 'AppDefault'])) {
                                 continue;
                             }
                             $o['info'][$k] = $v;
@@ -494,7 +492,7 @@ class Cpdf
                         case 'PrintPageRange':
                             // Cast to integer array
                             foreach ($v as $vK => $vV) {
-                                $v[$vK] = (int)$vV;
+                                $v[$vK] = (int) $vV;
                             }
                             $o['info'][$k] = array_values($v);
                             break;
@@ -508,13 +506,13 @@ class Cpdf
 
                 foreach ($o['info'] as $k => $v) {
                     if (is_string($v)) {
-                        $v = '/' . $v;
+                        $v = '/'.$v;
                     } elseif (is_int($v)) {
                         $v = (string) $v;
                     } elseif (is_bool($v)) {
                         $v = ($v ? 'true' : 'false');
                     } elseif (is_array($v)) {
-                        $v = '[' . implode(' ', $v) . ']';
+                        $v = '['.implode(' ', $v).']';
                     }
                     $res .= "\n/$k $v";
                 }
@@ -522,16 +520,15 @@ class Cpdf
 
                 return $res;
         }
-
-        return null;
     }
 
     /**
-     * define the document catalog, the overall controller for the document
+     * define the document catalog, the overall controller for the document.
      *
      * @param $id
      * @param $action
      * @param string|array $options
+     *
      * @return string|null
      */
     protected function o_catalog($id, $action, $options = '')
@@ -542,7 +539,7 @@ class Cpdf
 
         switch ($action) {
             case 'new':
-                $this->objects[$id] = array('t' => 'catalog', 'info' => array());
+                $this->objects[$id] = ['t' => 'catalog', 'info' => []];
                 $this->catalogId = $id;
                 break;
 
@@ -596,16 +593,15 @@ class Cpdf
 
                 return $res;
         }
-
-        return null;
     }
 
     /**
-     * object which is a parent to the pages in the document
+     * object which is a parent to the pages in the document.
      *
      * @param $id
      * @param $action
      * @param string $options
+     *
      * @return string|null
      */
     protected function o_pages($id, $action, $options = '')
@@ -616,7 +612,7 @@ class Cpdf
 
         switch ($action) {
             case 'new':
-                $this->objects[$id] = array('t' => 'pages', 'info' => array());
+                $this->objects[$id] = ['t' => 'pages', 'info' => []];
                 $this->o_catalog($this->catalogId, 'pages', $id);
                 break;
 
@@ -666,19 +662,19 @@ class Cpdf
             case 'mediaBox':
                 $o['info']['mediaBox'] = $options;
                 // which should be an array of 4 numbers
-                $this->currentPageSize = array('width' => $options[2], 'height' => $options[3]);
+                $this->currentPageSize = ['width' => $options[2], 'height' => $options[3]];
                 break;
 
             case 'font':
-                $o['info']['fonts'][] = array('objNum' => $options['objNum'], 'fontNum' => $options['fontNum']);
+                $o['info']['fonts'][] = ['objNum' => $options['objNum'], 'fontNum' => $options['fontNum']];
                 break;
 
             case 'extGState':
-                $o['info']['extGStates'][] = array('objNum' => $options['objNum'], 'stateNum' => $options['stateNum']);
+                $o['info']['extGStates'][] = ['objNum' => $options['objNum'], 'stateNum' => $options['stateNum']];
                 break;
 
             case 'xObject':
-                $o['info']['xObjects'][] = array('objNum' => $options['objNum'], 'label' => $options['label']);
+                $o['info']['xObjects'][] = ['objNum' => $options['objNum'], 'label' => $options['label']];
                 break;
 
             case 'out':
@@ -688,7 +684,7 @@ class Cpdf
                         $res .= "$v 0 R\n";
                     }
 
-                    $res .= "]\n/Count " . count($this->objects[$id]['info']['pages']);
+                    $res .= "]\n/Count ".count($this->objects[$id]['info']['pages']);
 
                     if ((isset($o['info']['fonts']) && count($o['info']['fonts'])) ||
                         isset($o['info']['procset']) ||
@@ -697,13 +693,13 @@ class Cpdf
                         $res .= "\n/Resources <<";
 
                         if (isset($o['info']['procset'])) {
-                            $res .= "\n/ProcSet " . $o['info']['procset'] . " 0 R";
+                            $res .= "\n/ProcSet ".$o['info']['procset'].' 0 R';
                         }
 
                         if (isset($o['info']['fonts']) && count($o['info']['fonts'])) {
                             $res .= "\n/Font << ";
                             foreach ($o['info']['fonts'] as $finfo) {
-                                $res .= "\n/F" . $finfo['fontNum'] . " " . $finfo['objNum'] . " 0 R";
+                                $res .= "\n/F".$finfo['fontNum'].' '.$finfo['objNum'].' 0 R';
                             }
                             $res .= "\n>>";
                         }
@@ -711,7 +707,7 @@ class Cpdf
                         if (isset($o['info']['xObjects']) && count($o['info']['xObjects'])) {
                             $res .= "\n/XObject << ";
                             foreach ($o['info']['xObjects'] as $finfo) {
-                                $res .= "\n/" . $finfo['label'] . " " . $finfo['objNum'] . " 0 R";
+                                $res .= "\n/".$finfo['label'].' '.$finfo['objNum'].' 0 R';
                             }
                             $res .= "\n>>";
                         }
@@ -719,7 +715,7 @@ class Cpdf
                         if (isset($o['info']['extGStates']) && count($o['info']['extGStates'])) {
                             $res .= "\n/ExtGState << ";
                             foreach ($o['info']['extGStates'] as $gstate) {
-                                $res .= "\n/GS" . $gstate['stateNum'] . " " . $gstate['objNum'] . " 0 R";
+                                $res .= "\n/GS".$gstate['stateNum'].' '.$gstate['objNum'].' 0 R';
                             }
                             $res .= "\n>>";
                         }
@@ -727,13 +723,13 @@ class Cpdf
                         $res .= "\n>>";
                         if (isset($o['info']['mediaBox'])) {
                             $tmp = $o['info']['mediaBox'];
-                            $res .= "\n/MediaBox [" . sprintf(
+                            $res .= "\n/MediaBox [".sprintf(
                                     '%.3F %.3F %.3F %.3F',
                                     $tmp[0],
                                     $tmp[1],
                                     $tmp[2],
                                     $tmp[3]
-                                ) . ']';
+                                ).']';
                         }
                     }
 
@@ -744,16 +740,15 @@ class Cpdf
 
                 return $res;
         }
-
-        return null;
     }
 
     /**
-     * define the outlines in the doc, empty for now
+     * define the outlines in the doc, empty for now.
      *
      * @param $id
      * @param $action
      * @param string $options
+     *
      * @return string|null
      */
     protected function o_outlines($id, $action, $options = '')
@@ -764,7 +759,7 @@ class Cpdf
 
         switch ($action) {
             case 'new':
-                $this->objects[$id] = array('t' => 'outlines', 'info' => array('outlines' => array()));
+                $this->objects[$id] = ['t' => 'outlines', 'info' => ['outlines' => []]];
                 $this->o_catalog($this->catalogId, 'outlines', $id);
                 break;
 
@@ -779,23 +774,22 @@ class Cpdf
                         $res .= "$v 0 R ";
                     }
 
-                    $res .= "] /Count " . count($o['info']['outlines']) . " >>\nendobj";
+                    $res .= '] /Count '.count($o['info']['outlines'])." >>\nendobj";
                 } else {
                     $res = "\n$id 0 obj\n<< /Type /Outlines /Count 0 >>\nendobj";
                 }
 
                 return $res;
         }
-
-        return null;
     }
 
     /**
-     * an object to hold the font description
+     * an object to hold the font description.
      *
      * @param $id
      * @param $action
      * @param string|array $options
+     *
      * @return string|null
      */
     protected function o_font($id, $action, $options = '')
@@ -806,14 +800,14 @@ class Cpdf
 
         switch ($action) {
             case 'new':
-                $this->objects[$id] = array(
+                $this->objects[$id] = [
                     't'    => 'font',
-                    'info' => array(
+                    'info' => [
                         'name'         => $options['name'],
                         'fontFileName' => $options['fontFileName'],
-                        'SubType'      => 'Type1'
-                    )
-                );
+                        'SubType'      => 'Type1',
+                    ],
+                ];
                 $fontNum = $this->numFonts;
                 $this->objects[$id]['info']['fontNum'] = $fontNum;
 
@@ -864,7 +858,7 @@ class Cpdf
                 }
 
                 // also tell the pages node about the new font
-                $this->o_pages($this->currentNode, 'font', array('fontNum' => $fontNum, 'objNum' => $id));
+                $this->o_pages($this->currentNode, 'font', ['fontNum' => $fontNum, 'objNum' => $id]);
                 break;
 
             case 'add':
@@ -878,7 +872,7 @@ class Cpdf
                         case 'Widths':
                         case 'FontDescriptor':
                         case 'SubType':
-                            $this->addMessage('o_font ' . $k . " : " . $v);
+                            $this->addMessage('o_font '.$k.' : '.$v);
                             $o['info'][$k] = $v;
                             break;
                     }
@@ -901,70 +895,69 @@ class Cpdf
                     // transform FPDF to TCPDF (http://tcpdf.sourceforge.net/)
 
                     $res = "\n$id 0 obj\n<</Type /Font\n/Subtype /Type0\n";
-                    $res .= "/BaseFont /" . $o['info']['name'] . "\n";
+                    $res .= '/BaseFont /'.$o['info']['name']."\n";
 
                     // The horizontal identity mapping for 2-byte CIDs; may be used
                     // with CIDFonts using any Registry, Ordering, and Supplement values.
                     $res .= "/Encoding /Identity-H\n";
-                    $res .= "/DescendantFonts [" . $o['info']['cidFont'] . " 0 R]\n";
-                    $res .= "/ToUnicode " . $o['info']['toUnicode'] . " 0 R\n";
+                    $res .= '/DescendantFonts ['.$o['info']['cidFont']." 0 R]\n";
+                    $res .= '/ToUnicode '.$o['info']['toUnicode']." 0 R\n";
                     $res .= ">>\n";
-                    $res .= "endobj";
+                    $res .= 'endobj';
                 } else {
-                    $res = "\n$id 0 obj\n<< /Type /Font\n/Subtype /" . $o['info']['SubType'] . "\n";
-                    $res .= "/Name /F" . $o['info']['fontNum'] . "\n";
-                    $res .= "/BaseFont /" . $o['info']['name'] . "\n";
+                    $res = "\n$id 0 obj\n<< /Type /Font\n/Subtype /".$o['info']['SubType']."\n";
+                    $res .= '/Name /F'.$o['info']['fontNum']."\n";
+                    $res .= '/BaseFont /'.$o['info']['name']."\n";
 
                     if (isset($o['info']['encodingDictionary'])) {
                         // then place a reference to the dictionary
-                        $res .= "/Encoding " . $o['info']['encodingDictionary'] . " 0 R\n";
+                        $res .= '/Encoding '.$o['info']['encodingDictionary']." 0 R\n";
                     } else {
                         if (isset($o['info']['encoding'])) {
                             // use the specified encoding
-                            $res .= "/Encoding /" . $o['info']['encoding'] . "\n";
+                            $res .= '/Encoding /'.$o['info']['encoding']."\n";
                         }
                     }
 
                     if (isset($o['info']['FirstChar'])) {
-                        $res .= "/FirstChar " . $o['info']['FirstChar'] . "\n";
+                        $res .= '/FirstChar '.$o['info']['FirstChar']."\n";
                     }
 
                     if (isset($o['info']['LastChar'])) {
-                        $res .= "/LastChar " . $o['info']['LastChar'] . "\n";
+                        $res .= '/LastChar '.$o['info']['LastChar']."\n";
                     }
 
                     if (isset($o['info']['Widths'])) {
-                        $res .= "/Widths " . $o['info']['Widths'] . " 0 R\n";
+                        $res .= '/Widths '.$o['info']['Widths']." 0 R\n";
                     }
 
                     if (isset($o['info']['FontDescriptor'])) {
-                        $res .= "/FontDescriptor " . $o['info']['FontDescriptor'] . " 0 R\n";
+                        $res .= '/FontDescriptor '.$o['info']['FontDescriptor']." 0 R\n";
                     }
 
                     $res .= ">>\n";
-                    $res .= "endobj";
+                    $res .= 'endobj';
                 }
 
                 return $res;
         }
-
-        return null;
     }
 
     /**
-     * A toUnicode section, needed for unicode fonts
+     * A toUnicode section, needed for unicode fonts.
      *
      * @param $id
      * @param $action
+     *
      * @return null|string
      */
     protected function o_toUnicode($id, $action)
     {
         switch ($action) {
             case 'new':
-                $this->objects[$id] = array(
-                    't'    => 'toUnicode'
-                );
+                $this->objects[$id] = [
+                    't'    => 'toUnicode',
+                ];
                 break;
             case 'add':
                 break;
@@ -1002,21 +995,20 @@ end
 EOT;
 
                 $res = "\n$id 0 obj\n";
-                $res .= "<</Length " . mb_strlen($stream, '8bit') . " >>\n";
-                $res .= "stream\n" . $stream . "\nendstream" . "\nendobj";;
+                $res .= '<</Length '.mb_strlen($stream, '8bit')." >>\n";
+                $res .= "stream\n".$stream."\nendstream"."\nendobj";
 
                 return $res;
         }
-
-        return null;
     }
 
     /**
-     * a font descriptor, needed for including additional fonts
+     * a font descriptor, needed for including additional fonts.
      *
      * @param $id
      * @param $action
      * @param string $options
+     *
      * @return null|string
      */
     protected function o_fontDescriptor($id, $action, $options = '')
@@ -1027,7 +1019,7 @@ EOT;
 
         switch ($action) {
             case 'new':
-                $this->objects[$id] = array('t' => 'fontDescriptor', 'info' => $options);
+                $this->objects[$id] = ['t' => 'fontDescriptor', 'info' => $options];
                 break;
 
             case 'out':
@@ -1072,16 +1064,15 @@ EOT;
 
                 return $res;
         }
-
-        return null;
     }
 
     /**
-     * the font encoding
+     * the font encoding.
      *
      * @param $id
      * @param $action
      * @param string $options
+     *
      * @return null|string
      */
     protected function o_fontEncoding($id, $action, $options = '')
@@ -1093,7 +1084,7 @@ EOT;
         switch ($action) {
             case 'new':
                 // the options array should contain 'differences' and maybe 'encoding'
-                $this->objects[$id] = array('t' => 'fontEncoding', 'info' => $options);
+                $this->objects[$id] = ['t' => 'fontEncoding', 'info' => $options];
                 break;
 
             case 'out':
@@ -1103,7 +1094,7 @@ EOT;
                 }
 
                 if ($o['info']['encoding'] !== 'none') {
-                    $res .= "/BaseEncoding /" . $o['info']['encoding'] . "\n";
+                    $res .= '/BaseEncoding /'.$o['info']['encoding']."\n";
                 }
 
                 $res .= "/Differences \n[";
@@ -1125,16 +1116,15 @@ EOT;
 
                 return $res;
         }
-
-        return null;
     }
 
     /**
-     * a descendent cid font, needed for unicode fonts
+     * a descendent cid font, needed for unicode fonts.
      *
      * @param $id
      * @param $action
      * @param string|array $options
+     *
      * @return null|string
      */
     protected function o_fontDescendentCID($id, $action, $options = '')
@@ -1145,7 +1135,7 @@ EOT;
 
         switch ($action) {
             case 'new':
-                $this->objects[$id] = array('t' => 'fontDescendentCID', 'info' => $options);
+                $this->objects[$id] = ['t' => 'fontDescendentCID', 'info' => $options];
 
                 // we need a CID system info section
                 $cidSystemInfoId = ++$this->numObj;
@@ -1184,8 +1174,8 @@ EOT;
                 $res = "\n$id 0 obj\n";
                 $res .= "<</Type /Font\n";
                 $res .= "/Subtype /CIDFontType2\n";
-                $res .= "/BaseFont /" . $o['info']['name'] . "\n";
-                $res .= "/CIDSystemInfo " . $o['info']['cidSystemInfo'] . " 0 R\n";
+                $res .= '/BaseFont /'.$o['info']['name']."\n";
+                $res .= '/CIDSystemInfo '.$o['info']['cidSystemInfo']." 0 R\n";
                 //      if (isset($o['info']['FirstChar'])) {
                 //        $res.= "/FirstChar ".$o['info']['FirstChar']."\n";
                 //      }
@@ -1194,11 +1184,11 @@ EOT;
                 //        $res.= "/LastChar ".$o['info']['LastChar']."\n";
                 //      }
                 if (isset($o['info']['FontDescriptor'])) {
-                    $res .= "/FontDescriptor " . $o['info']['FontDescriptor'] . " 0 R\n";
+                    $res .= '/FontDescriptor '.$o['info']['FontDescriptor']." 0 R\n";
                 }
 
                 if (isset($o['info']['MissingWidth'])) {
-                    $res .= "/DW " . $o['info']['MissingWidth'] . "\n";
+                    $res .= '/DW '.$o['info']['MissingWidth']."\n";
                 }
 
                 if (isset($o['info']['fontFileName']) && isset($this->fonts[$o['info']['fontFileName']]['CIDWidths'])) {
@@ -1210,30 +1200,29 @@ EOT;
                     $res .= "/W [$w]\n";
                 }
 
-                $res .= "/CIDToGIDMap " . $o['info']['cidToGidMap'] . " 0 R\n";
+                $res .= '/CIDToGIDMap '.$o['info']['cidToGidMap']." 0 R\n";
                 $res .= ">>\n";
-                $res .= "endobj";
+                $res .= 'endobj';
 
                 return $res;
         }
-
-        return null;
     }
 
     /**
-     * CID system info section, needed for unicode fonts
+     * CID system info section, needed for unicode fonts.
      *
      * @param $id
      * @param $action
+     *
      * @return null|string
      */
     protected function o_cidSystemInfo($id, $action)
     {
         switch ($action) {
             case 'new':
-                $this->objects[$id] = array(
-                    't' => 'cidSystemInfo'
-                );
+                $this->objects[$id] = [
+                    't' => 'cidSystemInfo',
+                ];
                 break;
             case 'add':
                 break;
@@ -1247,28 +1236,26 @@ EOT;
                     $registry = $this->ARC4($registry);
                 }
 
-
                 $res = "\n$id 0 obj\n";
 
-                $res .= '<</Registry ' . $registry . "\n"; // A string identifying an issuer of character collections
-                $res .= '/Ordering ' . $ordering . "\n"; // A string that uniquely names a character collection issued by a specific registry
+                $res .= '<</Registry '.$registry."\n"; // A string identifying an issuer of character collections
+                $res .= '/Ordering '.$ordering."\n"; // A string that uniquely names a character collection issued by a specific registry
                 $res .= "/Supplement 0\n"; // The supplement number of the character collection.
-                $res .= ">>";
+                $res .= '>>';
 
-                $res .= "\nendobj";;
+                $res .= "\nendobj";
 
                 return $res;
         }
-
-        return null;
     }
 
     /**
-     * a font glyph to character map, needed for unicode fonts
+     * a font glyph to character map, needed for unicode fonts.
      *
      * @param $id
      * @param $action
      * @param string $options
+     *
      * @return null|string
      */
     protected function o_fontGIDtoCIDMap($id, $action, $options = '')
@@ -1279,7 +1266,7 @@ EOT;
 
         switch ($action) {
             case 'new':
-                $this->objects[$id] = array('t' => 'fontGIDtoCIDMap', 'info' => $options);
+                $this->objects[$id] = ['t' => 'fontGIDtoCIDMap', 'info' => $options];
                 break;
 
             case 'out':
@@ -1293,7 +1280,7 @@ EOT;
                 if (!$compressed && isset($o['raw'])) {
                     $res .= $tmp;
                 } else {
-                    $res .= "<<";
+                    $res .= '<<';
 
                     if (!$compressed && $this->compressionReady && $this->options['compression']) {
                         // then implement ZLIB based compression on this content stream
@@ -1309,23 +1296,22 @@ EOT;
                         $tmp = $this->ARC4($tmp);
                     }
 
-                    $res .= "\n/Length " . mb_strlen($tmp, '8bit') . ">>\nstream\n$tmp\nendstream";
+                    $res .= "\n/Length ".mb_strlen($tmp, '8bit').">>\nstream\n$tmp\nendstream";
                 }
 
                 $res .= "\nendobj";
 
                 return $res;
         }
-
-        return null;
     }
 
     /**
-     * the document procset, solves some problems with printing to old PS printers
+     * the document procset, solves some problems with printing to old PS printers.
      *
      * @param $id
      * @param $action
      * @param string $options
+     *
      * @return null|string
      */
     protected function o_procset($id, $action, $options = '')
@@ -1336,7 +1322,7 @@ EOT;
 
         switch ($action) {
             case 'new':
-                $this->objects[$id] = array('t' => 'procset', 'info' => array('PDF' => 1, 'Text' => 1));
+                $this->objects[$id] = ['t' => 'procset', 'info' => ['PDF' => 1, 'Text' => 1]];
                 $this->o_pages($this->currentNode, 'procset', $id);
                 $this->procsetObjectId = $id;
                 break;
@@ -1362,16 +1348,15 @@ EOT;
 
                 return $res;
         }
-
-        return null;
     }
 
     /**
-     * define the document information
+     * define the document information.
      *
      * @param $id
      * @param $action
      * @param string $options
+     *
      * @return null|string
      */
     protected function o_info($id, $action, $options = '')
@@ -1379,14 +1364,14 @@ EOT;
         switch ($action) {
             case 'new':
                 $this->infoObject = $id;
-                $date = 'D:' . @date('Ymd');
-                $this->objects[$id] = array(
+                $date = 'D:'.@date('Ymd');
+                $this->objects[$id] = [
                     't'    => 'info',
-                    'info' => array(
+                    'info' => [
                         'Producer'      => 'CPDF (dompdf)',
-                        'CreationDate' => $date
-                    )
-                );
+                        'CreationDate'  => $date,
+                    ],
+                ];
                 break;
             case 'Title':
             case 'Author':
@@ -1428,16 +1413,15 @@ EOT;
 
                 return $res;
         }
-
-        return null;
     }
 
     /**
-     * an action object, used to link to URLS initially
+     * an action object, used to link to URLS initially.
      *
      * @param $id
      * @param $action
      * @param string $options
+     *
      * @return null|string
      */
     protected function o_action($id, $action, $options = '')
@@ -1449,10 +1433,10 @@ EOT;
         switch ($action) {
             case 'new':
                 if (is_array($options)) {
-                    $this->objects[$id] = array('t' => 'action', 'info' => $options, 'type' => $options['type']);
+                    $this->objects[$id] = ['t' => 'action', 'info' => $options, 'type' => $options['type']];
                 } else {
                     // then assume a URI action
-                    $this->objects[$id] = array('t' => 'action', 'info' => $options, 'type' => 'URI');
+                    $this->objects[$id] = ['t' => 'action', 'info' => $options, 'type' => 'URI'];
                 }
                 break;
 
@@ -1464,12 +1448,12 @@ EOT;
                 $res = "\n$id 0 obj\n<< /Type /Action";
                 switch ($o['type']) {
                     case 'ilink':
-                        if (!isset($this->destinations[(string)$o['info']['label']])) {
+                        if (!isset($this->destinations[(string) $o['info']['label']])) {
                             break;
                         }
 
                         // there will be an 'label' setting, this is the name of the destination
-                        $res .= "\n/S /GoTo\n/D " . $this->destinations[(string)$o['info']['label']] . " 0 R";
+                        $res .= "\n/S /GoTo\n/D ".$this->destinations[(string) $o['info']['label']].' 0 R';
                         break;
 
                     case 'URI':
@@ -1480,7 +1464,7 @@ EOT;
                             $res .= $this->filterText($o['info'], false, false);
                         }
 
-                        $res .= ")";
+                        $res .= ')';
                         break;
                 }
 
@@ -1488,17 +1472,16 @@ EOT;
 
                 return $res;
         }
-
-        return null;
     }
 
     /**
      * an annotation object, this will add an annotation to the current page.
-     * initially will support just link annotations
+     * initially will support just link annotations.
      *
      * @param $id
      * @param $action
      * @param string $options
+     *
      * @return null|string
      */
     protected function o_annotation($id, $action, $options = '')
@@ -1516,7 +1499,7 @@ EOT;
                 // and add the action object which is going to be required
                 switch ($options['type']) {
                     case 'link':
-                        $this->objects[$id] = array('t' => 'annotation', 'info' => $options);
+                        $this->objects[$id] = ['t' => 'annotation', 'info' => $options];
                         $this->numObj++;
                         $this->o_action($this->numObj, 'new', $options['url']);
                         $this->objects[$id]['info']['actionId'] = $this->numObj;
@@ -1525,9 +1508,9 @@ EOT;
                     case 'ilink':
                         // this is to a named internal link
                         $label = $options['label'];
-                        $this->objects[$id] = array('t' => 'annotation', 'info' => $options);
+                        $this->objects[$id] = ['t' => 'annotation', 'info' => $options];
                         $this->numObj++;
-                        $this->o_action($this->numObj, 'new', array('type' => 'ilink', 'label' => $label));
+                        $this->o_action($this->numObj, 'new', ['type' => 'ilink', 'label' => $label]);
                         $this->objects[$id]['info']['actionId'] = $this->numObj;
                         break;
                 }
@@ -1541,30 +1524,29 @@ EOT;
                         $res .= "\n/Subtype /Link";
                         break;
                 }
-                $res .= "\n/A " . $o['info']['actionId'] . " 0 R";
+                $res .= "\n/A ".$o['info']['actionId'].' 0 R';
                 $res .= "\n/Border [0 0 0]";
                 $res .= "\n/H /I";
                 $res .= "\n/Rect [ ";
 
                 foreach ($o['info']['rect'] as $v) {
-                    $res .= sprintf("%.4F ", $v);
+                    $res .= sprintf('%.4F ', $v);
                 }
 
-                $res .= "]";
+                $res .= ']';
                 $res .= "\n>>\nendobj";
 
                 return $res;
         }
-
-        return null;
     }
 
     /**
-     * a page object, it also creates a contents object to hold its contents
+     * a page object, it also creates a contents object to hold its contents.
      *
      * @param $id
      * @param $action
      * @param string $options
+     *
      * @return null|string
      */
     protected function o_page($id, $action, $options = '')
@@ -1576,14 +1558,14 @@ EOT;
         switch ($action) {
             case 'new':
                 $this->numPages++;
-                $this->objects[$id] = array(
+                $this->objects[$id] = [
                     't'    => 'page',
-                    'info' => array(
-                        'parent'  => $this->currentNode,
-                        'pageNum' => $this->numPages,
-                        'mediaBox' => $this->objects[$this->currentNode]['info']['mediaBox']
-                    )
-                );
+                    'info' => [
+                        'parent'   => $this->currentNode,
+                        'pageNum'  => $this->numPages,
+                        'mediaBox' => $this->objects[$this->currentNode]['info']['mediaBox'],
+                    ],
+                ];
 
                 if (is_array($options)) {
                     // then this must be a page insertion, array should contain 'rid','pos'=[before|after]
@@ -1598,7 +1580,7 @@ EOT;
                 $this->numObj++;
                 $this->o_contents($this->numObj, 'new', $id);
                 $this->currentContents = $this->numObj;
-                $this->objects[$id]['info']['contents'] = array();
+                $this->objects[$id]['info']['contents'] = [];
                 $this->objects[$id]['info']['contents'][] = $this->numObj;
 
                 $match = ($this->numPages % 2 ? 'odd' : 'even');
@@ -1616,7 +1598,7 @@ EOT;
             case 'annot':
                 // add an annotation to this page
                 if (!isset($o['info']['annot'])) {
-                    $o['info']['annot'] = array();
+                    $o['info']['annot'] = [];
                 }
 
                 // $options should contain the id of the annotation dictionary
@@ -1627,27 +1609,27 @@ EOT;
                 $res = "\n$id 0 obj\n<< /Type /Page";
                 if (isset($o['info']['mediaBox'])) {
                     $tmp = $o['info']['mediaBox'];
-                    $res .= "\n/MediaBox [" . sprintf(
+                    $res .= "\n/MediaBox [".sprintf(
                             '%.3F %.3F %.3F %.3F',
                             $tmp[0],
                             $tmp[1],
                             $tmp[2],
                             $tmp[3]
-                        ) . ']';
+                        ).']';
                 }
-                $res .= "\n/Parent " . $o['info']['parent'] . " 0 R";
+                $res .= "\n/Parent ".$o['info']['parent'].' 0 R';
 
                 if (isset($o['info']['annot'])) {
                     $res .= "\n/Annots [";
                     foreach ($o['info']['annot'] as $aId) {
                         $res .= " $aId 0 R";
                     }
-                    $res .= " ]";
+                    $res .= ' ]';
                 }
 
                 $count = count($o['info']['contents']);
                 if ($count == 1) {
-                    $res .= "\n/Contents " . $o['info']['contents'][0] . " 0 R";
+                    $res .= "\n/Contents ".$o['info']['contents'][0].' 0 R';
                 } else {
                     if ($count > 1) {
                         $res .= "\n/Contents [\n";
@@ -1658,7 +1640,7 @@ EOT;
                         foreach ($o['info']['contents'] as $cId) {
                             $res .= "$cId 0 R\n";
                         }
-                        $res .= "]";
+                        $res .= ']';
                     }
                 }
 
@@ -1666,16 +1648,15 @@ EOT;
 
                 return $res;
         }
-
-        return null;
     }
 
     /**
-     * the contents objects hold all of the content which appears on pages
+     * the contents objects hold all of the content which appears on pages.
      *
      * @param $id
      * @param $action
      * @param string|array $options
+     *
      * @return null|string
      */
     protected function o_contents($id, $action, $options = '')
@@ -1686,7 +1667,7 @@ EOT;
 
         switch ($action) {
             case 'new':
-                $this->objects[$id] = array('t' => 'contents', 'c' => '', 'info' => array());
+                $this->objects[$id] = ['t' => 'contents', 'c' => '', 'info' => []];
                 if (mb_strlen($options, '8bit') && intval($options)) {
                     // then this contents is the primary for a page
                     $this->objects[$id]['onPage'] = $options;
@@ -1711,10 +1692,10 @@ EOT;
                 if (isset($this->objects[$id]['raw'])) {
                     $res .= $tmp;
                 } else {
-                    $res .= "<<";
+                    $res .= '<<';
                     if ($this->compressionReady && $this->options['compression']) {
                         // then implement ZLIB based compression on this content stream
-                        $res .= " /Filter /FlateDecode";
+                        $res .= ' /Filter /FlateDecode';
                         $tmp = gzcompress($tmp, 6);
                     }
 
@@ -1727,32 +1708,31 @@ EOT;
                         $res .= "\n/$k $v";
                     }
 
-                    $res .= "\n/Length " . mb_strlen($tmp, '8bit') . " >>\nstream\n$tmp\nendstream";
+                    $res .= "\n/Length ".mb_strlen($tmp, '8bit')." >>\nstream\n$tmp\nendstream";
                 }
 
                 $res .= "\nendobj";
 
                 return $res;
         }
-
-        return null;
     }
 
     /**
      * @param $id
      * @param $action
+     *
      * @return string|null
      */
     protected function o_embedjs($id, $action)
     {
         switch ($action) {
             case 'new':
-                $this->objects[$id] = array(
+                $this->objects[$id] = [
                     't'    => 'embedjs',
-                    'info' => array(
-                        'Names' => '[(EmbeddedJS) ' . ($id + 1) . ' 0 R]'
-                    )
-                );
+                    'info' => [
+                        'Names' => '[(EmbeddedJS) '.($id + 1).' 0 R]',
+                    ],
+                ];
                 break;
 
             case 'out':
@@ -1765,27 +1745,26 @@ EOT;
 
                 return $res;
         }
-
-        return null;
     }
 
     /**
      * @param $id
      * @param $action
      * @param string $code
+     *
      * @return null|string
      */
     protected function o_javascript($id, $action, $code = '')
     {
         switch ($action) {
             case 'new':
-                $this->objects[$id] = array(
+                $this->objects[$id] = [
                     't'    => 'javascript',
-                    'info' => array(
+                    'info' => [
                         'S'  => '/JavaScript',
-                        'JS' => '(' . $this->filterText($code, true, false) . ')',
-                    )
-                );
+                        'JS' => '('.$this->filterText($code, true, false).')',
+                    ],
+                ];
                 break;
 
             case 'out':
@@ -1799,16 +1778,15 @@ EOT;
 
                 return $res;
         }
-
-        return null;
     }
 
     /**
-     * an image object, will be an XObject in the document, includes description and data
+     * an image object, will be an XObject in the document, includes description and data.
      *
      * @param $id
      * @param $action
      * @param string $options
+     *
      * @return null|string
      */
     protected function o_image($id, $action, $options = '')
@@ -1816,9 +1794,9 @@ EOT;
         switch ($action) {
             case 'new':
                 // make the new object
-                $this->objects[$id] = array('t' => 'image', 'data' => &$options['data'], 'info' => array());
+                $this->objects[$id] = ['t' => 'image', 'data' => &$options['data'], 'info' => []];
 
-                $info =& $this->objects[$id]['info'];
+                $info = &$this->objects[$id]['info'];
 
                 $info['Type'] = '/XObject';
                 $info['Subtype'] = '/Image';
@@ -1826,7 +1804,7 @@ EOT;
                 $info['Height'] = $options['ih'];
 
                 if (isset($options['masked']) && $options['masked']) {
-                    $info['SMask'] = ($this->numObj - 1) . ' 0 R';
+                    $info['SMask'] = ($this->numObj - 1).' 0 R';
                 }
 
                 if (!isset($options['type']) || $options['type'] === 'jpg') {
@@ -1855,17 +1833,17 @@ EOT;
                 } else {
                     if ($options['type'] === 'png') {
                         $info['Filter'] = '/FlateDecode';
-                        $info['DecodeParms'] = '<< /Predictor 15 /Colors ' . $options['ncolor'] . ' /Columns ' . $options['iw'] . ' /BitsPerComponent ' . $options['bitsPerComponent'] . '>>';
+                        $info['DecodeParms'] = '<< /Predictor 15 /Colors '.$options['ncolor'].' /Columns '.$options['iw'].' /BitsPerComponent '.$options['bitsPerComponent'].'>>';
 
                         if ($options['isMask']) {
                             $info['ColorSpace'] = '/DeviceGray';
                         } else {
                             if (mb_strlen($options['pdata'], '8bit')) {
-                                $tmp = ' [ /Indexed /DeviceRGB ' . (mb_strlen($options['pdata'], '8bit') / 3 - 1) . ' ';
+                                $tmp = ' [ /Indexed /DeviceRGB '.(mb_strlen($options['pdata'], '8bit') / 3 - 1).' ';
                                 $this->numObj++;
                                 $this->o_contents($this->numObj, 'new');
                                 $this->objects[$this->numObj]['c'] = $options['pdata'];
-                                $tmp .= $this->numObj . ' 0 R';
+                                $tmp .= $this->numObj.' 0 R';
                                 $tmp .= ' ]';
                                 $info['ColorSpace'] = $tmp;
 
@@ -1873,15 +1851,15 @@ EOT;
                                     $transparency = $options['transparency'];
                                     switch ($transparency['type']) {
                                         case 'indexed':
-                                            $tmp = ' [ ' . $transparency['data'] . ' ' . $transparency['data'] . '] ';
+                                            $tmp = ' [ '.$transparency['data'].' '.$transparency['data'].'] ';
                                             $info['Mask'] = $tmp;
                                             break;
 
                                         case 'color-key':
-                                            $tmp = ' [ ' .
-                                                $transparency['r'] . ' ' . $transparency['r'] .
-                                                $transparency['g'] . ' ' . $transparency['g'] .
-                                                $transparency['b'] . ' ' . $transparency['b'] .
+                                            $tmp = ' [ '.
+                                                $transparency['r'].' '.$transparency['r'].
+                                                $transparency['g'].' '.$transparency['g'].
+                                                $transparency['b'].' '.$transparency['b'].
                                                 ' ] ';
                                             $info['Mask'] = $tmp;
                                             break;
@@ -1893,21 +1871,21 @@ EOT;
 
                                     switch ($transparency['type']) {
                                         case 'indexed':
-                                            $tmp = ' [ ' . $transparency['data'] . ' ' . $transparency['data'] . '] ';
+                                            $tmp = ' [ '.$transparency['data'].' '.$transparency['data'].'] ';
                                             $info['Mask'] = $tmp;
                                             break;
 
                                         case 'color-key':
-                                            $tmp = ' [ ' .
-                                                $transparency['r'] . ' ' . $transparency['r'] . ' ' .
-                                                $transparency['g'] . ' ' . $transparency['g'] . ' ' .
-                                                $transparency['b'] . ' ' . $transparency['b'] .
+                                            $tmp = ' [ '.
+                                                $transparency['r'].' '.$transparency['r'].' '.
+                                                $transparency['g'].' '.$transparency['g'].' '.
+                                                $transparency['b'].' '.$transparency['b'].
                                                 ' ] ';
                                             $info['Mask'] = $tmp;
                                             break;
                                     }
                                 }
-                                $info['ColorSpace'] = '/' . $options['color'];
+                                $info['ColorSpace'] = '/'.$options['color'];
                             }
                         }
 
@@ -1917,7 +1895,7 @@ EOT;
 
                 // assign it a place in the named resource dictionary as an external object, according to
                 // the label passed in with it.
-                $this->o_pages($this->currentNode, 'xObject', array('label' => $options['label'], 'objNum' => $id));
+                $this->o_pages($this->currentNode, 'xObject', ['label' => $options['label'], 'objNum' => $id]);
 
                 // also make sure that we have the right procset object for it.
                 $this->o_procset($this->procsetObjectId, 'add', 'ImageC');
@@ -1937,67 +1915,66 @@ EOT;
                     $tmp = $this->ARC4($tmp);
                 }
 
-                $res .= "\n/Length " . mb_strlen($tmp, '8bit') . ">>\nstream\n$tmp\nendstream\nendobj";
+                $res .= "\n/Length ".mb_strlen($tmp, '8bit').">>\nstream\n$tmp\nendstream\nendobj";
 
                 return $res;
         }
-
-        return null;
     }
 
     /**
-     * graphics state object
+     * graphics state object.
      *
      * @param $id
      * @param $action
      * @param string $options
+     *
      * @return null|string
      */
-    protected function o_extGState($id, $action, $options = "")
+    protected function o_extGState($id, $action, $options = '')
     {
-        static $valid_params = array(
-            "LW",
-            "LC",
-            "LC",
-            "LJ",
-            "ML",
-            "D",
-            "RI",
-            "OP",
-            "op",
-            "OPM",
-            "Font",
-            "BG",
-            "BG2",
-            "UCR",
-            "TR",
-            "TR2",
-            "HT",
-            "FL",
-            "SM",
-            "SA",
-            "BM",
-            "SMask",
-            "CA",
-            "ca",
-            "AIS",
-            "TK"
-        );
+        static $valid_params = [
+            'LW',
+            'LC',
+            'LC',
+            'LJ',
+            'ML',
+            'D',
+            'RI',
+            'OP',
+            'op',
+            'OPM',
+            'Font',
+            'BG',
+            'BG2',
+            'UCR',
+            'TR',
+            'TR2',
+            'HT',
+            'FL',
+            'SM',
+            'SA',
+            'BM',
+            'SMask',
+            'CA',
+            'ca',
+            'AIS',
+            'TK',
+        ];
 
         switch ($action) {
-            case "new":
-                $this->objects[$id] = array('t' => 'extGState', 'info' => $options);
+            case 'new':
+                $this->objects[$id] = ['t' => 'extGState', 'info' => $options];
 
                 // Tell the pages about the new resource
                 $this->numStates++;
-                $this->o_pages($this->currentNode, 'extGState', array("objNum" => $id, "stateNum" => $this->numStates));
+                $this->o_pages($this->currentNode, 'extGState', ['objNum' => $id, 'stateNum' => $this->numStates]);
                 break;
 
-            case "out":
+            case 'out':
                 $o = &$this->objects[$id];
                 $res = "\n$id 0 obj\n<< /Type /ExtGState\n";
 
-                foreach ($o["info"] as $k => $v) {
+                foreach ($o['info'] as $k => $v) {
                     if (!in_array($k, $valid_params)) {
                         continue;
                     }
@@ -2008,8 +1985,6 @@ EOT;
 
                 return $res;
         }
-
-        return null;
     }
 
     /**
@@ -2018,6 +1993,7 @@ EOT;
      * @param $id
      * @param $action
      * @param string $options
+     *
      * @return string|null
      */
     protected function o_encryption($id, $action, $options = '')
@@ -2025,16 +2001,16 @@ EOT;
         switch ($action) {
             case 'new':
                 // make the new object
-                $this->objects[$id] = array('t' => 'encryption', 'info' => $options);
+                $this->objects[$id] = ['t' => 'encryption', 'info' => $options];
                 $this->arc4_objnum = $id;
                 break;
 
             case 'keys':
                 // figure out the additional parameters required
-                $pad = chr(0x28) . chr(0xBF) . chr(0x4E) . chr(0x5E) . chr(0x4E) . chr(0x75) . chr(0x8A) . chr(0x41)
-                    . chr(0x64) . chr(0x00) . chr(0x4E) . chr(0x56) . chr(0xFF) . chr(0xFA) . chr(0x01) . chr(0x08)
-                    . chr(0x2E) . chr(0x2E) . chr(0x00) . chr(0xB6) . chr(0xD0) . chr(0x68) . chr(0x3E) . chr(0x80)
-                    . chr(0x2F) . chr(0x0C) . chr(0xA9) . chr(0xFE) . chr(0x64) . chr(0x53) . chr(0x69) . chr(0x7A);
+                $pad = chr(0x28).chr(0xBF).chr(0x4E).chr(0x5E).chr(0x4E).chr(0x75).chr(0x8A).chr(0x41)
+                    .chr(0x64).chr(0x00).chr(0x4E).chr(0x56).chr(0xFF).chr(0xFA).chr(0x01).chr(0x08)
+                    .chr(0x2E).chr(0x2E).chr(0x00).chr(0xB6).chr(0xD0).chr(0x68).chr(0x3E).chr(0x80)
+                    .chr(0x2F).chr(0x0C).chr(0xA9).chr(0xFE).chr(0x64).chr(0x53).chr(0x69).chr(0x7A);
 
                 $info = $this->objects[$id]['info'];
 
@@ -2044,7 +2020,7 @@ EOT;
                     $owner = substr($info['owner'], 0, 32);
                 } else {
                     if ($len < 32) {
-                        $owner = $info['owner'] . substr($pad, 0, 32 - $len);
+                        $owner = $info['owner'].substr($pad, 0, 32 - $len);
                     } else {
                         $owner = $info['owner'];
                     }
@@ -2055,7 +2031,7 @@ EOT;
                     $user = substr($info['user'], 0, 32);
                 } else {
                     if ($len < 32) {
-                        $user = $info['user'] . substr($pad, 0, 32 - $len);
+                        $user = $info['user'].substr($pad, 0, 32 - $len);
                     } else {
                         $user = $info['user'];
                     }
@@ -2069,7 +2045,7 @@ EOT;
 
                 // now make the u value, phew.
                 $tmp = $this->md5_16(
-                    $user . $ovalue . chr($info['p']) . chr(255) . chr(255) . chr(255) . hex2bin($this->fileIdentifier)
+                    $user.$ovalue.chr($info['p']).chr(255).chr(255).chr(255).hex2bin($this->fileIdentifier)
                 );
 
                 $ukey = substr($tmp, 0, 5);
@@ -2088,31 +2064,30 @@ EOT;
                 $res .= "\n/Filter /Standard";
                 $res .= "\n/V 1";
                 $res .= "\n/R 2";
-                $res .= "\n/O (" . $this->filterText($o['info']['O'], false, false) . ')';
-                $res .= "\n/U (" . $this->filterText($o['info']['U'], false, false) . ')';
+                $res .= "\n/O (".$this->filterText($o['info']['O'], false, false).')';
+                $res .= "\n/U (".$this->filterText($o['info']['U'], false, false).')';
                 // and the p-value needs to be converted to account for the twos-complement approach
                 $o['info']['p'] = (($o['info']['p'] ^ 255) + 1) * -1;
-                $res .= "\n/P " . ($o['info']['p']);
+                $res .= "\n/P ".($o['info']['p']);
                 $res .= "\n>>\nendobj";
 
                 return $res;
         }
-
-        return null;
     }
 
     /**
      * ARC4 functions
-     * A series of function to implement ARC4 encoding in PHP
+     * A series of function to implement ARC4 encoding in PHP.
      */
 
     /**
-     * calculate the 16 byte version of the 128 bit md5 digest of the string
+     * calculate the 16 byte version of the 128 bit md5 digest of the string.
      *
      * @param $string
+     *
      * @return string
      */
-    function md5_16($string)
+    public function md5_16($string)
     {
         $tmp = md5($string);
         $out = '';
@@ -2124,33 +2099,32 @@ EOT;
     }
 
     /**
-     * initialize the encryption for processing a particular object
+     * initialize the encryption for processing a particular object.
      *
      * @param $id
      */
-    function encryptInit($id)
+    public function encryptInit($id)
     {
         $tmp = $this->encryptionKey;
         $hex = dechex($id);
         if (mb_strlen($hex, '8bit') < 6) {
-            $hex = substr('000000', 0, 6 - mb_strlen($hex, '8bit')) . $hex;
+            $hex = substr('000000', 0, 6 - mb_strlen($hex, '8bit')).$hex;
         }
         $tmp .= chr(hexdec(substr($hex, 4, 2)))
-            . chr(hexdec(substr($hex, 2, 2)))
-            . chr(hexdec(substr($hex, 0, 2)))
-            . chr(0)
-            . chr(0)
-        ;
+            .chr(hexdec(substr($hex, 2, 2)))
+            .chr(hexdec(substr($hex, 0, 2)))
+            .chr(0)
+            .chr(0);
         $key = $this->md5_16($tmp);
         $this->ARC4_init(substr($key, 0, 10));
     }
 
     /**
-     * initialize the ARC4 encryption
+     * initialize the ARC4 encryption.
      *
      * @param string $key
      */
-    function ARC4_init($key = '')
+    public function ARC4_init($key = '')
     {
         $this->arc4 = '';
 
@@ -2180,12 +2154,13 @@ EOT;
     }
 
     /**
-     * ARC4 encrypt a text string
+     * ARC4 encrypt a text string.
      *
      * @param $text
+     *
      * @return string
      */
-    function ARC4($text)
+    public function ARC4($text)
     {
         $len = mb_strlen($text, '8bit');
         $a = 0;
@@ -2206,11 +2181,11 @@ EOT;
     }
 
     /**
-     * functions which can be called to adjust or add to the document
+     * functions which can be called to adjust or add to the document.
      */
 
     /**
-     * add a link in the document to an external URL
+     * add a link in the document to an external URL.
      *
      * @param $url
      * @param $x0
@@ -2218,15 +2193,15 @@ EOT;
      * @param $x1
      * @param $y1
      */
-    function addLink($url, $x0, $y0, $x1, $y1)
+    public function addLink($url, $x0, $y0, $x1, $y1)
     {
         $this->numObj++;
-        $info = array('type' => 'link', 'url' => $url, 'rect' => array($x0, $y0, $x1, $y1));
+        $info = ['type' => 'link', 'url' => $url, 'rect' => [$x0, $y0, $x1, $y1]];
         $this->o_annotation($this->numObj, 'new', $info);
     }
 
     /**
-     * add a link in the document to an internal destination (ie. within the document)
+     * add a link in the document to an internal destination (ie. within the document).
      *
      * @param $label
      * @param $x0
@@ -2234,27 +2209,27 @@ EOT;
      * @param $x1
      * @param $y1
      */
-    function addInternalLink($label, $x0, $y0, $x1, $y1)
+    public function addInternalLink($label, $x0, $y0, $x1, $y1)
     {
         $this->numObj++;
-        $info = array('type' => 'ilink', 'label' => $label, 'rect' => array($x0, $y0, $x1, $y1));
+        $info = ['type' => 'ilink', 'label' => $label, 'rect' => [$x0, $y0, $x1, $y1]];
         $this->o_annotation($this->numObj, 'new', $info);
     }
 
     /**
      * set the encryption of the document
      * can be used to turn it on and/or set the passwords which it will have.
-     * also the functions that the user will have are set here, such as print, modify, add
+     * also the functions that the user will have are set here, such as print, modify, add.
      *
      * @param string $userPass
      * @param string $ownerPass
-     * @param array $pc
+     * @param array  $pc
      */
-    function setEncryption($userPass = '', $ownerPass = '', $pc = array())
+    public function setEncryption($userPass = '', $ownerPass = '', $pc = [])
     {
-        $p = bindec("11000000");
+        $p = bindec('11000000');
 
-        $options = array('print' => 4, 'modify' => 8, 'copy' => 16, 'add' => 32);
+        $options = ['print' => 4, 'modify' => 8, 'copy' => 16, 'add' => 32];
 
         foreach ($pc as $k => $v) {
             if ($v && isset($options[$k])) {
@@ -2274,24 +2249,25 @@ EOT;
                 $ownerPass = $userPass;
             }
 
-            $this->o_encryption($this->numObj, 'new', array('user' => $userPass, 'owner' => $ownerPass, 'p' => $p));
+            $this->o_encryption($this->numObj, 'new', ['user' => $userPass, 'owner' => $ownerPass, 'p' => $p]);
         }
     }
 
     /**
-     * should be used for internal checks, not implemented as yet
+     * should be used for internal checks, not implemented as yet.
      */
-    function checkAllHere()
+    public function checkAllHere()
     {
     }
 
     /**
-     * return the pdf stream as a string returned from the function
+     * return the pdf stream as a string returned from the function.
      *
      * @param bool $debug
+     *
      * @return string
      */
-    function output($debug = false)
+    public function output($debug = false)
     {
         if ($debug) {
             // turn compression off
@@ -2311,8 +2287,8 @@ EOT;
         }
 
         if ($this->fileIdentifier === '') {
-            $tmp = implode('',  $this->objects[$this->infoObject]['info']);
-            $this->fileIdentifier = md5('DOMPDF' . __FILE__ . $tmp . microtime() . mt_rand());
+            $tmp = implode('', $this->objects[$this->infoObject]['info']);
+            $this->fileIdentifier = md5('DOMPDF'.__FILE__.$tmp.microtime().mt_rand());
         }
 
         if ($this->arc4_objnum) {
@@ -2322,36 +2298,35 @@ EOT;
 
         $this->checkAllHere();
 
-        $xref = array();
+        $xref = [];
         $content = '%PDF-1.3';
         $pos = mb_strlen($content, '8bit');
 
         foreach ($this->objects as $k => $v) {
-            $tmp = 'o_' . $v['t'];
+            $tmp = 'o_'.$v['t'];
             $cont = $this->$tmp($k, 'out');
             $content .= $cont;
             $xref[] = $pos + 1; //+1 to account for \n at the start of each object
             $pos += mb_strlen($cont, '8bit');
         }
 
-        $content .= "\nxref\n0 " . (count($xref) + 1) . "\n0000000000 65535 f \n";
+        $content .= "\nxref\n0 ".(count($xref) + 1)."\n0000000000 65535 f \n";
 
         foreach ($xref as $p) {
-            $content .= str_pad($p, 10, "0", STR_PAD_LEFT) . " 00000 n \n";
+            $content .= str_pad($p, 10, '0', STR_PAD_LEFT)." 00000 n \n";
         }
 
-        $content .= "trailer\n<<\n" .
-            '/Size ' . (count($xref) + 1) . "\n" .
-            '/Root 1 0 R' . "\n" .
-            '/Info ' . $this->infoObject . " 0 R\n"
-        ;
+        $content .= "trailer\n<<\n".
+            '/Size '.(count($xref) + 1)."\n".
+            '/Root 1 0 R'."\n".
+            '/Info '.$this->infoObject." 0 R\n";
 
         // if encryption has been applied to this document then add the marker for this dictionary
         if ($this->arc4_objnum > 0) {
-            $content .= '/Encrypt ' . $this->arc4_objnum . " 0 R\n";
+            $content .= '/Encrypt '.$this->arc4_objnum." 0 R\n";
         }
 
-        $content .= '/ID[<' . $this->fileIdentifier . '><' . $this->fileIdentifier . ">]\n";
+        $content .= '/ID[<'.$this->fileIdentifier.'><'.$this->fileIdentifier.">]\n";
 
         // account for \n added at start of xref table
         $pos++;
@@ -2364,14 +2339,14 @@ EOT;
     /**
      * initialize a new document
      * if this is called on an existing document results may be unpredictable, but the existing document would be lost at minimum
-     * this function is called automatically by the constructor function
+     * this function is called automatically by the constructor function.
      *
      * @param array $pageSize
      */
-    private function newDocument($pageSize = array(0, 0, 612, 792))
+    private function newDocument($pageSize = [0, 0, 612, 792])
     {
         $this->numObj = 0;
-        $this->objects = array();
+        $this->objects = [];
 
         $this->numObj++;
         $this->o_catalog($this->numObj, 'new');
@@ -2412,11 +2387,11 @@ EOT;
     {
         // assume that $font contains the path and file but not the extension
         $name = basename($font);
-        $dir = dirname($font) . '/';
+        $dir = dirname($font).'/';
 
         $fontcache = $this->fontcache;
         if ($fontcache == '') {
-            $fontcache = rtrim($dir, DIRECTORY_SEPARATOR."/\\");
+            $fontcache = rtrim($dir, DIRECTORY_SEPARATOR.'/\\');
         }
 
         //$name       filename without folder and extension of font metrics
@@ -2436,9 +2411,9 @@ EOT;
         $cache_name = "$metrics_name.php";
         $this->addMessage("metrics: $metrics_name, cache: $cache_name");
 
-        if (file_exists($fontcache . '/' . $cache_name)) {
+        if (file_exists($fontcache.'/'.$cache_name)) {
             $this->addMessage("openFont: php file exists $fontcache/$cache_name");
-            $this->fonts[$font] = require($fontcache . '/' . $cache_name);
+            $this->fonts[$font] = require $fontcache.'/'.$cache_name;
 
             if (!isset($this->fonts[$font]['_version_']) || $this->fonts[$font]['_version_'] != $this->fontcacheVersion) {
                 // if the font file is old, then clear it out and prepare for re-creation
@@ -2448,25 +2423,26 @@ EOT;
             }
         } else {
             $old_cache_name = "php_$metrics_name";
-            if (file_exists($fontcache . '/' . $old_cache_name)) {
+            if (file_exists($fontcache.'/'.$old_cache_name)) {
                 $this->addMessage(
                     "openFont: php file doesn't exist $fontcache/$cache_name, creating it from the old format"
                 );
-                $old_cache = file_get_contents($fontcache . '/' . $old_cache_name);
-                file_put_contents($fontcache . '/' . $cache_name, '<?php return ' . $old_cache . ';');
+                $old_cache = file_get_contents($fontcache.'/'.$old_cache_name);
+                file_put_contents($fontcache.'/'.$cache_name, '<?php return '.$old_cache.';');
 
                 $this->openFont($font);
+
                 return;
             }
         }
 
-        if (!isset($this->fonts[$font]) && file_exists($dir . $metrics_name)) {
+        if (!isset($this->fonts[$font]) && file_exists($dir.$metrics_name)) {
             // then rebuild the php_<font>.afm file from the <font>.afm file
             $this->addMessage("openFont: build php file from $dir$metrics_name");
-            $data = array();
+            $data = [];
 
             // 20 => 'space'
-            $data['codeToName'] = array();
+            $data['codeToName'] = [];
 
             // Since we're not going to enable Unicode for the core fonts we need to use a font-based
             // setting for Unicode support rather than a global setting.
@@ -2477,7 +2453,7 @@ EOT;
                 $cidtogid = str_pad('', 256 * 256 * 2, "\x00");
             }
 
-            $file = file($dir . $metrics_name);
+            $file = file($dir.$metrics_name);
 
             foreach ($file as $rowA) {
                 $row = trim($rowA);
@@ -2517,7 +2493,7 @@ EOT;
                         //C 39 ; WX 222 ; N quoteright ; B 53 463 157 718 ;
                         case 'C': // Found in AFM files
                             $bits = explode(';', trim($row));
-                            $dtmp = array();
+                            $dtmp = [];
 
                             foreach ($bits as $bit) {
                                 $bits2 = explode(' ', trim($bit));
@@ -2526,7 +2502,7 @@ EOT;
                                 }
 
                                 if (count($bits2) > 2) {
-                                    $dtmp[$bits2[0]] = array();
+                                    $dtmp[$bits2[0]] = [];
                                     for ($i = 1; $i < count($bits2); $i++) {
                                         $dtmp[$bits2[0]][] = $bits2[$i];
                                     }
@@ -2537,7 +2513,7 @@ EOT;
                                 }
                             }
 
-                            $c = (int)$dtmp['C'];
+                            $c = (int) $dtmp['C'];
                             $n = $dtmp['N'];
                             $width = floatval($dtmp['WX']);
 
@@ -2563,7 +2539,7 @@ EOT;
                             }
 
                             $bits = explode(';', trim($row));
-                            $dtmp = array();
+                            $dtmp = [];
 
                             foreach ($bits as $bit) {
                                 $bits2 = explode(' ', trim($bit));
@@ -2572,7 +2548,7 @@ EOT;
                                 }
 
                                 if (count($bits2) > 2) {
-                                    $dtmp[$bits2[0]] = array();
+                                    $dtmp[$bits2[0]] = [];
                                     for ($i = 1; $i < count($bits2); $i++) {
                                         $dtmp[$bits2[0]][] = $bits2[$i];
                                     }
@@ -2583,7 +2559,7 @@ EOT;
                                 }
                             }
 
-                            $c = (int)$dtmp['U'];
+                            $c = (int) $dtmp['U'];
                             $n = $dtmp['N'];
                             $glyph = $dtmp['G'];
                             $width = floatval($dtmp['WX']);
@@ -2631,7 +2607,7 @@ EOT;
             //Because of potential trouble with php safe mode, expect that the folder already exists.
             //If not existing, this will hit performance because of missing cached results.
             if (is_dir($fontcache) && is_writable($fontcache)) {
-                file_put_contents($fontcache . '/' . $cache_name, '<?php return ' . var_export($data, true) . ';');
+                file_put_contents($fontcache.'/'.$cache_name, '<?php return '.var_export($data, true).';');
             }
             $data = null;
         }
@@ -2652,10 +2628,11 @@ EOT;
      *
      * @param $fontName
      * @param string $encoding
-     * @param bool $set
+     * @param bool   $set
+     *
      * @return int
      */
-    function selectFont($fontName, $encoding = '', $set = true)
+    public function selectFont($fontName, $encoding = '', $set = true)
     {
         $ext = substr($fontName, -4);
         if ($ext === '.afm' || $ext === '.ufm') {
@@ -2675,8 +2652,8 @@ EOT;
                 $font = &$this->fonts[$fontName];
 
                 $name = basename($fontName);
-                $dir = dirname($fontName) . '/';
-                $options = array('name' => $name, 'fontFileName' => $fontName);
+                $dir = dirname($fontName).'/';
+                $options = ['name' => $name, 'fontFileName' => $fontName];
 
                 if (is_array($encoding)) {
                     // then encoding and differences might be set
@@ -2718,7 +2695,7 @@ EOT;
 
                 //      $pfbfile = substr($fontName,0,strlen($fontName)-4).'.pfb';
                 //      $ttffile = substr($fontName,0,strlen($fontName)-4).'.ttf';
-                $this->addMessage('selectFont: checking for - ' . $fbfile);
+                $this->addMessage('selectFont: checking for - '.$fbfile);
 
                 // OAR - I don't understand this old check
                 // if (substr($fontName, -4) ===  '.afm' &&  strlen($fbtype)) {
@@ -2730,8 +2707,8 @@ EOT;
                     // find the array of font widths, and put that into an object.
                     $firstChar = -1;
                     $lastChar = 0;
-                    $widths = array();
-                    $cid_widths = array();
+                    $widths = [];
+                    $cid_widths = [];
 
                     foreach ($font['C'] as $num => $d) {
                         if (intval($num) > 0 || $num == '0') {
@@ -2785,8 +2762,8 @@ EOT;
                         $font['CIDWidths'] = $cid_widths;
                     }
 
-                    $this->addMessage('selectFont: FirstChar = ' . $firstChar);
-                    $this->addMessage('selectFont: LastChar = ' . $lastChar);
+                    $this->addMessage('selectFont: FirstChar = '.$firstChar);
+                    $this->addMessage('selectFont: LastChar = '.$lastChar);
 
                     $widthid = -1;
 
@@ -2795,7 +2772,7 @@ EOT;
 
                         $this->numObj++;
                         $this->o_contents($this->numObj, 'new', 'raw');
-                        $this->objects[$this->numObj]['c'] .= '[' . implode(' ', $widths) . ']';
+                        $this->objects[$this->numObj]['c'] .= '['.implode(' ', $widths).']';
                         $widthid = $this->numObj;
                     }
 
@@ -2834,9 +2811,9 @@ EOT;
                         $font_obj->reduce();
 
                         // Write new font
-                        $tmp_name = $this->tmp . "/" . basename($fbfile) . ".tmp." . uniqid();
+                        $tmp_name = $this->tmp.'/'.basename($fbfile).'.tmp.'.uniqid();
                         $font_obj->open($tmp_name, BinaryStream::modeWrite);
-                        $font_obj->encode(array("OS/2"));
+                        $font_obj->encode(['OS/2']);
                         $font_obj->close();
 
                         // Parse the new font to get cid2gid and widths
@@ -2844,21 +2821,21 @@ EOT;
 
                         // Find Unicode char map table
                         $subtable = null;
-                        foreach ($font_obj->getData("cmap", "subtables") as $_subtable) {
-                            if ($_subtable["platformID"] == 0 || $_subtable["platformID"] == 3 && $_subtable["platformSpecificID"] == 1) {
+                        foreach ($font_obj->getData('cmap', 'subtables') as $_subtable) {
+                            if ($_subtable['platformID'] == 0 || $_subtable['platformID'] == 3 && $_subtable['platformSpecificID'] == 1) {
                                 $subtable = $_subtable;
                                 break;
                             }
                         }
 
                         if ($subtable) {
-                            $glyphIndexArray = $subtable["glyphIndexArray"];
-                            $hmtx = $font_obj->getData("hmtx");
+                            $glyphIndexArray = $subtable['glyphIndexArray'];
+                            $hmtx = $font_obj->getData('hmtx');
 
                             unset($glyphIndexArray[0xFFFF]);
 
                             $cidtogid = str_pad('', max(array_keys($glyphIndexArray)) * 2 + 1, "\x00");
-                            $font['CIDWidths'] = array();
+                            $font['CIDWidths'] = [];
                             foreach ($glyphIndexArray as $cid => $gid) {
                                 if ($cid >= 0 && $cid < 0xFFFF && $gid) {
                                     $cidtogid[$cid * 2] = chr($gid >> 8);
@@ -2900,19 +2877,19 @@ EOT;
                     }
 
                     $flags += pow(2, 5); // assume non-sybolic
-                    $list = array(
+                    $list = [
                         'Ascent'       => 'Ascender',
                         'CapHeight'    => 'Ascender', //FIXME: php-font-lib is not grabbing this value, so we'll fake it and use the Ascender value // 'CapHeight'
                         'MissingWidth' => 'MissingWidth',
                         'Descent'      => 'Descender',
                         'FontBBox'     => 'FontBBox',
-                        'ItalicAngle'  => 'ItalicAngle'
-                    );
-                    $fdopt = array(
+                        'ItalicAngle'  => 'ItalicAngle',
+                    ];
+                    $fdopt = [
                         'Flags'    => $flags,
                         'FontName' => $adobeFontName,
-                        'StemV'    => $stemV
-                    );
+                        'StemV'    => $stemV,
+                    ];
 
                     foreach ($list as $k => $v) {
                         if (isset($font[$v])) {
@@ -2940,22 +2917,22 @@ EOT;
                         $this->o_contents(
                             $this->numObj,
                             'add',
-                            array('Length1' => $l1, 'Length2' => $l2, 'Length3' => $l3)
+                            ['Length1' => $l1, 'Length2' => $l2, 'Length3' => $l3]
                         );
                     } elseif (strtolower($fbtype) == 'ttf') {
                         $l1 = mb_strlen($data, '8bit');
-                        $this->o_contents($this->numObj, 'add', array('Length1' => $l1));
+                        $this->o_contents($this->numObj, 'add', ['Length1' => $l1]);
                     }
 
                     // tell the font object about all this new stuff
-                    $tmp = array(
+                    $tmp = [
                         'BaseFont'       => $adobeFontName,
                         'MissingWidth'   => $missing_width,
                         'Widths'         => $widthid,
                         'FirstChar'      => $firstChar,
                         'LastChar'       => $lastChar,
-                        'FontDescriptor' => $fontDescriptorId
-                    );
+                        'FontDescriptor' => $fontDescriptorId,
+                    ];
 
                     if (strtolower($fbtype) === 'ttf') {
                         $tmp['SubType'] = 'TrueType';
@@ -3039,13 +3016,13 @@ EOT;
      *
      * @return int
      */
-    function getFirstPageId()
+    public function getFirstPageId()
     {
         return $this->firstPageId;
     }
 
     /**
-     * add content to the currently active object
+     * add content to the currently active object.
      *
      * @param $content
      */
@@ -3055,14 +3032,14 @@ EOT;
     }
 
     /**
-     * sets the color for fill operations
+     * sets the color for fill operations.
      *
      * @param $color
      * @param bool $force
      */
-    function setColor($color, $force = false)
+    public function setColor($color, $force = false)
     {
-        $new_color = array($color[0], $color[1], $color[2], isset($color[3]) ? $color[3] : null);
+        $new_color = [$color[0], $color[1], $color[2], isset($color[3]) ? $color[3] : null];
 
         if (!$force && $this->currentColor == $new_color) {
             return;
@@ -3080,13 +3057,13 @@ EOT;
     }
 
     /**
-     * sets the color for fill operations
+     * sets the color for fill operations.
      *
      * @param $fillRule
      */
-    function setFillRule($fillRule)
+    public function setFillRule($fillRule)
     {
-        if (!in_array($fillRule, array("nonzero", "evenodd"))) {
+        if (!in_array($fillRule, ['nonzero', 'evenodd'])) {
             return;
         }
 
@@ -3094,14 +3071,14 @@ EOT;
     }
 
     /**
-     * sets the color for stroke operations
+     * sets the color for stroke operations.
      *
      * @param $color
      * @param bool $force
      */
-    function setStrokeColor($color, $force = false)
+    public function setStrokeColor($color, $force = false)
     {
-        $new_color = array($color[0], $color[1], $color[2], isset($color[3]) ? $color[3] : null);
+        $new_color = [$color[0], $color[1], $color[2], isset($color[3]) ? $color[3] : null];
 
         if (!$force && $this->currentStrokeColor == $new_color) {
             return;
@@ -3119,11 +3096,11 @@ EOT;
     }
 
     /**
-     * Set the graphics state for compositions
+     * Set the graphics state for compositions.
      *
      * @param $parameters
      */
-    function setGraphicsState($parameters)
+    public function setGraphicsState($parameters)
     {
         // Create a new graphics state object if necessary
         if (($gstate = array_search($parameters, $this->gstates)) === false) {
@@ -3147,41 +3124,41 @@ EOT;
      * @param string $mode    the blend mode to use
      * @param float  $opacity 0.0 fully transparent, 1.0 fully opaque
      */
-    function setLineTransparency($mode, $opacity)
+    public function setLineTransparency($mode, $opacity)
     {
-        static $blend_modes = array(
-            "Normal",
-            "Multiply",
-            "Screen",
-            "Overlay",
-            "Darken",
-            "Lighten",
-            "ColorDogde",
-            "ColorBurn",
-            "HardLight",
-            "SoftLight",
-            "Difference",
-            "Exclusion"
-        );
+        static $blend_modes = [
+            'Normal',
+            'Multiply',
+            'Screen',
+            'Overlay',
+            'Darken',
+            'Lighten',
+            'ColorDogde',
+            'ColorBurn',
+            'HardLight',
+            'SoftLight',
+            'Difference',
+            'Exclusion',
+        ];
 
         if (!in_array($mode, $blend_modes)) {
-            $mode = "Normal";
+            $mode = 'Normal';
         }
 
         // Only create a new graphics state if required
-        if ($mode === $this->currentLineTransparency["mode"] &&
-            $opacity == $this->currentLineTransparency["opacity"]
+        if ($mode === $this->currentLineTransparency['mode'] &&
+            $opacity == $this->currentLineTransparency['opacity']
         ) {
             return;
         }
 
-        $this->currentLineTransparency["mode"] = $mode;
-        $this->currentLineTransparency["opacity"] = $opacity;
+        $this->currentLineTransparency['mode'] = $mode;
+        $this->currentLineTransparency['opacity'] = $opacity;
 
-        $options = array(
-            "BM" => "/$mode",
-            "CA" => (float)$opacity
-        );
+        $options = [
+            'BM' => "/$mode",
+            'CA' => (float) $opacity,
+        ];
 
         $this->setGraphicsState($options);
     }
@@ -3198,46 +3175,46 @@ EOT;
      * @param string $mode    the blend mode to use
      * @param float  $opacity 0.0 fully transparent, 1.0 fully opaque
      */
-    function setFillTransparency($mode, $opacity)
+    public function setFillTransparency($mode, $opacity)
     {
-        static $blend_modes = array(
-            "Normal",
-            "Multiply",
-            "Screen",
-            "Overlay",
-            "Darken",
-            "Lighten",
-            "ColorDogde",
-            "ColorBurn",
-            "HardLight",
-            "SoftLight",
-            "Difference",
-            "Exclusion"
-        );
+        static $blend_modes = [
+            'Normal',
+            'Multiply',
+            'Screen',
+            'Overlay',
+            'Darken',
+            'Lighten',
+            'ColorDogde',
+            'ColorBurn',
+            'HardLight',
+            'SoftLight',
+            'Difference',
+            'Exclusion',
+        ];
 
         if (!in_array($mode, $blend_modes)) {
-            $mode = "Normal";
+            $mode = 'Normal';
         }
 
-        if ($mode === $this->currentFillTransparency["mode"] &&
-            $opacity == $this->currentFillTransparency["opacity"]
+        if ($mode === $this->currentFillTransparency['mode'] &&
+            $opacity == $this->currentFillTransparency['opacity']
         ) {
             return;
         }
 
-        $this->currentFillTransparency["mode"] = $mode;
-        $this->currentFillTransparency["opacity"] = $opacity;
+        $this->currentFillTransparency['mode'] = $mode;
+        $this->currentFillTransparency['opacity'] = $opacity;
 
-        $options = array(
-            "BM" => "/$mode",
-            "ca" => (float)$opacity,
-        );
+        $options = [
+            'BM' => "/$mode",
+            'ca' => (float) $opacity,
+        ];
 
         $this->setGraphicsState($options);
     }
 
     /**
-     * draw a line from one set of coordinates to another
+     * draw a line from one set of coordinates to another.
      *
      * @param $x1
      * @param $y1
@@ -3245,7 +3222,7 @@ EOT;
      * @param $y2
      * @param bool $stroke
      */
-    function line($x1, $y1, $x2, $y2, $stroke = true)
+    public function line($x1, $y1, $x2, $y2, $stroke = true)
     {
         $this->addContent(sprintf("\n%.3F %.3F m %.3F %.3F l", $x1, $y1, $x2, $y2));
 
@@ -3255,7 +3232,7 @@ EOT;
     }
 
     /**
-     * draw a bezier curve based on 4 control points
+     * draw a bezier curve based on 4 control points.
      *
      * @param $x0
      * @param $y0
@@ -3266,7 +3243,7 @@ EOT;
      * @param $x3
      * @param $y3
      */
-    function curve($x0, $y0, $x1, $y1, $x2, $y2, $x3, $y3)
+    public function curve($x0, $y0, $x1, $y1, $x2, $y2, $x3, $y3)
     {
         // in the current line style, draw a bezier curve from (x0,y0) to (x3,y3) using the other two points
         // as the control points for the curve.
@@ -3276,7 +3253,7 @@ EOT;
     }
 
     /**
-     * draw a part of an ellipse
+     * draw a part of an ellipse.
      *
      * @param $x0
      * @param $y0
@@ -3287,13 +3264,13 @@ EOT;
      * @param int $angle
      * @param int $nSeg
      */
-    function partEllipse($x0, $y0, $astart, $afinish, $r1, $r2 = 0, $angle = 0, $nSeg = 8)
+    public function partEllipse($x0, $y0, $astart, $afinish, $r1, $r2 = 0, $angle = 0, $nSeg = 8)
     {
         $this->ellipse($x0, $y0, $r1, $r2, $angle, $nSeg, $astart, $afinish, false);
     }
 
     /**
-     * draw a filled ellipse
+     * draw a filled ellipse.
      *
      * @param $x0
      * @param $y0
@@ -3304,7 +3281,7 @@ EOT;
      * @param int $astart
      * @param int $afinish
      */
-    function filledEllipse($x0, $y0, $r1, $r2 = 0, $angle = 0, $nSeg = 8, $astart = 0, $afinish = 360)
+    public function filledEllipse($x0, $y0, $r1, $r2 = 0, $angle = 0, $nSeg = 8, $astart = 0, $afinish = 360)
     {
         $this->ellipse($x0, $y0, $r1, $r2, $angle, $nSeg, $astart, $afinish, true, true);
     }
@@ -3313,7 +3290,7 @@ EOT;
      * @param $x
      * @param $y
      */
-    function lineTo($x, $y)
+    public function lineTo($x, $y)
     {
         $this->addContent(sprintf("\n%.3F %.3F l", $x, $y));
     }
@@ -3322,13 +3299,13 @@ EOT;
      * @param $x
      * @param $y
      */
-    function moveTo($x, $y)
+    public function moveTo($x, $y)
     {
         $this->addContent(sprintf("\n%.3F %.3F m", $x, $y));
     }
 
     /**
-     * draw a bezier curve based on 4 control points
+     * draw a bezier curve based on 4 control points.
      *
      * @param $x1
      * @param $y1
@@ -3337,31 +3314,32 @@ EOT;
      * @param $x3
      * @param $y3
      */
-    function curveTo($x1, $y1, $x2, $y2, $x3, $y3)
+    public function curveTo($x1, $y1, $x2, $y2, $x3, $y3)
     {
         $this->addContent(sprintf("\n%.3F %.3F %.3F %.3F %.3F %.3F c", $x1, $y1, $x2, $y2, $x3, $y3));
     }
 
     /**
-     * draw a bezier curve based on 4 control points
-     */    function quadTo($cpx, $cpy, $x, $y)
+     * draw a bezier curve based on 4 control points.
+     */
+    public function quadTo($cpx, $cpy, $x, $y)
     {
         $this->addContent(sprintf("\n%.3F %.3F %.3F %.3F v", $cpx, $cpy, $x, $y));
     }
 
-    function closePath()
+    public function closePath()
     {
         $this->addContent(' h');
     }
 
-    function endPath()
+    public function endPath()
     {
         $this->addContent(' n');
     }
 
     /**
      * draw an ellipse
-     * note that the part and filled ellipse are just special cases of this function
+     * note that the part and filled ellipse are just special cases of this function.
      *
      * draws an ellipse in the current line style
      * centered at $x0,$y0, radii $r1,$r2
@@ -3373,17 +3351,17 @@ EOT;
      * @param $x0
      * @param $y0
      * @param $r1
-     * @param int $r2
-     * @param int $angle
-     * @param int $nSeg
-     * @param int $astart
-     * @param int $afinish
+     * @param int  $r2
+     * @param int  $angle
+     * @param int  $nSeg
+     * @param int  $astart
+     * @param int  $afinish
      * @param bool $close
      * @param bool $fill
      * @param bool $stroke
      * @param bool $incomplete
      */
-    function ellipse(
+    public function ellipse(
         $x0,
         $y0,
         $r1,
@@ -3409,15 +3387,15 @@ EOT;
             $nSeg = 2;
         }
 
-        $astart = deg2rad((float)$astart);
-        $afinish = deg2rad((float)$afinish);
+        $astart = deg2rad((float) $astart);
+        $afinish = deg2rad((float) $afinish);
         $totalAngle = $afinish - $astart;
 
         $dt = $totalAngle / $nSeg;
         $dtm = $dt / 3;
 
         if ($angle != 0) {
-            $a = -1 * deg2rad((float)$angle);
+            $a = -1 * deg2rad((float) $angle);
 
             $this->addContent(
                 sprintf("\n q %.3F %.3F %.3F %.3F %.3F %.3F cm", cos($a), -sin($a), sin($a), cos($a), $x0, $y0)
@@ -3495,13 +3473,13 @@ EOT;
      *   (2,1) is 2 on, 1 off, 2 on, 1 off.. etc
      * phase is a modifier on the dash pattern which is used to shift the point at which the pattern starts.
      *
-     * @param int $width
+     * @param int    $width
      * @param string $cap
      * @param string $join
      * @param string $dash
-     * @param int $phase
+     * @param int    $phase
      */
-    function setLineStyle($width = 1, $cap = '', $join = '', $dash = '', $phase = 0)
+    public function setLineStyle($width = 1, $cap = '', $join = '', $dash = '', $phase = 0)
     {
         // this is quite inefficient in that it sets all the parameters whenever 1 is changed, but will fix another day
         $string = '';
@@ -3510,20 +3488,20 @@ EOT;
             $string .= "$width w";
         }
 
-        $ca = array('butt' => 0, 'round' => 1, 'square' => 2);
+        $ca = ['butt' => 0, 'round' => 1, 'square' => 2];
 
         if (isset($ca[$cap])) {
             $string .= " $ca[$cap] J";
         }
 
-        $ja = array('miter' => 0, 'round' => 1, 'bevel' => 2);
+        $ja = ['miter' => 0, 'round' => 1, 'bevel' => 2];
 
         if (isset($ja[$join])) {
             $string .= " $ja[$join] j";
         }
 
         if (is_array($dash)) {
-            $string .= ' [ ' . implode(' ', $dash) . " ] $phase d";
+            $string .= ' [ '.implode(' ', $dash)." ] $phase d";
         }
 
         $this->currentLineStyle = $string;
@@ -3531,18 +3509,18 @@ EOT;
     }
 
     /**
-     * draw a polygon, the syntax for this is similar to the GD polygon command
+     * draw a polygon, the syntax for this is similar to the GD polygon command.
      *
      * @param $p
      * @param $np
      * @param bool $f
      */
-    function polygon($p, $np, $f = false)
+    public function polygon($p, $np, $f = false)
     {
         $this->addContent(sprintf("\n%.3F %.3F m ", $p[0], $p[1]));
 
         for ($i = 2; $i < $np * 2; $i = $i + 2) {
-            $this->addContent(sprintf("%.3F %.3F l ", $p[$i], $p[$i + 1]));
+            $this->addContent(sprintf('%.3F %.3F l ', $p[$i], $p[$i + 1]));
         }
 
         if ($f) {
@@ -3554,65 +3532,65 @@ EOT;
 
     /**
      * a filled rectangle, note that it is the width and height of the rectangle which are the secondary parameters, not
-     * the coordinates of the upper-right corner
+     * the coordinates of the upper-right corner.
      *
      * @param $x1
      * @param $y1
      * @param $width
      * @param $height
      */
-    function filledRectangle($x1, $y1, $width, $height)
+    public function filledRectangle($x1, $y1, $width, $height)
     {
         $this->addContent(sprintf("\n%.3F %.3F %.3F %.3F re f", $x1, $y1, $width, $height));
     }
 
     /**
      * draw a rectangle, note that it is the width and height of the rectangle which are the secondary parameters, not
-     * the coordinates of the upper-right corner
+     * the coordinates of the upper-right corner.
      *
      * @param $x1
      * @param $y1
      * @param $width
      * @param $height
      */
-    function rectangle($x1, $y1, $width, $height)
+    public function rectangle($x1, $y1, $width, $height)
     {
         $this->addContent(sprintf("\n%.3F %.3F %.3F %.3F re S", $x1, $y1, $width, $height));
     }
 
     /**
      * draw a rectangle, note that it is the width and height of the rectangle which are the secondary parameters, not
-     * the coordinates of the upper-right corner
+     * the coordinates of the upper-right corner.
      *
      * @param $x1
      * @param $y1
      * @param $width
      * @param $height
      */
-    function rect($x1, $y1, $width, $height)
+    public function rect($x1, $y1, $width, $height)
     {
         $this->addContent(sprintf("\n%.3F %.3F %.3F %.3F re", $x1, $y1, $width, $height));
     }
 
-    function stroke()
+    public function stroke()
     {
         $this->addContent("\nS");
     }
 
-    function fill()
+    public function fill()
     {
-        $this->addContent("\nf" . ($this->fillRule === "evenodd" ? "*" : ""));
+        $this->addContent("\nf".($this->fillRule === 'evenodd' ? '*' : ''));
     }
 
-    function fillStroke()
+    public function fillStroke()
     {
-        $this->addContent("\nb" . ($this->fillRule === "evenodd" ? "*" : ""));
+        $this->addContent("\nb".($this->fillRule === 'evenodd' ? '*' : ''));
     }
 
     /**
-     * save the current graphic state
+     * save the current graphic state.
      */
-    function save()
+    public function save()
     {
         // we must reset the color cache or it will keep bad colors after clipping
         $this->currentColor = null;
@@ -3621,9 +3599,9 @@ EOT;
     }
 
     /**
-     * restore the last graphic state
+     * restore the last graphic state.
      */
-    function restore()
+    public function restore()
     {
         // we must reset the color cache or it will keep bad colors after clipping
         $this->currentColor = null;
@@ -3632,21 +3610,21 @@ EOT;
     }
 
     /**
-     * draw a clipping rectangle, all the elements added after this will be clipped
+     * draw a clipping rectangle, all the elements added after this will be clipped.
      *
      * @param $x1
      * @param $y1
      * @param $width
      * @param $height
      */
-    function clippingRectangle($x1, $y1, $width, $height)
+    public function clippingRectangle($x1, $y1, $width, $height)
     {
         $this->save();
         $this->addContent(sprintf("\n%.3F %.3F %.3F %.3F re W n", $x1, $y1, $width, $height));
     }
 
     /**
-     * draw a clipping rounded rectangle, all the elements added after this will be clipped
+     * draw a clipping rounded rectangle, all the elements added after this will be clipped.
      *
      * @param $x1
      * @param $y1
@@ -3657,7 +3635,7 @@ EOT;
      * @param $rBR
      * @param $rBL
      */
-    function clippingRectangleRounded($x1, $y1, $w, $h, $rTL, $rTR, $rBR, $rBL)
+    public function clippingRectangleRounded($x1, $y1, $w, $h, $rTL, $rTR, $rBR, $rBL)
     {
         $this->save();
 
@@ -3692,135 +3670,136 @@ EOT;
         $this->addContent(sprintf("\n%.3F %.3F l ", $x1 + $rBL, $y1));
 
         // Close & clip
-        $this->addContent(" W n");
+        $this->addContent(' W n');
     }
 
     /**
-     * ends the last clipping shape
+     * ends the last clipping shape.
      */
-    function clippingEnd()
+    public function clippingEnd()
     {
         $this->restore();
     }
 
     /**
-     * scale
+     * scale.
      *
      * @param float $s_x scaling factor for width as percent
      * @param float $s_y scaling factor for height as percent
      * @param float $x   Origin abscissa
      * @param float $y   Origin ordinate
      */
-    function scale($s_x, $s_y, $x, $y)
+    public function scale($s_x, $s_y, $x, $y)
     {
-        $y = $this->currentPageSize["height"] - $y;
+        $y = $this->currentPageSize['height'] - $y;
 
-        $tm = array(
+        $tm = [
             $s_x,
             0,
             0,
             $s_y,
             $x * (1 - $s_x),
-            $y * (1 - $s_y)
-        );
+            $y * (1 - $s_y),
+        ];
 
         $this->transform($tm);
     }
 
     /**
-     * translate
+     * translate.
      *
      * @param float $t_x movement to the right
      * @param float $t_y movement to the bottom
      */
-    function translate($t_x, $t_y)
+    public function translate($t_x, $t_y)
     {
-        $tm = array(
+        $tm = [
             1,
             0,
             0,
             1,
             $t_x,
-            -$t_y
-        );
+            -$t_y,
+        ];
 
         $this->transform($tm);
     }
 
     /**
-     * rotate
+     * rotate.
      *
      * @param float $angle angle in degrees for counter-clockwise rotation
      * @param float $x     Origin abscissa
      * @param float $y     Origin ordinate
      */
-    function rotate($angle, $x, $y)
+    public function rotate($angle, $x, $y)
     {
-        $y = $this->currentPageSize["height"] - $y;
+        $y = $this->currentPageSize['height'] - $y;
 
         $a = deg2rad($angle);
         $cos_a = cos($a);
         $sin_a = sin($a);
 
-        $tm = array(
+        $tm = [
             $cos_a,
             -$sin_a,
             $sin_a,
             $cos_a,
             $x - $sin_a * $y - $cos_a * $x,
             $y - $cos_a * $y + $sin_a * $x,
-        );
+        ];
 
         $this->transform($tm);
     }
 
     /**
-     * skew
+     * skew.
      *
      * @param float $angle_x
      * @param float $angle_y
-     * @param float $x Origin abscissa
-     * @param float $y Origin ordinate
+     * @param float $x       Origin abscissa
+     * @param float $y       Origin ordinate
      */
-    function skew($angle_x, $angle_y, $x, $y)
+    public function skew($angle_x, $angle_y, $x, $y)
     {
-        $y = $this->currentPageSize["height"] - $y;
+        $y = $this->currentPageSize['height'] - $y;
 
         $tan_x = tan(deg2rad($angle_x));
         $tan_y = tan(deg2rad($angle_y));
 
-        $tm = array(
+        $tm = [
             1,
             -$tan_y,
             -$tan_x,
             1,
             $tan_x * $y,
             $tan_y * $x,
-        );
+        ];
 
         $this->transform($tm);
     }
 
     /**
-     * apply graphic transformations
+     * apply graphic transformations.
      *
      * @param array $tm transformation matrix
      */
-    function transform($tm)
+    public function transform($tm)
     {
         $this->addContent(vsprintf("\n %.3F %.3F %.3F %.3F %.3F %.3F cm", $tm));
     }
 
     /**
      * add a new page to the document
-     * this also makes the new page the current active object
+     * this also makes the new page the current active object.
      *
-     * @param int $insert
-     * @param int $id
+     * @param int    $insert
+     * @param int    $id
      * @param string $pos
+     *
      * @return int
      */
-    function newPage($insert = 0, $id = 0, $pos = 'after')
+    public function newPage($insert = 0, $id = 0, $pos = 'after')
     {
         // if there is a state saved, then go up the stack closing them
         // then on the new page, re-open them with the right setings
@@ -3837,7 +3816,7 @@ EOT;
             // the id from the ezPdf class is the id of the contents of the page, not the page object itself
             // query that object to find the parent
             $rid = $this->objects[$id]['onPage'];
-            $opt = array('rid' => $rid, 'pos' => $pos);
+            $opt = ['rid' => $rid, 'pos' => $pos];
             $this->o_page($this->numObj, 'new', $opt);
         } else {
             $this->o_page($this->numObj, 'new');
@@ -3872,30 +3851,34 @@ EOT;
      * Streams the PDF to the client.
      *
      * @param string $filename The filename to present to the client.
-     * @param array $options Associative array: 'compress' => 1 or 0 (default 1); 'Attachment' => 1 or 0 (default 1).
+     * @param array  $options  Associative array: 'compress' => 1 or 0 (default 1); 'Attachment' => 1 or 0 (default 1).
      */
-    function stream($filename = "document.pdf", $options = array())
+    public function stream($filename = 'document.pdf', $options = [])
     {
         if (headers_sent()) {
-            die("Unable to stream pdf: headers already sent");
+            die('Unable to stream pdf: headers already sent');
         }
 
-        if (!isset($options["compress"])) $options["compress"] = true;
-        if (!isset($options["Attachment"])) $options["Attachment"] = true;
+        if (!isset($options['compress'])) {
+            $options['compress'] = true;
+        }
+        if (!isset($options['Attachment'])) {
+            $options['Attachment'] = true;
+        }
 
         $debug = !$options['compress'];
         $tmp = ltrim($this->output($debug));
 
-        header("Cache-Control: private");
-        header("Content-Type: application/pdf");
-        header("Content-Length: " . mb_strlen($tmp, "8bit"));
+        header('Cache-Control: private');
+        header('Content-Type: application/pdf');
+        header('Content-Length: '.mb_strlen($tmp, '8bit'));
 
-        $filename = str_replace(array("\n", "'"), "", basename($filename, ".pdf")) . ".pdf";
-        $attachment = $options["Attachment"] ? "attachment" : "inline";
+        $filename = str_replace(["\n", "'"], '', basename($filename, '.pdf')).'.pdf';
+        $attachment = $options['Attachment'] ? 'attachment' : 'inline';
 
         $encoding = mb_detect_encoding($filename);
-        $fallbackfilename = mb_convert_encoding($filename, "ISO-8859-1", $encoding);
-        $fallbackfilename = str_replace("\"", "", $fallbackfilename);
+        $fallbackfilename = mb_convert_encoding($filename, 'ISO-8859-1', $encoding);
+        $fallbackfilename = str_replace('"', '', $fallbackfilename);
         $encodedfilename = rawurlencode($filename);
 
         $contentDisposition = "Content-Disposition: $attachment; filename=\"$fallbackfilename\"";
@@ -3909,12 +3892,13 @@ EOT;
     }
 
     /**
-     * return the height in units of the current font in the given size
+     * return the height in units of the current font in the given size.
      *
      * @param $size
+     *
      * @return float|int
      */
-    function getFontHeight($size)
+    public function getFontHeight($size)
     {
         if (!$this->numFonts) {
             $this->selectFont($this->defaultFont);
@@ -3939,7 +3923,7 @@ EOT;
             // Courier font.
             //
             // Both have been added manually to the .afm and .ufm files.
-            $h += (int)$font['FontHeightOffset'];
+            $h += (int) $font['FontHeightOffset'];
         }
 
         return $size * $h / 1000;
@@ -3947,9 +3931,10 @@ EOT;
 
     /**
      * @param $size
+     *
      * @return float|int
      */
-    function getFontXHeight($size)
+    public function getFontXHeight($size)
     {
         if (!$this->numFonts) {
             $this->selectFont($this->defaultFont);
@@ -3970,12 +3955,13 @@ EOT;
     /**
      * return the font descender, this will normally return a negative number
      * if you add this number to the baseline, you get the level of the bottom of the font
-     * it is in the pdf user units
+     * it is in the pdf user units.
      *
      * @param $size
+     *
      * @return float|int
      */
-    function getFontDescender($size)
+    public function getFontDescender($size)
     {
         // note that this will most likely return a negative value
         if (!$this->numFonts) {
@@ -3990,16 +3976,16 @@ EOT;
 
     /**
      * filter the text, this is applied to all text just before being inserted into the pdf document
-     * it escapes the various things that need to be escaped, and so on
+     * it escapes the various things that need to be escaped, and so on.
      *
-     * @access private
      *
      * @param $text
      * @param bool $bom
      * @param bool $convert_encoding
+     *
      * @return string
      */
-    function filterText($text, $bom = true, $convert_encoding = true)
+    public function filterText($text, $bom = true, $convert_encoding = true)
     {
         if (!$this->numFonts) {
             $this->selectFont($this->defaultFont);
@@ -4013,12 +3999,12 @@ EOT;
                 //$text = html_entity_decode($text, ENT_QUOTES);
                 $text = mb_convert_encoding($text, self::$targetEncoding, 'UTF-8');
             }
-        } else if ($bom) {
+        } elseif ($bom) {
             $text = $this->utf8toUtf16BE($text, $bom);
         }
 
         // the chr(13) substitution fixes a bug seen in TCPDF (bug #1421290)
-        return strtr($text, array(')' => '\\)', '(' => '\\(', '\\' => '\\\\', chr(13) => '\r'));
+        return strtr($text, [')' => '\\)', '(' => '\\(', '\\' => '\\\\', chr(13) => '\r']);
     }
 
     /**
@@ -4028,19 +4014,19 @@ EOT;
      * based on the excellent TCPDF code by Nicola Asuni and the
      * RFC for UTF-8 at http://www.faqs.org/rfcs/rfc3629.html
      *
-     * @access private
      * @author Orion Richardson
+     *
      * @since  January 5, 2008
      *
      * @param string $text UTF-8 string to process
      *
      * @return array UTF-8 codepoints array for the string
      */
-    function utf8toCodePointsArray(&$text)
+    public function utf8toCodePointsArray(&$text)
     {
         $length = mb_strlen($text, '8bit'); // http://www.php.net/manual/en/function.mb-strlen.php#77040
-        $unicode = array(); // array containing unicode values
-        $bytes = array(); // array containing single character byte sequences
+        $unicode = []; // array containing unicode values
+        $bytes = []; // array containing single character byte sequences
         $numbytes = 1; // number of octets needed to represent the UTF-8 character
 
         for ($i = 0; $i < $length; $i++) {
@@ -4061,7 +4047,7 @@ EOT;
                 } else {
                     // use replacement character for other invalid sequences
                     $unicode[] = 0xFFFD;
-                    $bytes = array();
+                    $bytes = [];
                     $numbytes = 1;
                 }
             } elseif (($c >> 0x06) === 0x02) { // bytes 2, 3 and 4 must start with 0x02 = 10 BIN
@@ -4072,7 +4058,7 @@ EOT;
                     for ($j = 1; $j < $numbytes; $j++) {
                         $c += ($bytes[$j] << (($numbytes - $j - 1) * 0x06));
                     }
-                    if ((($c >= 0xD800) AND ($c <= 0xDFFF)) OR ($c >= 0x10FFFF)) {
+                    if ((($c >= 0xD800) and ($c <= 0xDFFF)) or ($c >= 0x10FFFF)) {
                         // The definition of UTF-8 prohibits encoding character numbers between
                         // U+D800 and U+DFFF, which are reserved for use with the UTF-16
                         // encoding form (as surrogate pairs) and do not directly represent
@@ -4082,13 +4068,13 @@ EOT;
                         $unicode[] = $c; // add char to array
                     }
                     // reset data for next char
-                    $bytes = array();
+                    $bytes = [];
                     $numbytes = 1;
                 }
             } else {
                 // use replacement character for other invalid sequences
                 $unicode[] = 0xFFFD;
-                $bytes = array();
+                $bytes = [];
                 $numbytes = 1;
             }
         }
@@ -4103,16 +4089,16 @@ EOT;
      * based on the excellent TCPDF code by Nicola Asuni and the
      * RFC for UTF-8 at http://www.faqs.org/rfcs/rfc3629.html
      *
-     * @access private
      * @author Orion Richardson
+     *
      * @since  January 5, 2008
      *
-     * @param string  $text UTF-8 string to process
-     * @param boolean $bom  whether to add the byte order marker
+     * @param string $text UTF-8 string to process
+     * @param bool   $bom  whether to add the byte order marker
      *
      * @return string UTF-16 result string
      */
-    function utf8toUtf16BE(&$text, $bom = true)
+    public function utf8toUtf16BE(&$text, $bom = true)
     {
         $out = $bom ? "\xFE\xFF" : '';
 
@@ -4121,12 +4107,12 @@ EOT;
             if ($c === 0xFFFD) {
                 $out .= "\xFF\xFD"; // replacement character
             } elseif ($c < 0x10000) {
-                $out .= chr($c >> 0x08) . chr($c & 0xFF);
+                $out .= chr($c >> 0x08).chr($c & 0xFF);
             } else {
                 $c -= 0x10000;
                 $w1 = 0xD800 | ($c >> 0x10);
                 $w2 = 0xDC00 | ($c & 0x3FF);
-                $out .= chr($w1 >> 0x08) . chr($w1 & 0xFF) . chr($w2 >> 0x08) . chr($w2 & 0xFF);
+                $out .= chr($w1 >> 0x08).chr($w1 & 0xFF).chr($w2 >> 0x08).chr($w2 & 0xFF);
             }
         }
 
@@ -4135,7 +4121,7 @@ EOT;
 
     /**
      * given a start position and information about how text is to be laid out, calculate where
-     * on the page the text will end
+     * on the page the text will end.
      *
      * @param $x
      * @param $y
@@ -4143,6 +4129,7 @@ EOT;
      * @param $size
      * @param $wa
      * @param $text
+     *
      * @return array
      */
     private function getTextPosition($x, $y, $angle, $size, $wa, $text)
@@ -4154,26 +4141,26 @@ EOT;
         $words = explode(' ', $text);
         $nspaces = count($words) - 1;
         $w += $wa * $nspaces;
-        $a = deg2rad((float)$angle);
+        $a = deg2rad((float) $angle);
 
-        return array(cos($a) * $w + $x, -sin($a) * $w + $y);
+        return [cos($a) * $w + $x, -sin($a) * $w + $y];
     }
 
     /**
-     * Callback method used by smallCaps
+     * Callback method used by smallCaps.
      *
      * @param array $matches
      *
      * @return string
      */
-    function toUpper($matches)
+    public function toUpper($matches)
     {
         return mb_strtoupper($matches[0]);
     }
 
-    function concatMatches($matches)
+    public function concatMatches($matches)
     {
-        $str = "";
+        $str = '';
         foreach ($matches as $match) {
             $str .= $match[0];
         }
@@ -4182,19 +4169,19 @@ EOT;
     }
 
     /**
-     * register text for font subsetting
+     * register text for font subsetting.
      *
      * @param $font
      * @param $text
      */
-    function registerText($font, $text)
+    public function registerText($font, $text)
     {
         if (!$this->isUnicode || in_array(mb_strtolower(basename($font)), self::$coreFonts)) {
             return;
         }
 
         if (!isset($this->stringSubsets[$font])) {
-            $this->stringSubsets[$font] = array();
+            $this->stringSubsets[$font] = [];
         }
 
         $this->stringSubsets[$font] = array_unique(
@@ -4203,24 +4190,24 @@ EOT;
     }
 
     /**
-     * add text to the document, at a specified location, size and angle on the page
+     * add text to the document, at a specified location, size and angle on the page.
      *
      * @param $x
      * @param $y
      * @param $size
      * @param $text
-     * @param int $angle
-     * @param int $wordSpaceAdjust
-     * @param int $charSpaceAdjust
+     * @param int  $angle
+     * @param int  $wordSpaceAdjust
+     * @param int  $charSpaceAdjust
      * @param bool $smallCaps
      */
-    function addText($x, $y, $size, $text, $angle = 0, $wordSpaceAdjust = 0, $charSpaceAdjust = 0, $smallCaps = false)
+    public function addText($x, $y, $size, $text, $angle = 0, $wordSpaceAdjust = 0, $charSpaceAdjust = 0, $smallCaps = false)
     {
         if (!$this->numFonts) {
             $this->selectFont($this->defaultFont);
         }
 
-        $text = str_replace(array("\r", "\n"), "", $text);
+        $text = str_replace(["\r", "\n"], '', $text);
 
         if ($smallCaps) {
             preg_match_all("/(\P{Ll}+)/u", $text, $matches, PREG_SET_ORDER);
@@ -4238,7 +4225,7 @@ EOT;
         if ($this->nCallback > 0) {
             for ($i = $this->nCallback; $i > 0; $i--) {
                 // call each function
-                $info = array(
+                $info = [
                     'x'         => $x,
                     'y'         => $y,
                     'angle'     => $angle,
@@ -4246,8 +4233,8 @@ EOT;
                     'p'         => $this->callback[$i]['p'],
                     'nCallback' => $this->callback[$i]['nCallback'],
                     'height'    => $this->callback[$i]['height'],
-                    'descender' => $this->callback[$i]['descender']
-                );
+                    'descender' => $this->callback[$i]['descender'],
+                ];
 
                 $func = $this->callback[$i]['f'];
                 $this->$func($info);
@@ -4257,18 +4244,18 @@ EOT;
         if ($angle == 0) {
             $this->addContent(sprintf("\nBT %.3F %.3F Td", $x, $y));
         } else {
-            $a = deg2rad((float)$angle);
+            $a = deg2rad((float) $angle);
             $this->addContent(
                 sprintf("\nBT %.3F %.3F %.3F %.3F %.3F %.3F Tm", cos($a), -sin($a), sin($a), cos($a), $x, $y)
             );
         }
 
         if ($wordSpaceAdjust != 0) {
-            $this->addContent(sprintf(" %.3F Tw", $wordSpaceAdjust));
+            $this->addContent(sprintf(' %.3F Tw', $wordSpaceAdjust));
         }
 
         if ($charSpaceAdjust != 0) {
-            $this->addContent(sprintf(" %.3F Tc", $charSpaceAdjust));
+            $this->addContent(sprintf(' %.3F Tc', $charSpaceAdjust));
         }
 
         $len = mb_strlen($text);
@@ -4281,18 +4268,18 @@ EOT;
             $cf = $this->currentFont;
             if ($this->fonts[$cf]['isUnicode'] && $wordSpaceAdjust != 0) {
                 $space_scale = 1000 / $size;
-                $place_text = str_replace("\x00\x20", "\x00\x20)\x00\x20" . (-round($space_scale * $wordSpaceAdjust)) . "\x00\x20(", $place_text);
+                $place_text = str_replace("\x00\x20", "\x00\x20)\x00\x20".(-round($space_scale * $wordSpaceAdjust))."\x00\x20(", $place_text);
             }
-            $this->addContent(" /F$this->currentFontNum " . sprintf('%.1F Tf ', $size));
+            $this->addContent(" /F$this->currentFontNum ".sprintf('%.1F Tf ', $size));
             $this->addContent(" [($place_text)] TJ");
         }
 
         if ($wordSpaceAdjust != 0) {
-            $this->addContent(sprintf(" %.3F Tw", 0));
+            $this->addContent(sprintf(' %.3F Tw', 0));
         }
 
         if ($charSpaceAdjust != 0) {
-            $this->addContent(sprintf(" %.3F Tc", 0));
+            $this->addContent(sprintf(' %.3F Tc', 0));
         }
 
         $this->addContent(' ET');
@@ -4302,7 +4289,7 @@ EOT;
             for ($i = $this->nCallback; $i > 0; $i--) {
                 // call each function
                 $tmp = $this->getTextPosition($x, $y, $angle, $size, $wordSpaceAdjust, $text);
-                $info = array(
+                $info = [
                     'x'         => $tmp[0],
                     'y'         => $tmp[1],
                     'angle'     => $angle,
@@ -4310,8 +4297,8 @@ EOT;
                     'p'         => $this->callback[$i]['p'],
                     'nCallback' => $this->callback[$i]['nCallback'],
                     'height'    => $this->callback[$i]['height'],
-                    'descender' => $this->callback[$i]['descender']
-                );
+                    'descender' => $this->callback[$i]['descender'],
+                ];
                 $func = $this->callback[$i]['f'];
                 $this->$func($info);
             }
@@ -4320,17 +4307,18 @@ EOT;
 
     /**
      * calculate how wide a given text string will be on a page, at a given size.
-     * this can be called externally, but is also used by the other class functions
+     * this can be called externally, but is also used by the other class functions.
      *
      * @param $size
      * @param $text
      * @param int $word_spacing
      * @param int $char_spacing
+     *
      * @return float|int
      */
-    function getTextWidth($size, $text, $word_spacing = 0, $char_spacing = 0)
+    public function getTextWidth($size, $text, $word_spacing = 0, $char_spacing = 0)
     {
-        static $ord_cache = array();
+        static $ord_cache = [];
 
         // this function should not change any of the settings, though it will need to
         // track any directives which change during calculation, so copy them at the start
@@ -4341,7 +4329,7 @@ EOT;
             $this->selectFont($this->defaultFont);
         }
 
-        $text = str_replace(array("\r", "\n"), "", $text);
+        $text = str_replace(["\r", "\n"], '', $text);
 
         // converts a number or a float to a string so it can get the width
         $text = "$text";
@@ -4383,7 +4371,6 @@ EOT;
             if ($char_spacing != 0) {
                 $w += $char_spacing * $space_scale * (count($unicode) + $n_spaces);
             }
-
         } else {
             // If CPDF is in Unicode mode but the current font does not support Unicode we need to convert the character set to Windows-1252
             if ($this->isUnicode) {
@@ -4430,11 +4417,11 @@ EOT;
     /**
      * this will be called at a new page to return the state to what it was on the
      * end of the previous page, before the stack was closed down
-     * This is to get around not being able to have open 'q' across pages
+     * This is to get around not being able to have open 'q' across pages.
      *
      * @param int $pageEnd
      */
-    function saveState($pageEnd = 0)
+    public function saveState($pageEnd = 0)
     {
         if ($pageEnd) {
             // this will be called at a new page to return the state to what it was on the
@@ -4444,32 +4431,32 @@ EOT;
             // ok to use this as stack starts numbering at 1
             $this->setColor($opt['col'], true);
             $this->setStrokeColor($opt['str'], true);
-            $this->addContent("\n" . $opt['lin']);
-            //    $this->currentLineStyle = $opt['lin'];
+            $this->addContent("\n".$opt['lin']);
+        //    $this->currentLineStyle = $opt['lin'];
         } else {
             $this->nStateStack++;
-            $this->stateStack[$this->nStateStack] = array(
+            $this->stateStack[$this->nStateStack] = [
                 'col' => $this->currentColor,
                 'str' => $this->currentStrokeColor,
-                'lin' => $this->currentLineStyle
-            );
+                'lin' => $this->currentLineStyle,
+            ];
         }
 
         $this->save();
     }
 
     /**
-     * restore a previously saved state
+     * restore a previously saved state.
      *
      * @param int $pageEnd
      */
-    function restoreState($pageEnd = 0)
+    public function restoreState($pageEnd = 0)
     {
         if (!$pageEnd) {
             $n = $this->nStateStack;
             $this->currentColor = $this->stateStack[$n]['col'];
             $this->currentStrokeColor = $this->stateStack[$n]['str'];
-            $this->addContent("\n" . $this->stateStack[$n]['lin']);
+            $this->addContent("\n".$this->stateStack[$n]['lin']);
             $this->currentLineStyle = $this->stateStack[$n]['lin'];
             $this->stateStack[$n] = null;
             unset($this->stateStack[$n]);
@@ -4483,14 +4470,14 @@ EOT;
      * make a loose object, the output will go into this object, until it is closed, then will revert to
      * the current one.
      * this object will not appear until it is included within a page.
-     * the function will return the object number
+     * the function will return the object number.
      *
      * @return int
      */
-    function openObject()
+    public function openObject()
     {
         $this->nStack++;
-        $this->stack[$this->nStack] = array('c' => $this->currentContents, 'p' => $this->currentPage);
+        $this->stack[$this->nStack] = ['c' => $this->currentContents, 'p' => $this->currentPage];
         // add a new object of the content type, to hold the data flow
         $this->numObj++;
         $this->o_contents($this->numObj, 'new');
@@ -4501,14 +4488,14 @@ EOT;
     }
 
     /**
-     * open an existing object for editing
+     * open an existing object for editing.
      *
      * @param $id
      */
-    function reopenObject($id)
+    public function reopenObject($id)
     {
         $this->nStack++;
-        $this->stack[$this->nStack] = array('c' => $this->currentContents, 'p' => $this->currentPage);
+        $this->stack[$this->nStack] = ['c' => $this->currentContents, 'p' => $this->currentPage];
         $this->currentContents = $id;
 
         // also if this object is the primary contents for a page, then set the current page to its parent
@@ -4518,9 +4505,9 @@ EOT;
     }
 
     /**
-     * close an object
+     * close an object.
      */
-    function closeObject()
+    public function closeObject()
     {
         // close the object, as long as there was one open in the first place, which will be indicated by
         // an objectId on the stack.
@@ -4534,11 +4521,11 @@ EOT;
     }
 
     /**
-     * stop an object from appearing on pages from this point on
+     * stop an object from appearing on pages from this point on.
      *
      * @param $id
      */
-    function stopObject($id)
+    public function stopObject($id)
     {
         // if an object has been appearing on pages up to now, then stop it, this page will
         // be the last one that could contain it.
@@ -4553,7 +4540,7 @@ EOT;
      * @param $id
      * @param string $options
      */
-    function addObject($id, $options = 'add')
+    public function addObject($id, $options = 'add')
     {
         // add the specified object to the page
         if (isset($this->looseObjects[$id]) && $this->currentContents != $id) {
@@ -4606,27 +4593,27 @@ EOT;
     }
 
     /**
-     * return a storable representation of a specific object
+     * return a storable representation of a specific object.
      *
      * @param $id
+     *
      * @return string|null
      */
-    function serializeObject($id)
+    public function serializeObject($id)
     {
         if (array_key_exists($id, $this->objects)) {
             return serialize($this->objects[$id]);
         }
-
-        return null;
     }
 
     /**
      * restore an object from its stored representation.  returns its new object id.
      *
      * @param $obj
+     *
      * @return int
      */
-    function restoreSerializedObject($obj)
+    public function restoreSerializedObject($obj)
     {
         $obj_id = $this->openObject();
         $this->objects[$obj_id] = unserialize($obj);
@@ -4636,12 +4623,12 @@ EOT;
     }
 
     /**
-     * add content to the documents info object
+     * add content to the documents info object.
      *
      * @param $label
      * @param int $value
      */
-    function addInfo($label, $value = 0)
+    public function addInfo($label, $value = 0)
     {
         // this will only work if the label is one of the valid ones.
         // modify this so that arrays can be passed as well.
@@ -4662,24 +4649,25 @@ EOT;
      * @param $label
      * @param int $value
      */
-    function setPreferences($label, $value = 0)
+    public function setPreferences($label, $value = 0)
     {
         // this will only work if the label is one of the valid ones.
         if (is_array($label)) {
             foreach ($label as $l => $v) {
-                $this->o_catalog($this->catalogId, 'viewerPreferences', array($l => $v));
+                $this->o_catalog($this->catalogId, 'viewerPreferences', [$l => $v]);
             }
         } else {
-            $this->o_catalog($this->catalogId, 'viewerPreferences', array($label => $value));
+            $this->o_catalog($this->catalogId, 'viewerPreferences', [$label => $value]);
         }
     }
 
     /**
-     * extract an integer from a position in a byte stream
+     * extract an integer from a position in a byte stream.
      *
      * @param $data
      * @param $pos
      * @param $num
+     *
      * @return int
      */
     private function getBytes(&$data, $pos, $num)
@@ -4696,34 +4684,36 @@ EOT;
 
     /**
      * Check if image already added to pdf image directory.
-     * If yes, need not to create again (pass empty data)
+     * If yes, need not to create again (pass empty data).
      *
      * @param $imgname
+     *
      * @return bool
      */
-    function image_iscached($imgname)
+    public function image_iscached($imgname)
     {
         return isset($this->imagelist[$imgname]);
     }
 
     /**
      * add a PNG image into the document, from a GD object
-     * this should work with remote files
+     * this should work with remote files.
      *
-     * @param string $file The PNG file
-     * @param float $x X position
-     * @param float $y Y position
-     * @param float $w Width
-     * @param float $h Height
-     * @param resource $img A GD resource
-     * @param bool $is_mask true if the image is a mask
-     * @param bool $mask true if the image is masked
+     * @param string   $file    The PNG file
+     * @param float    $x       X position
+     * @param float    $y       Y position
+     * @param float    $w       Width
+     * @param float    $h       Height
+     * @param resource $img     A GD resource
+     * @param bool     $is_mask true if the image is a mask
+     * @param bool     $mask    true if the image is masked
+     *
      * @throws Exception
      */
-    function addImagePng($file, $x, $y, $w = 0.0, $h = 0.0, &$img, $is_mask = false, $mask = null)
+    public function addImagePng($file, $x, $y, $w, $h, &$img, $is_mask = false, $mask = null)
     {
-        if (!function_exists("imagepng")) {
-            throw new \Exception("The PHP GD extension is required, but is not installed.");
+        if (!function_exists('imagepng')) {
+            throw new \Exception('The PHP GD extension is required, but is not installed.');
         }
 
         //if already cached, need not to read again
@@ -4747,8 +4737,8 @@ EOT;
             $error = 0;
             //DEBUG_IMG_TEMP
             //debugpng
-            if (defined("DEBUGPNG") && DEBUGPNG) {
-                print '[addImagePng ' . $file . ']';
+            if (defined('DEBUGPNG') && DEBUGPNG) {
+                echo '[addImagePng '.$file.']';
             }
 
             ob_start();
@@ -4760,13 +4750,13 @@ EOT;
                 $errormsg = 'trouble writing file from GD';
                 //DEBUG_IMG_TEMP
                 //debugpng
-                if (defined("DEBUGPNG") && DEBUGPNG) {
-                    print 'trouble writing file from GD';
+                if (defined('DEBUGPNG') && DEBUGPNG) {
+                    echo 'trouble writing file from GD';
                 }
             }
 
             if ($error) {
-                $this->addMessage('PNG error - (' . $file . ') ' . $errormsg);
+                $this->addMessage('PNG error - ('.$file.') '.$errormsg);
 
                 return;
             }
@@ -4801,12 +4791,12 @@ EOT;
         imagesavealpha($img, false);
 
         // create temp alpha file
-        $tempfile_alpha = tempnam($this->tmp, "cpdf_img_");
+        $tempfile_alpha = tempnam($this->tmp, 'cpdf_img_');
         @unlink($tempfile_alpha);
         $tempfile_alpha = "$tempfile_alpha.png";
 
         // create temp plain file
-        $tempfile_plain = tempnam($this->tmp, "cpdf_img_");
+        $tempfile_plain = tempnam($this->tmp, 'cpdf_img_');
         @unlink($tempfile_plain);
         $tempfile_plain = "$tempfile_plain.png";
 
@@ -4814,12 +4804,12 @@ EOT;
         imagesavealpha($imgalpha, false);
 
         // generate gray scale palette (0 -> 255)
-        for ($c = 0; $c < 256; ++$c) {
+        for ($c = 0; $c < 256; $c++) {
             imagecolorallocate($imgalpha, $c, $c, $c);
         }
 
         // Use PECL gmagick + Graphics Magic to process transparent PNG images
-        if (extension_loaded("gmagick")) {
+        if (extension_loaded('gmagick')) {
             $gmagick = new \Gmagick($file);
             $gmagick->setimageformat('png');
 
@@ -4829,7 +4819,7 @@ EOT;
 
             // Negate opacity channel
             $alpha_channel = new \Gmagick();
-            $alpha_channel->newimage($wpx, $hpx, "#FFFFFF", "png");
+            $alpha_channel->newimage($wpx, $hpx, '#FFFFFF', 'png');
             $alpha_channel->compositeimage($alpha_channel_neg, \Gmagick::COMPOSITE_DIFFERENCE, 0, 0);
             $alpha_channel->separateimagechannel(\Gmagick::CHANNEL_RED);
             $alpha_channel->writeimage($tempfile_alpha);
@@ -4842,7 +4832,7 @@ EOT;
 
             // Make opaque image
             $color_channels = new \Gmagick();
-            $color_channels->newimage($wpx, $hpx, "#FFFFFF", "png");
+            $color_channels->newimage($wpx, $hpx, '#FFFFFF', 'png');
             $color_channels->compositeimage($gmagick, \Gmagick::COMPOSITE_COPYRED, 0, 0);
             $color_channels->compositeimage($gmagick, \Gmagick::COMPOSITE_COPYGREEN, 0, 0);
             $color_channels->compositeimage($gmagick, \Gmagick::COMPOSITE_COPYBLUE, 0, 0);
@@ -4851,7 +4841,7 @@ EOT;
             $imgplain = imagecreatefrompng($tempfile_plain);
         }
         // Use PECL imagick + ImageMagic to process transparent PNG images
-        elseif (extension_loaded("imagick")) {
+        elseif (extension_loaded('imagick')) {
             // Native cloning was added to pecl-imagick in svn commit 263814
             // the first version containing it was 3.0.1RC1
             static $imagickClonable = null;
@@ -4880,7 +4870,7 @@ EOT;
 
             // Make opaque image
             $color_channels = new \Imagick();
-            $color_channels->newImage($wpx, $hpx, "#FFFFFF", "png");
+            $color_channels->newImage($wpx, $hpx, '#FFFFFF', 'png');
             $color_channels->compositeImage($imagick, \Imagick::COMPOSITE_COPYRED, 0, 0);
             $color_channels->compositeImage($imagick, \Imagick::COMPOSITE_COPYGREEN, 0, 0);
             $color_channels->compositeImage($imagick, \Imagick::COMPOSITE_COPYBLUE, 0, 0);
@@ -4889,11 +4879,11 @@ EOT;
             $imgplain = imagecreatefrompng($tempfile_plain);
         } else {
             // allocated colors cache
-            $allocated_colors = array();
+            $allocated_colors = [];
 
             // extract alpha channel
-            for ($xpx = 0; $xpx < $wpx; ++$xpx) {
-                for ($ypx = 0; $ypx < $hpx; ++$ypx) {
+            for ($xpx = 0; $xpx < $wpx; $xpx++) {
+                for ($ypx = 0; $ypx < $hpx; $ypx++) {
                     $color = imagecolorat($img, $xpx, $ypx);
                     $col = imagecolorsforindex($img, $color);
                     $alpha = $col['alpha'];
@@ -4906,7 +4896,7 @@ EOT;
                         // without gamma correction
                         $pixel = (127 - $alpha) * 2;
 
-                        $key = $col['red'] . $col['green'] . $col['blue'];
+                        $key = $col['red'].$col['green'].$col['blue'];
 
                         if (!isset($allocated_colors[$key])) {
                             $pixel_img = imagecolorallocate($img, $col['red'], $col['green'], $col['blue']);
@@ -4950,19 +4940,20 @@ EOT;
 
     /**
      * add a PNG image into the document, from a file
-     * this should work with remote files
+     * this should work with remote files.
      *
      * @param $file
      * @param $x
      * @param $y
      * @param int $w
      * @param int $h
+     *
      * @throws Exception
      */
-    function addPngFromFile($file, $x, $y, $w = 0, $h = 0)
+    public function addPngFromFile($file, $x, $y, $w = 0, $h = 0)
     {
-        if (!function_exists("imagecreatefrompng")) {
-            throw new \Exception("The PHP GD extension is required, but is not installed.");
+        if (!function_exists('imagecreatefrompng')) {
+            throw new \Exception('The PHP GD extension is required, but is not installed.');
         }
 
         //if already cached, need not to read again
@@ -4970,18 +4961,19 @@ EOT;
             $img = null;
         } else {
             $info = file_get_contents($file, false, null, 24, 5);
-            $meta = unpack("CbitDepth/CcolorType/CcompressionMethod/CfilterMethod/CinterlaceMethod", $info);
-            $bit_depth = $meta["bitDepth"];
-            $color_type = $meta["colorType"];
+            $meta = unpack('CbitDepth/CcolorType/CcompressionMethod/CfilterMethod/CinterlaceMethod', $info);
+            $bit_depth = $meta['bitDepth'];
+            $color_type = $meta['colorType'];
 
             // http://www.w3.org/TR/PNG/#11IHDR
             // 3 => indexed
             // 4 => greyscale with alpha
             // 6 => fullcolor with alpha
-            $is_alpha = in_array($color_type, array(4, 6)) || ($color_type == 3 && $bit_depth != 4);
+            $is_alpha = in_array($color_type, [4, 6]) || ($color_type == 3 && $bit_depth != 4);
 
             if ($is_alpha) { // exclude grayscale alpha
                 $this->addImagePngAlpha($file, $x, $y, $w, $h, $color_type);
+
                 return;
             }
 
@@ -5027,7 +5019,7 @@ EOT;
 
     /**
      * add a PNG image into the document, from a file
-     * this should work with remote files
+     * this should work with remote files.
      *
      * @param $file
      * @param $x
@@ -5035,7 +5027,7 @@ EOT;
      * @param int $w
      * @param int $h
      */
-    function addSvgFromFile($file, $x, $y, $w = 0, $h = 0)
+    public function addSvgFromFile($file, $x, $y, $w = 0, $h = 0)
     {
         $doc = new \Svg\Document();
         $doc->loadFile($file);
@@ -5043,7 +5035,7 @@ EOT;
 
         $this->save();
 
-        $this->transform(array($w / $dimensions["width"], 0, 0, $h / $dimensions["height"], $x, $y));
+        $this->transform([$w / $dimensions['width'], 0, 0, $h / $dimensions['height'], $x, $y]);
 
         $surface = new \Svg\Surface\SurfaceCpdf($doc, $this);
         $doc->render($surface);
@@ -5052,7 +5044,7 @@ EOT;
     }
 
     /**
-     * add a PNG image into the document, from a memory buffer of the file
+     * add a PNG image into the document, from a memory buffer of the file.
      *
      * @param $file
      * @param $x
@@ -5063,7 +5055,7 @@ EOT;
      * @param bool $is_mask
      * @param null $mask
      */
-    function addPngFromBuf($file, $x, $y, $w = 0.0, $h = 0.0, &$data, $is_mask = false, $mask = null)
+    public function addPngFromBuf($file, $x, $y, $w, $h, &$data, $is_mask = false, $mask = null)
     {
         if (isset($this->imagelist[$file])) {
             $data = null;
@@ -5080,13 +5072,13 @@ EOT;
             $error = 0;
 
             if (!$error) {
-                $header = chr(137) . chr(80) . chr(78) . chr(71) . chr(13) . chr(10) . chr(26) . chr(10);
+                $header = chr(137).chr(80).chr(78).chr(71).chr(13).chr(10).chr(26).chr(10);
 
                 if (mb_substr($data, 0, 8, '8bit') != $header) {
                     $error = 1;
 
-                    if (defined("DEBUGPNG") && DEBUGPNG) {
-                        print '[addPngFromFile this file does not have a valid header ' . $file . ']';
+                    if (defined('DEBUGPNG') && DEBUGPNG) {
+                        echo '[addPngFromFile this file does not have a valid header '.$file.']';
                     }
 
                     $errormsg = 'this file does not have a valid header';
@@ -5100,7 +5092,7 @@ EOT;
 
                 // cycle through the file, identifying chunks
                 $haveHeader = 0;
-                $info = array();
+                $info = [];
                 $idata = '';
                 $pdata = '';
 
@@ -5125,8 +5117,8 @@ EOT;
                                 $error = 1;
 
                                 //debugpng
-                                if (defined("DEBUGPNG") && DEBUGPNG) {
-                                    print '[addPngFromFile unsupported compression method ' . $file . ']';
+                                if (defined('DEBUGPNG') && DEBUGPNG) {
+                                    echo '[addPngFromFile unsupported compression method '.$file.']';
                                 }
 
                                 $errormsg = 'unsupported compression method';
@@ -5136,8 +5128,8 @@ EOT;
                                 $error = 1;
 
                                 //debugpng
-                                if (defined("DEBUGPNG") && DEBUGPNG) {
-                                    print '[addPngFromFile unsupported filter method ' . $file . ']';
+                                if (defined('DEBUGPNG') && DEBUGPNG) {
+                                    echo '[addPngFromFile unsupported filter method '.$file.']';
                                 }
 
                                 $errormsg = 'unsupported filter method';
@@ -5155,7 +5147,7 @@ EOT;
                         case 'tRNS':
                             //this chunk can only occur once and it must occur after the PLTE chunk and before IDAT chunk
                             //print "tRNS found, color type = ".$info['colorType']."\n";
-                            $transparency = array();
+                            $transparency = [];
 
                             switch ($info['colorType']) {
                                 // indexed color, rbg
@@ -5208,8 +5200,8 @@ EOT;
 
                                 //unsupported transparency type
                                 default:
-                                    if (defined("DEBUGPNG") && DEBUGPNG) {
-                                        print '[addPngFromFile unsupported transparency type ' . $file . ']';
+                                    if (defined('DEBUGPNG') && DEBUGPNG) {
+                                        echo '[addPngFromFile unsupported transparency type '.$file.']';
                                     }
                                     break;
                             }
@@ -5228,8 +5220,8 @@ EOT;
                     $error = 1;
 
                     //debugpng
-                    if (defined("DEBUGPNG") && DEBUGPNG) {
-                        print '[addPngFromFile information header is missing ' . $file . ']';
+                    if (defined('DEBUGPNG') && DEBUGPNG) {
+                        echo '[addPngFromFile information header is missing '.$file.']';
                     }
 
                     $errormsg = 'information header is missing';
@@ -5239,8 +5231,8 @@ EOT;
                     $error = 1;
 
                     //debugpng
-                    if (defined("DEBUGPNG") && DEBUGPNG) {
-                        print '[addPngFromFile no support for interlaced images in pdf ' . $file . ']';
+                    if (defined('DEBUGPNG') && DEBUGPNG) {
+                        echo '[addPngFromFile no support for interlaced images in pdf '.$file.']';
                     }
 
                     $errormsg = 'There appears to be no support for interlaced images in pdf.';
@@ -5251,8 +5243,8 @@ EOT;
                 $error = 1;
 
                 //debugpng
-                if (defined("DEBUGPNG") && DEBUGPNG) {
-                    print '[addPngFromFile bit depth of 8 or less is supported ' . $file . ']';
+                if (defined('DEBUGPNG') && DEBUGPNG) {
+                    echo '[addPngFromFile bit depth of 8 or less is supported '.$file.']';
                 }
 
                 $errormsg = 'only bit depth of 8 or less is supported';
@@ -5279,8 +5271,8 @@ EOT;
                         $error = 1;
 
                         //debugpng
-                        if (defined("DEBUGPNG") && DEBUGPNG) {
-                            print '[addPngFromFile alpha channel not supported: ' . $info['colorType'] . ' ' . $file . ']';
+                        if (defined('DEBUGPNG') && DEBUGPNG) {
+                            echo '[addPngFromFile alpha channel not supported: '.$info['colorType'].' '.$file.']';
                         }
 
                         $errormsg = 'transparency alpha channel not supported, transparency only supported for palette images.';
@@ -5288,7 +5280,7 @@ EOT;
             }
 
             if ($error) {
-                $this->addMessage('PNG error - (' . $file . ') ' . $errormsg);
+                $this->addMessage('PNG error - ('.$file.') '.$errormsg);
 
                 return;
             }
@@ -5301,7 +5293,7 @@ EOT;
             $this->numObj++;
 
             //  $this->o_image($this->numObj,'new',array('label' => $label,'data' => $idata,'iw' => $w,'ih' => $h,'type' => 'png','ic' => $info['width']));
-            $options = array(
+            $options = [
                 'label'            => $label,
                 'data'             => $idata,
                 'bitsPerComponent' => $info['bitDepth'],
@@ -5312,15 +5304,15 @@ EOT;
                 'color'            => $color,
                 'ncolor'           => $ncolor,
                 'masked'           => $mask,
-                'isMask'           => $is_mask
-            );
+                'isMask'           => $is_mask,
+            ];
 
             if (isset($transparency)) {
                 $options['transparency'] = $transparency;
             }
 
             $this->o_image($this->numObj, 'new', $options);
-            $this->imagelist[$file] = array('label' => $label, 'w' => $info['width'], 'h' => $info['height']);
+            $this->imagelist[$file] = ['label' => $label, 'w' => $info['width'], 'h' => $info['height']];
         }
 
         if ($is_mask) {
@@ -5344,7 +5336,7 @@ EOT;
     }
 
     /**
-     * add a JPEG image into the document, from a file
+     * add a JPEG image into the document, from a file.
      *
      * @param $img
      * @param $x
@@ -5352,7 +5344,7 @@ EOT;
      * @param int $w
      * @param int $h
      */
-    function addJpegFromFile($img, $x, $y, $w = 0, $h = 0)
+    public function addJpegFromFile($img, $x, $y, $w = 0, $h = 0)
     {
         // attempt to add a jpeg image straight from a file, using no GD commands
         // note that this function is unable to operate on a remote file.
@@ -5396,7 +5388,8 @@ EOT;
     }
 
     /**
-     * common code used by the two JPEG adding functions
+     * common code used by the two JPEG adding functions.
+     *
      * @param $data
      * @param $x
      * @param $y
@@ -5411,21 +5404,20 @@ EOT;
         &$data,
         $x,
         $y,
-        $w = 0,
-        $h = 0,
+        $w,
+        $h,
         $imageWidth,
         $imageHeight,
-        $channels = 3,
+        $channels,
         $imgname
     ) {
         if ($this->image_iscached($imgname)) {
             $label = $this->imagelist[$imgname]['label'];
-            //debugpng
+        //debugpng
             //if (DEBUGPNG) print '[addJpegImage_common Duplicate '.$imgname.']';
-
         } else {
             if ($data == null) {
-                $this->addMessage('addJpegImage_common error - (' . $imgname . ') data not present!');
+                $this->addMessage('addJpegImage_common error - ('.$imgname.') data not present!');
 
                 return;
             }
@@ -5440,35 +5432,35 @@ EOT;
             $this->o_image(
                 $this->numObj,
                 'new',
-                array(
+                [
                     'label'    => $label,
                     'data'     => &$data,
                     'iw'       => $imageWidth,
                     'ih'       => $imageHeight,
-                    'channels' => $channels
-                )
+                    'channels' => $channels,
+                ]
             );
 
-            $this->imagelist[$imgname] = array(
+            $this->imagelist[$imgname] = [
                 'label' => $label,
                 'w'     => $imageWidth,
                 'h'     => $imageHeight,
-                'c'     => $channels
-            );
+                'c'     => $channels,
+            ];
         }
 
         $this->addContent(sprintf("\nq\n%.3F 0 0 %.3F %.3F %.3F cm /%s Do\nQ ", $w, $h, $x, $y, $label));
     }
 
     /**
-     * specify where the document should open when it first starts
+     * specify where the document should open when it first starts.
      *
      * @param $style
      * @param int $a
      * @param int $b
      * @param int $c
      */
-    function openHere($style, $a = 0, $b = 0, $c = 0)
+    public function openHere($style, $a = 0, $b = 0, $c = 0)
     {
         // this function will open the document at a specified page, in a specified style
         // the values for style, and the required parameters are:
@@ -5484,24 +5476,24 @@ EOT;
         $this->o_destination(
             $this->numObj,
             'new',
-            array('page' => $this->currentPage, 'type' => $style, 'p1' => $a, 'p2' => $b, 'p3' => $c)
+            ['page' => $this->currentPage, 'type' => $style, 'p1' => $a, 'p2' => $b, 'p3' => $c]
         );
         $id = $this->catalogId;
         $this->o_catalog($id, 'openHere', $this->numObj);
     }
 
     /**
-     * Add JavaScript code to the PDF document
+     * Add JavaScript code to the PDF document.
      *
      * @param string $code
      */
-    function addJavascript($code)
+    public function addJavascript($code)
     {
         $this->javascript .= $code;
     }
 
     /**
-     * create a labelled destination within the document
+     * create a labelled destination within the document.
      *
      * @param $label
      * @param $style
@@ -5509,7 +5501,7 @@ EOT;
      * @param int $b
      * @param int $c
      */
-    function addDestination($label, $style, $a = 0, $b = 0, $c = 0)
+    public function addDestination($label, $style, $a = 0, $b = 0, $c = 0)
     {
         // associates the given label with the destination, it is done this way so that a destination can be specified after
         // it has been linked to
@@ -5518,7 +5510,7 @@ EOT;
         $this->o_destination(
             $this->numObj,
             'new',
-            array('page' => $this->currentPage, 'type' => $style, 'p1' => $a, 'p2' => $b, 'p3' => $c)
+            ['page' => $this->currentPage, 'type' => $style, 'p1' => $a, 'p2' => $b, 'p3' => $c]
         );
         $id = $this->numObj;
 
@@ -5534,7 +5526,7 @@ EOT;
      * @param $family
      * @param string $options
      */
-    function setFontFamily($family, $options = '')
+    public function setFontFamily($family, $options = '')
     {
         if (!is_array($options)) {
             if ($family === 'init') {
@@ -5542,28 +5534,28 @@ EOT;
                 // these font families will be used to enable bold and italic markers to be included
                 // within text streams. html forms will be used... <b></b> <i></i>
                 $this->fontFamilies['Helvetica.afm'] =
-                    array(
+                    [
                         'b'  => 'Helvetica-Bold.afm',
                         'i'  => 'Helvetica-Oblique.afm',
                         'bi' => 'Helvetica-BoldOblique.afm',
-                        'ib' => 'Helvetica-BoldOblique.afm'
-                    );
+                        'ib' => 'Helvetica-BoldOblique.afm',
+                    ];
 
                 $this->fontFamilies['Courier.afm'] =
-                    array(
+                    [
                         'b'  => 'Courier-Bold.afm',
                         'i'  => 'Courier-Oblique.afm',
                         'bi' => 'Courier-BoldOblique.afm',
-                        'ib' => 'Courier-BoldOblique.afm'
-                    );
+                        'ib' => 'Courier-BoldOblique.afm',
+                    ];
 
                 $this->fontFamilies['Times-Roman.afm'] =
-                    array(
+                    [
                         'b'  => 'Times-Bold.afm',
                         'i'  => 'Times-Italic.afm',
                         'bi' => 'Times-BoldItalic.afm',
-                        'ib' => 'Times-BoldItalic.afm'
-                    );
+                        'ib' => 'Times-BoldItalic.afm',
+                    ];
             }
         } else {
 
@@ -5576,13 +5568,13 @@ EOT;
     }
 
     /**
-     * used to add messages for use in debugging
+     * used to add messages for use in debugging.
      *
      * @param $message
      */
-    function addMessage($message)
+    public function addMessage($message)
     {
-        $this->messages .= $message . "\n";
+        $this->messages .= $message."\n";
     }
 
     /**
@@ -5590,7 +5582,7 @@ EOT;
      *
      * @param $action
      */
-    function transaction($action)
+    public function transaction($action)
     {
         switch ($action) {
             case 'start':

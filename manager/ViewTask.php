@@ -1,11 +1,13 @@
 <?php
 include '../includes/config.php';
 $tid = filter_var($_GET['id'], FILTER_SANITIZE_STRING);
-if(mysqli_num_rows(mysqli_query($con,"SELECT * FROM $task_table WHERE taskID='$tid'"))!=1) { header('HTTP/1.0 404 Forbidden');
-          exit;}
-$page_name = "View Task";
+if (mysqli_num_rows(mysqli_query($con, "SELECT * FROM $task_table WHERE taskID='$tid'")) != 1) {
+    header('HTTP/1.0 404 Forbidden');
+    exit;
+}
+$page_name = 'View Task';
 include '../views/manager_header.php';
-$omo = mysqli_fetch_assoc(mysqli_query($con,"SELECT * FROM $task_table LEFT JOIN $assigned_table ON $task_table.taskID=$assigned_table.taskID LEFT JOIN $employee_table ON $assigned_table.employeeEmail=$employee_table.email LEFT JOIN $status_table ON $task_table.status=$status_table.statusID WHERE $task_table.taskID='$tid'"));
+$omo = mysqli_fetch_assoc(mysqli_query($con, "SELECT * FROM $task_table LEFT JOIN $assigned_table ON $task_table.taskID=$assigned_table.taskID LEFT JOIN $employee_table ON $assigned_table.employeeEmail=$employee_table.email LEFT JOIN $status_table ON $task_table.status=$status_table.statusID WHERE $task_table.taskID='$tid'"));
  ?>
 <link href="../lib/font-awesome/css/font-awesome.css" rel="stylesheet">
     <link href="../lib/Ionicons/css/ionicons.css" rel="stylesheet">
@@ -41,12 +43,12 @@ $omo = mysqli_fetch_assoc(mysqli_query($con,"SELECT * FROM $task_table LEFT JOIN
 		  </thead>
 		  <tbody>
 		  <tr>
-		  <td><?php echo $omo['startDate']?date('d-M-Y',$omo['startDate']):'-'; ?></td>
+		  <td><?php echo $omo['startDate'] ? date('d-M-Y', $omo['startDate']) : '-'; ?></td>
 		  <td><a href="ViewContractor?id=<?php echo $omo['employeeID']; ?>"><?php echo $omo['email']; ?></a></td>
 		  <td><?php echo $omo['phone']; ?></td>
 		  <td><a href="<?php echo $omo['website']; ?>"><?php echo $omo['website']; ?></a></td>
 		  <td><?php echo $omo['sdetail']; ?></td>
-		  <td><?php echo $omo['duration']." hours"; ?></td>
+		  <td><?php echo $omo['duration'].' hours'; ?></td>
 		  <td><button onclick="del_con(this.value)" id="btnDelete" type="submit" value="<?php echo $omo['employeeEmail']; ?>" class="btn btn-info">Delete</button></td>
                 
 		  </tr>

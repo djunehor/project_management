@@ -1,47 +1,46 @@
 <?php
 /**
- * @package dompdf
  * @link    http://dompdf.github.com/
+ *
  * @author  Benj Carson <benjcarson@digitaljunkies.ca>
  * @author  Brian Sweeney <eclecticgeek@gmail.com>
  * @author  Fabien Ménager <fabien.menager@gmail.com>
  * @license http://www.gnu.org/copyleft/lesser.html GNU Lesser General Public License
  */
+
 namespace Dompdf\FrameDecorator;
 
 use Dompdf\Dompdf;
-use Dompdf\Frame;
 use Dompdf\Exception;
+use Dompdf\Frame;
 
 /**
- * Decorates Frame objects for text layout
- *
- * @access  private
- * @package dompdf
+ * Decorates Frame objects for text layout.
  */
 class Text extends AbstractFrameDecorator
 {
-
     // protected members
     protected $_text_spacing;
 
     /**
      * Text constructor.
-     * @param Frame $frame
+     *
+     * @param Frame  $frame
      * @param Dompdf $dompdf
+     *
      * @throws Exception
      */
-    function __construct(Frame $frame, Dompdf $dompdf)
+    public function __construct(Frame $frame, Dompdf $dompdf)
     {
         if (!$frame->is_text_node()) {
-            throw new Exception("Text_Decorator can only be applied to #text nodes.");
+            throw new Exception('Text_Decorator can only be applied to #text nodes.');
         }
 
         parent::__construct($frame, $dompdf);
         $this->_text_spacing = null;
     }
 
-    function reset()
+    public function reset()
     {
         parent::reset();
         $this->_text_spacing = null;
@@ -52,7 +51,7 @@ class Text extends AbstractFrameDecorator
     /**
      * @return null
      */
-    function get_text_spacing()
+    public function get_text_spacing()
     {
         return $this->_text_spacing;
     }
@@ -60,7 +59,7 @@ class Text extends AbstractFrameDecorator
     /**
      * @return string
      */
-    function get_text()
+    public function get_text()
     {
         // FIXME: this should be in a child class (and is incorrect)
 //    if ( $this->_frame->get_style()->content !== "normal" ) {
@@ -82,7 +81,7 @@ class Text extends AbstractFrameDecorator
     //........................................................................
 
     /**
-     * Vertical margins & padding do not apply to text frames
+     * Vertical margins & padding do not apply to text frames.
      *
      * http://www.w3.org/TR/CSS21/visudet.html#inline-non-replaced:
      *
@@ -93,7 +92,7 @@ class Text extends AbstractFrameDecorator
      *
      * @return float|int
      */
-    function get_margin_height()
+    public function get_margin_height()
     {
         // This function is called in add_frame_to_line() and is used to
         // determine the line height, so we actually want to return the
@@ -116,10 +115,10 @@ class Text extends AbstractFrameDecorator
     /**
      * @return array
      */
-    function get_padding_box()
+    public function get_padding_box()
     {
         $pb = $this->_frame->get_padding_box();
-        $pb[3] = $pb["h"] = $this->_frame->get_style()->height;
+        $pb[3] = $pb['h'] = $this->_frame->get_style()->height;
 
         return $pb;
     }
@@ -127,30 +126,30 @@ class Text extends AbstractFrameDecorator
     /**
      * @param $spacing
      */
-    function set_text_spacing($spacing)
+    public function set_text_spacing($spacing)
     {
         $style = $this->_frame->get_style();
 
         $this->_text_spacing = $spacing;
-        $char_spacing = (float)$style->length_in_pt($style->letter_spacing);
+        $char_spacing = (float) $style->length_in_pt($style->letter_spacing);
 
         // Re-adjust our width to account for the change in spacing
         $style->width = $this->_dompdf->getFontMetrics()->getTextWidth($this->get_text(), $style->font_family, $style->font_size, $spacing, $char_spacing);
     }
 
     /**
-     *  Recalculate the text width
+     *  Recalculate the text width.
      *
      * @return float
      */
-    function recalculate_width()
+    public function recalculate_width()
     {
         $style = $this->get_style();
         $text = $this->get_text();
         $size = $style->font_size;
         $font = $style->font_family;
-        $word_spacing = (float)$style->length_in_pt($style->word_spacing);
-        $char_spacing = (float)$style->length_in_pt($style->letter_spacing);
+        $word_spacing = (float) $style->length_in_pt($style->word_spacing);
+        $char_spacing = (float) $style->length_in_pt($style->letter_spacing);
 
         return $style->width = $this->_dompdf->getFontMetrics()->getTextWidth($text, $font, $size, $word_spacing, $char_spacing);
     }
@@ -162,12 +161,13 @@ class Text extends AbstractFrameDecorator
      * text is added a sibling frame following this one and is returned.
      *
      * @param $offset
+     *
      * @return Frame|null
      */
-    function split_text($offset)
+    public function split_text($offset)
     {
         if ($offset == 0) {
-            return null;
+            return;
         }
 
         $split = $this->_frame->get_node()->splitText($offset);
@@ -188,7 +188,7 @@ class Text extends AbstractFrameDecorator
      * @param $offset
      * @param $count
      */
-    function delete_text($offset, $count)
+    public function delete_text($offset, $count)
     {
         $this->_frame->get_node()->deleteData($offset, $count);
     }
@@ -196,7 +196,7 @@ class Text extends AbstractFrameDecorator
     /**
      * @param $text
      */
-    function set_text($text)
+    public function set_text($text)
     {
         $this->_frame->get_node()->data = $text;
     }

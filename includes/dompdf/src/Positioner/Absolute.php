@@ -1,7 +1,7 @@
 <?php
 /**
- * @package dompdf
  * @link    http://dompdf.github.com/
+ *
  * @author  Benj Carson <benjcarson@digitaljunkies.ca>
  * @license http://www.gnu.org/copyleft/lesser.html GNU Lesser General Public License
  */
@@ -11,15 +11,14 @@ namespace Dompdf\Positioner;
 use Dompdf\FrameDecorator\AbstractFrameDecorator;
 
 /**
- * Positions absolutely positioned frames
+ * Positions absolutely positioned frames.
  */
 class Absolute extends AbstractPositioner
 {
-
     /**
      * @param AbstractFrameDecorator $frame
      */
-    function position(AbstractFrameDecorator $frame)
+    public function position(AbstractFrameDecorator $frame)
     {
         $style = $frame->get_style();
 
@@ -32,12 +31,12 @@ class Absolute extends AbstractPositioner
         $bottom = $style->length_in_pt($style->bottom, $h);
         $left = $style->length_in_pt($style->left, $w);
 
-        if ($p && !($left === "auto" && $right === "auto")) {
+        if ($p && !($left === 'auto' && $right === 'auto')) {
             // Get the parent's padding box (see http://www.w3.org/TR/CSS21/visuren.html#propdef-top)
             list($x, $y, $w, $h) = $p->get_padding_box();
         }
 
-        list($width, $height) = array($frame->get_margin_width(), $frame->get_margin_height());
+        list($width, $height) = [$frame->get_margin_width(), $frame->get_margin_height()];
 
         $orig_style = $frame->get_original_style();
         $orig_width = $orig_style->width;
@@ -56,12 +55,12 @@ class Absolute extends AbstractPositioner
          * right=fixed |     G     |     H      |
          *****************************/
 
-        if ($left === "auto") {
-            if ($right === "auto") {
+        if ($left === 'auto') {
+            if ($right === 'auto') {
                 // A or E - Keep the frame at the same position
                 $x = $x + $frame->find_block_parent()->get_current_line_box()->w;
             } else {
-                if ($orig_width === "auto") {
+                if ($orig_width === 'auto') {
                     // C
                     $x += $w - $width - $right;
                 } else {
@@ -70,45 +69,45 @@ class Absolute extends AbstractPositioner
                 }
             }
         } else {
-            if ($right === "auto") {
+            if ($right === 'auto') {
                 // B or F
-                $x += (float)$left;
+                $x += (float) $left;
             } else {
-                if ($orig_width === "auto") {
+                if ($orig_width === 'auto') {
                     // D - TODO change width
-                    $x += (float)$left;
+                    $x += (float) $left;
                 } else {
                     // H - Everything is fixed: left + width win
-                    $x += (float)$left;
+                    $x += (float) $left;
                 }
             }
         }
 
         // The same vertically
-        if ($top === "auto") {
-            if ($bottom === "auto") {
+        if ($top === 'auto') {
+            if ($bottom === 'auto') {
                 // A or E - Keep the frame at the same position
                 $y = $frame->find_block_parent()->get_current_line_box()->y;
             } else {
-                if ($orig_height === "auto") {
+                if ($orig_height === 'auto') {
                     // C
-                    $y += (float)$h - $height - (float)$bottom;
+                    $y += (float) $h - $height - (float) $bottom;
                 } else {
                     // G
-                    $y += (float)$h - $height - (float)$bottom;
+                    $y += (float) $h - $height - (float) $bottom;
                 }
             }
         } else {
-            if ($bottom === "auto") {
+            if ($bottom === 'auto') {
                 // B or F
-                $y += (float)$top;
+                $y += (float) $top;
             } else {
-                if ($orig_height === "auto") {
+                if ($orig_height === 'auto') {
                     // D - TODO change height
-                    $y += (float)$top;
+                    $y += (float) $top;
                 } else {
                     // H - Everything is fixed: top + height win
-                    $y += (float)$top;
+                    $y += (float) $top;
                 }
             }
         }

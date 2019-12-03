@@ -1,11 +1,13 @@
 <?php
 include '../includes/config.php';
 $tid = filter_var($_GET['id'], FILTER_SANITIZE_STRING);
-if(mysqli_num_rows(mysqli_query($con,"SELECT * FROM $employee_table WHERE employeeID='$tid'"))!=1) { header('HTTP/1.0 404 Forbidden');
-          exit;}
-$page_name = "View Contractor";
+if (mysqli_num_rows(mysqli_query($con, "SELECT * FROM $employee_table WHERE employeeID='$tid'")) != 1) {
+    header('HTTP/1.0 404 Forbidden');
+    exit;
+}
+$page_name = 'View Contractor';
 include '../views/manager_header.php';
-$omo = mysqli_fetch_assoc(mysqli_query($con,"SELECT * FROM $employee_table WHERE employeeID='$tid'"));
+$omo = mysqli_fetch_assoc(mysqli_query($con, "SELECT * FROM $employee_table WHERE employeeID='$tid'"));
  ?>
 <link href="../lib/font-awesome/css/font-awesome.css" rel="stylesheet">
     <link href="../lib/Ionicons/css/ionicons.css" rel="stylesheet">

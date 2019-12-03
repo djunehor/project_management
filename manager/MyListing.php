@@ -1,5 +1,5 @@
 <?php
-$page_name = "All Listings";
+$page_name = 'All Listings';
 include '../views/manager_header.php'; ?>
  <link href="../lib/font-awesome/css/font-awesome.css" rel="stylesheet">
     <link href="../lib/Ionicons/css/ionicons.css" rel="stylesheet">
@@ -37,23 +37,23 @@ include '../views/manager_header.php'; ?>
               </thead>
 			  <tbody>
 			  <?php
-			  $q8 = mysqli_query($con,"SELECT * FROM $apartment_table
+              $q8 = mysqli_query($con, "SELECT * FROM $apartment_table
 			  LEFT JOIN $user_table ON $apartment_table.agentID=$user_table.managerID 
 LEFT JOIN $listing_type ON $apartment_table.ltype=$listing_type.id
 LEFT JOIN $apartment_type ON $apartment_table.atype=$apartment_type.id
-WHERE agentID='$managerID'");				
-			   while($v = mysqli_fetch_assoc($q8))
- {
-	 ?>
+WHERE agentID='$managerID'");
+               while ($v = mysqli_fetch_assoc($q8)) {
+                   ?>
                 <tr class="<?php echo $v['aID']; ?>">
                   <td><a href="../listing?id=<?php echo $v['aID']; ?>"><?php echo $v['name']; ?></a></td>
-                  <td><?php echo substr(html_entity_decode(htmlspecialchars_decode($v['info'])),0,100); ?>...</td>
-                  <td><?php echo "&#x20A6;".number_format($v['price']); ?></td>
-                  <td><?php echo date('d M Y',$v['addDate']); ?></td>
+                  <td><?php echo substr(html_entity_decode(htmlspecialchars_decode($v['info'])), 0, 100); ?>...</td>
+                  <td><?php echo '&#x20A6;'.number_format($v['price']); ?></td>
+                  <td><?php echo date('d M Y', $v['addDate']); ?></td>
 				  <td><form action="EditListing?id=<?php echo $v['aID']; ?>"><button id="btnEdit" type="submit" class="btn btn-info">Edit</button></form></td>
                   <td><button onclick="del_listing(this.value)" id="btnDelete" type="submit" value="<?php echo $v['aID']; ?>" class="btn btn-danger">Delete</button></td>
                 </tr>
- <?php } ?>
+ <?php
+               } ?>
 				 </tbody>
             </table>
           </div><!-- table-wrapper -->

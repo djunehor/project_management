@@ -1,5 +1,5 @@
 <?php
-$page_name = "Open Chat";
+$page_name = 'Open Chat';
 include '../views/manager_header.php'; ?>
  <link href="../lib/font-awesome/css/font-awesome.css" rel="stylesheet">
     <link href="../lib/Ionicons/css/ionicons.css" rel="stylesheet">

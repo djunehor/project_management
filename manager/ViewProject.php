@@ -1,13 +1,12 @@
 <?php
 include '../includes/config.php';
 $tid = filter_var($_GET['id'], FILTER_SANITIZE_STRING);
-if(mysqli_num_rows(mysqli_query($con,"SELECT * FROM $project_table WHERE projectID='$tid'"))!=1)
-{
-header('HTTP/1.0 403 Forbidden');
-exit;
+if (mysqli_num_rows(mysqli_query($con, "SELECT * FROM $project_table WHERE projectID='$tid'")) != 1) {
+    header('HTTP/1.0 403 Forbidden');
+    exit;
 }
-$omo = mysqli_fetch_assoc(mysqli_query($con,"SELECT * FROM $project_table WHERE projectID='$tid'"));
-$page_name = $omo['title']." | Projects";
+$omo = mysqli_fetch_assoc(mysqli_query($con, "SELECT * FROM $project_table WHERE projectID='$tid'"));
+$page_name = $omo['title'].' | Projects';
 include '../views/manager_header.php';
  ?>
 <link href="../lib/font-awesome/css/font-awesome.css" rel="stylesheet">
@@ -42,11 +41,11 @@ include '../views/manager_header.php';
 		  </thead>
 		  <tbody>
 		  <tr>
-		  <td><?php echo date('d-M-Y',$omo['startDate']); ?></td>
-		  <td><?php echo date('d-M-Y',$omo['endDate']); ?></td>
-		  <td><?php echo "&#x20A6;".number_format($omo['budget']); ?></td>
-		  <td><?php $s = mysqli_fetch_assoc(mysqli_query($con,"SELECT sdetail FROM $status_table WHERE statusID='".$omo['status']."'")); echo $s['sdetail']; ?></td>
-		  <?php if($omo['projectStatus']==0) { ?>
+		  <td><?php echo date('d-M-Y', $omo['startDate']); ?></td>
+		  <td><?php echo date('d-M-Y', $omo['endDate']); ?></td>
+		  <td><?php echo '&#x20A6;'.number_format($omo['budget']); ?></td>
+		  <td><?php $s = mysqli_fetch_assoc(mysqli_query($con, "SELECT sdetail FROM $status_table WHERE statusID='".$omo['status']."'")); echo $s['sdetail']; ?></td>
+		  <?php if ($omo['projectStatus'] == 0) { ?>
                   <td><button onclick="start_project(this.value)" id="btnStart" type="submit" value="<?php echo $omo['projectID']; ?>" class="btn btn-success">Mark As started</button></td> <?php } ?>
                   
 		  </tr>
@@ -68,21 +67,22 @@ include '../views/manager_header.php';
 		  </thead>
 		  <tbody>
 <?php
-$g = mysqli_query($con,"SELECT * FROM $milestone_table WHERE projectID='".$omo['projectID']."'");
-while($om = mysqli_fetch_assoc($g))
-{
-?>	
+$g = mysqli_query($con, "SELECT * FROM $milestone_table WHERE projectID='".$omo['projectID']."'");
+while ($om = mysqli_fetch_assoc($g)) {
+    ?>	
 <tr class="<?php echo $om['milestoneID']; ?>">
 		  <td><?php echo $om['milestoneID']; ?></td>
 		  <td><a href="ViewMilestone?id=<?php echo $om['milestoneID']; ?>"><?php echo $om['mtitle']; ?></a></td>
-		  <td><?php echo substr(html_entity_decode(htmlspecialchars_decode($om['mdetail'])),0,100); ?></td>
-		  <td><?php echo date('d-M-Y',$om['startDate']); ?></td>
-		  <td><?php $s = mysqli_fetch_assoc(mysqli_query($con,"SELECT detail FROM $tag_table WHERE tagID='".$om['tagID']."'")); echo $s['detail']; ?></td>
+		  <td><?php echo substr(html_entity_decode(htmlspecialchars_decode($om['mdetail'])), 0, 100); ?></td>
+		  <td><?php echo date('d-M-Y', $om['startDate']); ?></td>
+		  <td><?php $s = mysqli_fetch_assoc(mysqli_query($con, "SELECT detail FROM $tag_table WHERE tagID='".$om['tagID']."'"));
+    echo $s['detail']; ?></td>
 <td><form action="EditMilestone?id=<?php echo $om['milestoneID']; ?>"><button id="btnEdit" type="submit" class="btn btn-info">Edit</button></form></td>
                   <td><button onclick="del_mile(this.value)" id="btnDelete" type="submit" value="<?php echo $om['milestoneID']; ?>" class="btn btn-danger">Delete</button></td>
                		 
 		 </tr>
-<?php } ?>
+<?php
+} ?>
 		  </tbody><tfoot><tr><a style="text-align:right;" href="NewMilestone">Add New Milestone</a></tr></tfoot>
 				</table>
 				<br><hr>
@@ -105,25 +105,25 @@ while($om = mysqli_fetch_assoc($g))
 		  </thead>
 		  <tbody>
 <?php
-$g = mysqli_query($con,"SELECT * FROM $task_table WHERE projectID='".$omo['projectID']."'");
-while($o = mysqli_fetch_assoc($g))
-{
-?>	
+$g = mysqli_query($con, "SELECT * FROM $task_table WHERE projectID='".$omo['projectID']."'");
+while ($o = mysqli_fetch_assoc($g)) {
+    ?>	
 <tr class="<?php echo $o['taskID']; ?>">
 		  <td><?php echo $o['taskID']; ?></td>
 		  <td><a href="ViewTask?id=<?php echo $omo['taskID']; ?>"><?php echo $o['ttitle']; ?></a></td>
-		  <td><?php echo substr(html_entity_decode(htmlspecialchars_decode($o['tdetail'])),0,50); ?></td>
-		  <td><?php echo $o['duration']." hours"; ?></td>
-		  <td><?php $s = mysqli_fetch_assoc(mysqli_query($con,"SELECT * FROM $assigned_table LEFT JOIN $status_table ON $assigned_table.astatus=$status_table.statusID WHERE taskID='".$o['taskID']."'"));
-		  echo $s['sdetail']?$s['sdetail']:'Not Assigned'; ?></td>
+		  <td><?php echo substr(html_entity_decode(htmlspecialchars_decode($o['tdetail'])), 0, 50); ?></td>
+		  <td><?php echo $o['duration'].' hours'; ?></td>
+		  <td><?php $s = mysqli_fetch_assoc(mysqli_query($con, "SELECT * FROM $assigned_table LEFT JOIN $status_table ON $assigned_table.astatus=$status_table.statusID WHERE taskID='".$o['taskID']."'"));
+    echo $s['sdetail'] ? $s['sdetail'] : 'Not Assigned'; ?></td>
 		  
-		  <td><?php echo $s['startDate']?date('d-M-Y',$s['startDate']):'Not Assigned'; ?></td>
-		  <td><?php echo $s['employeeEmail']?$s['employeeEmail']:'Not Assigned';?></td>
+		  <td><?php echo $s['startDate'] ? date('d-M-Y', $s['startDate']) : 'Not Assigned'; ?></td>
+		  <td><?php echo $s['employeeEmail'] ? $s['employeeEmail'] : 'Not Assigned'; ?></td>
 		  <td><form action="EditTask?id=<?php echo $o['taskID']; ?>"><button id="btnEdit" type="submit" class="btn btn-info">Edit</button></form></td>
                   <td><button onclick="del_task(this.value)" id="btnDelete" type="submit" value="<?php echo $o['taskID']; ?>" class="btn btn-danger">Delete</button></td>
                 
 		  </tr>
-<?php } ?>
+<?php
+} ?>
 		  </tbody><tfoot><tr><a style="text-align:right;" href="NewTask">Add New Task</a></tr></tfoot>
 				</table>
 				<br><hr>
@@ -137,18 +137,18 @@ while($o = mysqli_fetch_assoc($g))
 		  </thead>
 		  <tbody>
 <?php
-$l = mysqli_query($con,"SELECT * FROM $projectlog WHERE projectID='".$omo['projectID']."'");
-while($f = mysqli_fetch_assoc($l))
-{
-?>		  <tr>
+$l = mysqli_query($con, "SELECT * FROM $projectlog WHERE projectID='".$omo['projectID']."'");
+while ($f = mysqli_fetch_assoc($l)) {
+    ?>		  <tr>
 		  <td><?php echo html_entity_decode(htmlspecialchars_decode($f['detail'])); ?></td>
-		  <td><?php echo date('d-M-Y g:i a',$f['addDate']); ?></td>
+		  <td><?php echo date('d-M-Y g:i a', $f['addDate']); ?></td>
 		  </tr>
-<?php } ?>
+<?php
+} ?>
 		  </tbody>
 				</table>
 				     <script src="../lib/jquery/jquery.js"></script>
-				<?php include_once('../includes/functions.php'); ?>
+				<?php include_once '../includes/functions.php'; ?>
  <link href="../css/calendar-style.css" rel="stylesheet">	
 <div id="calendar_div" style="border: 1px solid blue;">
 	<?php echo getCalender(); ?>

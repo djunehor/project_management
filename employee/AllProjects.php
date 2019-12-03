@@ -1,5 +1,5 @@
 <?php
-$page_name = "All Projects";
+$page_name = 'All Projects';
 include '../views/manager_header.php'; ?>
  <link href="../lib/font-awesome/css/font-awesome.css" rel="stylesheet">
     <link href="../lib/Ionicons/css/ionicons.css" rel="stylesheet">
@@ -36,20 +36,20 @@ include '../views/manager_header.php'; ?>
               </thead>
 			  <tbody>
 			  <?php
-			  $q8 = mysqli_query($con,"SELECT * FROM $project_table INNER JOIN $status_table
-ON $project_table.projectStatus=$status_table.statusID WHERE managerID='$managerID'");				
-			   while($v = mysqli_fetch_assoc($q8))
- {
-	 ?>
+              $q8 = mysqli_query($con, "SELECT * FROM $project_table INNER JOIN $status_table
+ON $project_table.projectStatus=$status_table.statusID WHERE managerID='$managerID'");
+               while ($v = mysqli_fetch_assoc($q8)) {
+                   ?>
                 <tr>
                   <td><?php echo $v['title']; ?></td>
-                  <td><?php echo html_entity_decode(htmlspecialchars_decode(substr($v['detail'],0,50))); ?>...</td>
-                  <td><?php echo "NGN".number_format($v['budget']); ?></td>
-                  <td><?php echo date('d M Y',$v['startDate']); ?></td>
-                  <td><?php echo date('d M Y',$v['endDate']); ?></td>
+                  <td><?php echo html_entity_decode(htmlspecialchars_decode(substr($v['detail'], 0, 50))); ?>...</td>
+                  <td><?php echo 'NGN'.number_format($v['budget']); ?></td>
+                  <td><?php echo date('d M Y', $v['startDate']); ?></td>
+                  <td><?php echo date('d M Y', $v['endDate']); ?></td>
                   <td><?php echo $v['sdetail']; ?></td>
                 </tr>
- <?php } ?>
+ <?php
+               } ?>
 				 </tbody>
             </table>
           </div><!-- table-wrapper -->

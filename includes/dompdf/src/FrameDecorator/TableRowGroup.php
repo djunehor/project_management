@@ -1,48 +1,47 @@
 <?php
 /**
- * @package dompdf
  * @link    http://dompdf.github.com/
+ *
  * @author  Benj Carson <benjcarson@digitaljunkies.ca>
  * @license http://www.gnu.org/copyleft/lesser.html GNU Lesser General Public License
  */
+
 namespace Dompdf\FrameDecorator;
 
 use Dompdf\Dompdf;
 use Dompdf\Frame;
 
 /**
- * Table row group decorator
+ * Table row group decorator.
  *
  * Overrides split() method for tbody, thead & tfoot elements
- *
- * @package dompdf
  */
 class TableRowGroup extends AbstractFrameDecorator
 {
-
     /**
-     * Class constructor
+     * Class constructor.
      *
-     * @param Frame $frame   Frame to decorate
+     * @param Frame  $frame  Frame to decorate
      * @param Dompdf $dompdf Current dompdf instance
      */
-    function __construct(Frame $frame, Dompdf $dompdf)
+    public function __construct(Frame $frame, Dompdf $dompdf)
     {
         parent::__construct($frame, $dompdf);
     }
 
     /**
-     * Override split() to remove all child rows and this element from the cellmap
+     * Override split() to remove all child rows and this element from the cellmap.
      *
      * @param Frame $child
-     * @param bool $force_pagebreak
+     * @param bool  $force_pagebreak
      *
      * @return void
      */
-    function split(Frame $child = null, $force_pagebreak = false)
+    public function split(Frame $child = null, $force_pagebreak = false)
     {
         if (is_null($child)) {
             parent::split();
+
             return;
         }
 
@@ -60,6 +59,7 @@ class TableRowGroup extends AbstractFrameDecorator
         if ($child === $this->get_first_child()) {
             $cellmap->remove_row_group($this);
             parent::split();
+
             return;
         }
 
@@ -67,4 +67,3 @@ class TableRowGroup extends AbstractFrameDecorator
         parent::split($child);
     }
 }
-

@@ -1,5 +1,5 @@
 <?php
-$page_name = "All Contractors";
+$page_name = 'All Contractors';
 include '../views/manager_header.php'; ?>
  <link href="../lib/font-awesome/css/font-awesome.css" rel="stylesheet">
     <link href="../lib/Ionicons/css/ionicons.css" rel="stylesheet">
@@ -39,21 +39,22 @@ include '../views/manager_header.php'; ?>
               </thead>
 			  <tbody>
 			  <?php
-			  $q8 = mysqli_query($con,"select * from $project_table inner join $task_table on $project_table.projectID=$task_table.projectID inner join $assigned_table on $task_table.taskID=$assigned_table.taskID inner join $employee_table on $assigned_table.employeeEmail=$employee_table.email where $project_table.managerID='$managerID'") or die(mysqli_error($con));				
-			   while($v = mysqli_fetch_assoc($q8))
- {
-	 ?>
+              $q8 = mysqli_query($con, "select * from $project_table inner join $task_table on $project_table.projectID=$task_table.projectID inner join $assigned_table on $task_table.taskID=$assigned_table.taskID inner join $employee_table on $assigned_table.employeeEmail=$employee_table.email where $project_table.managerID='$managerID'") or die(mysqli_error($con));
+               while ($v = mysqli_fetch_assoc($q8)) {
+                   ?>
                 <tr class="<?php echo $v['id']; ?>">
                   <td><a href="ViewTask?id=<?php echo $v['taskID']; ?>"><?php echo $v['ttitle']; ?></a></td>
-                  <td><?php echo $v['duration']." hours"; ?></td>
-                  <td><?php $e=mysqli_fetch_assoc(mysqli_query($con,"SELECT sdetail FROM $status_table WHERE statusID='".$v['astatus']."'")); echo $e['sdetail']; ?></td>
+                  <td><?php echo $v['duration'].' hours'; ?></td>
+                  <td><?php $e = mysqli_fetch_assoc(mysqli_query($con, "SELECT sdetail FROM $status_table WHERE statusID='".$v['astatus']."'"));
+                   echo $e['sdetail']; ?></td>
                   <td><?php echo $v['fullname']; ?></td>
                   <td><a href="ViewContractor?id=<?php echo $v['employeeID']; ?>"><?php echo $v['email']; ?></a></td>
                   <td><a href="<?php echo $v['website']; ?>"><?php echo $v['website']; ?></a></td>
                   <td><a href="tel:<?php echo $v['phone']; ?>"><?php echo $v['phone']; ?></a></td>
 				  <td><button onclick="del_con(this.value)" id="btnDelete" type="submit" value="<?php echo $v['employeeEmail']; ?>" class="btn btn-info">Delete</button></td>
                 </tr>
- <?php } ?>
+ <?php
+               } ?>
 				 </tbody>
             </table>
           </div><!-- table-wrapper -->

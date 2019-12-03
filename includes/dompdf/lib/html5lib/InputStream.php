@@ -29,14 +29,15 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // /* */ indicates verbatim text from the HTML 5 specification
 // // indicates regular comments
 
-class HTML5_InputStream {
+class HTML5_InputStream
+{
     /**
      * The string data we're parsing.
      */
     private $data;
 
     /**
-     * The current integer byte position we are in $data
+     * The current integer byte position we are in $data.
      */
     private $char;
 
@@ -48,13 +49,15 @@ class HTML5_InputStream {
     /**
      * Parse errors.
      */
-    public $errors = array();
+    public $errors = [];
 
     /**
      * @param $data | Data to parse
+     *
      * @throws Exception
      */
-    public function __construct($data) {
+    public function __construct($data)
+    {
 
         /* Given an encoding, the bytes in the input stream must be
         converted to Unicode characters for the tokeniser, as
@@ -90,10 +93,10 @@ class HTML5_InputStream {
         by U+FFFD REPLACEMENT CHARACTERs. Any occurrences of such
         characters is a parse error. */
         for ($i = 0, $count = substr_count($data, "\0"); $i < $count; $i++) {
-            $this->errors[] = array(
+            $this->errors[] = [
                 'type' => HTML5_Tokenizer::PARSEERROR,
-                'data' => 'null-character'
-            );
+                'data' => 'null-character',
+            ];
         }
         /* U+000D CARRIAGE RETURN (CR) characters and U+000A LINE FEED
         (LF) characters are treated specially. Any CR characters
@@ -103,16 +106,16 @@ class HTML5_InputStream {
         by LF characters, and there are never any CR characters in the
         input to the tokenization stage. */
         $data = str_replace(
-            array(
+            [
                 "\0",
                 "\r\n",
-                "\r"
-            ),
-            array(
+                "\r",
+            ],
+            [
                 "\xEF\xBF\xBD",
                 "\n",
-                "\n"
-            ),
+                "\n",
+            ],
             $data
         );
 
@@ -146,10 +149,10 @@ class HTML5_InputStream {
                 $matches
             );
             for ($i = 0; $i < $count; $i++) {
-                $this->errors[] = array(
+                $this->errors[] = [
                     'type' => HTML5_Tokenizer::PARSEERROR,
-                    'data' => 'invalid-codepoint'
-                );
+                    'data' => 'invalid-codepoint',
+                ];
             }
         } else {
             // XXX: Need non-PCRE impl, probably using substr_count
@@ -157,7 +160,7 @@ class HTML5_InputStream {
 
         $this->data = $data;
         $this->char = 0;
-        $this->EOF  = strlen($data);
+        $this->EOF = strlen($data);
     }
 
     /**
@@ -165,7 +168,8 @@ class HTML5_InputStream {
      *
      * @return int
      */
-    public function getCurrentLine() {
+    public function getCurrentLine()
+    {
         // Check the string isn't empty
         if ($this->EOF) {
             // Add one to $this->char because we want the number for the next
@@ -182,7 +186,8 @@ class HTML5_InputStream {
      *
      * @return int
      */
-    public function getColumnOffset() {
+    public function getColumnOffset()
+    {
         // strrpos is weird, and the offset needs to be negative for what we
         // want (i.e., the last \n before $this->char). This needs to not have
         // one (to make it point to the next character, the one we want the
@@ -216,11 +221,13 @@ class HTML5_InputStream {
 
     /**
      * Retrieve the currently consume character.
+     *
      * @note This performs bounds checking
      *
      * @return bool|string
      */
-    public function char() {
+    public function char()
+    {
         return ($this->char++ < $this->EOF)
             ? $this->data[$this->char - 1]
             : false;
@@ -228,14 +235,17 @@ class HTML5_InputStream {
 
     /**
      * Get all characters until EOF.
+     *
      * @note This performs bounds checking
      *
      * @return string|bool
      */
-    public function remainingChars() {
+    public function remainingChars()
+    {
         if ($this->char < $this->EOF) {
             $data = substr($this->data, $this->char);
             $this->char = $this->EOF;
+
             return $data;
         } else {
             return false;
@@ -248,9 +258,11 @@ class HTML5_InputStream {
      *
      * @param $bytes | Bytes to match.
      * @param null $max
+     *
      * @return bool|string
      */
-    public function charsUntil($bytes, $max = null) {
+    public function charsUntil($bytes, $max = null)
+    {
         if ($this->char < $this->EOF) {
             if ($max === 0 || $max) {
                 $len = strcspn($this->data, $bytes, $this->char, $max);
@@ -259,6 +271,7 @@ class HTML5_InputStream {
             }
             $string = (string) substr($this->data, $this->char, $len);
             $this->char += $len;
+
             return $string;
         } else {
             return false;
@@ -271,9 +284,11 @@ class HTML5_InputStream {
      *
      * @param $bytes | Bytes to match.
      * @param null $max
+     *
      * @return bool|string
      */
-    public function charsWhile($bytes, $max = null) {
+    public function charsWhile($bytes, $max = null)
+    {
         if ($this->char < $this->EOF) {
             if ($max === 0 || $max) {
                 $len = strspn($this->data, $bytes, $this->char, $max);
@@ -282,6 +297,7 @@ class HTML5_InputStream {
             }
             $string = (string) substr($this->data, $this->char, $len);
             $this->char += $len;
+
             return $string;
         } else {
             return false;
@@ -291,7 +307,8 @@ class HTML5_InputStream {
     /**
      * Unconsume one character.
      */
-    public function unget() {
+    public function unget()
+    {
         if ($this->char <= $this->EOF) {
             $this->char--;
         }

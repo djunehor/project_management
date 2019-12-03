@@ -4,13 +4,12 @@
 
 class HTML5_Data
 {
-
     // at some point this should be moved to a .ser file. Another
     // possible optimization is to give UTF-8 bytes, not Unicode
     // codepoints
     // XXX: Not quite sure why it's named this; this is
     // actually the numeric entity dereference table.
-    protected static $realCodepointTable = array(
+    protected static $realCodepointTable = [
         0x00 => 0xFFFD, // REPLACEMENT CHARACTER
         0x0D => 0x000A, // LINE FEED (LF)
         0x80 => 0x20AC, // EURO SIGN ('€')
@@ -45,7 +44,7 @@ class HTML5_Data
         0x9D => 0x009D, // <control>
         0x9E => 0x017E, // LATIN SMALL LETTER Z WITH CARON ('ž')
         0x9F => 0x0178, // LATIN CAPITAL LETTER Y WITH DIAERESIS ('Ÿ')
-    );
+    ];
 
     protected static $namedCharacterReferences;
 
@@ -55,7 +54,8 @@ class HTML5_Data
      * Returns the "real" Unicode codepoint of a malformed character
      * reference.
      */
-    public static function getRealCodepoint($ref) {
+    public static function getRealCodepoint($ref)
+    {
         if (!isset(self::$realCodepointTable[$ref])) {
             return false;
         } else {
@@ -63,20 +63,24 @@ class HTML5_Data
         }
     }
 
-    public static function getNamedCharacterReferences() {
+    public static function getNamedCharacterReferences()
+    {
         if (!self::$namedCharacterReferences) {
             self::$namedCharacterReferences = unserialize(
-                file_get_contents(dirname(__FILE__) . '/named-character-references.ser'));
+                file_get_contents(dirname(__FILE__).'/named-character-references.ser'));
         }
+
         return self::$namedCharacterReferences;
     }
 
     /**
      * Converts a Unicode codepoint to sequence of UTF-8 bytes.
+     *
      * @note Shamelessly stolen from HTML Purifier, which is also
      *       shamelessly stolen from Feyd (which is in public domain).
      */
-    public static function utf8chr($code) {
+    public static function utf8chr($code)
+    {
         /* We don't care: we live dangerously
          * if($code > 0x10FFFF or $code < 0x0 or
           ($code >= 0xD800 and $code <= 0xDFFF) ) {
@@ -93,7 +97,7 @@ class HTML5_Data
             // set up bits for UTF-8
             $x = ($code & 0x3F) | 0x80;
             if ($code < 0x800) {
-               $y = (($code & 0x7FF) >> 6) | 0xC0;
+                $y = (($code & 0x7FF) >> 6) | 0xC0;
             } else {
                 $y = (($code & 0xFC0) >> 6) | 0x80;
                 if ($code < 0x10000) {
@@ -119,5 +123,4 @@ class HTML5_Data
 
         return $ret;
     }
-
 }

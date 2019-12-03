@@ -1,25 +1,24 @@
 <?php
 /**
- * @package dompdf
  * @link    http://dompdf.github.com/
+ *
  * @author  Benj Carson <benjcarson@digitaljunkies.ca>
  * @author  Fabien Ménager <fabien.menager@gmail.com>
  * @license http://www.gnu.org/copyleft/lesser.html GNU Lesser General Public License
  */
+
 namespace Dompdf\Adapter;
 
 use Dompdf\Canvas;
 use Dompdf\Dompdf;
-use Dompdf\Image\Cache;
 use Dompdf\Helpers;
+use Dompdf\Image\Cache;
 
 /**
- * Image rendering interface
+ * Image rendering interface.
  *
  * Renders to an image format supported by GD (jpeg, gif, png, xpm).
  * Not super-useful day-to-day but handy nonetheless
- *
- * @package dompdf
  */
 class GD implements Canvas
 {
@@ -29,98 +28,98 @@ class GD implements Canvas
     private $_dompdf;
 
     /**
-     * Resource handle for the image
+     * Resource handle for the image.
      *
      * @var resource
      */
     private $_img;
 
     /**
-     * Resource handle for the image
+     * Resource handle for the image.
      *
      * @var resource[]
      */
     private $_imgs;
 
     /**
-     * Apparent canvas width in pixels
+     * Apparent canvas width in pixels.
      *
      * @var int
      */
     private $_width;
 
     /**
-     * Apparent canvas height in pixels
+     * Apparent canvas height in pixels.
      *
      * @var int
      */
     private $_height;
 
     /**
-     * Actual image width in pixels
+     * Actual image width in pixels.
      *
      * @var int
      */
     private $_actual_width;
 
     /**
-     * Actual image height in pixels
+     * Actual image height in pixels.
      *
      * @var int
      */
     private $_actual_height;
 
     /**
-     * Current page number
+     * Current page number.
      *
      * @var int
      */
     private $_page_number;
 
     /**
-     * Total number of pages
+     * Total number of pages.
      *
      * @var int
      */
     private $_page_count;
 
     /**
-     * Image antialias factor
+     * Image antialias factor.
      *
      * @var float
      */
     private $_aa_factor;
 
     /**
-     * Allocated colors
+     * Allocated colors.
      *
      * @var array
      */
     private $_colors;
 
     /**
-     * Background color
+     * Background color.
      *
      * @var int
      */
     private $_bg_color;
 
     /**
-     * Background color array
+     * Background color array.
      *
      * @var int
      */
     private $_bg_color_array;
 
     /**
-     * Actual DPI
+     * Actual DPI.
      *
      * @var int
      */
     private $dpi;
 
     /**
-     * Amount to scale font sizes
+     * Amount to scale font sizes.
      *
      * Font sizes are 72 DPI, GD internally uses 96. Scale them proportionally.
      * 72 / 96 = 0.75.
@@ -130,29 +129,28 @@ class GD implements Canvas
     const FONT_SCALE = 0.75;
 
     /**
-     * Class constructor
+     * Class constructor.
      *
-     * @param mixed $size The size of image to create: array(x1,y1,x2,y2) or "letter", "legal", etc.
+     * @param mixed  $size        The size of image to create: array(x1,y1,x2,y2) or "letter", "legal", etc.
      * @param string $orientation The orientation of the document (either 'landscape' or 'portrait')
      * @param Dompdf $dompdf
-     * @param float $aa_factor Anti-aliasing factor, 1 for no AA
-     * @param array $bg_color Image background color: array(r,g,b,a), 0 <= r,g,b,a <= 1
+     * @param float  $aa_factor   Anti-aliasing factor, 1 for no AA
+     * @param array  $bg_color    Image background color: array(r,g,b,a), 0 <= r,g,b,a <= 1
      */
-    public function __construct($size = 'letter', $orientation = "portrait", Dompdf $dompdf, $aa_factor = 1.0, $bg_color = array(1, 1, 1, 0))
+    public function __construct($size, $orientation, Dompdf $dompdf, $aa_factor = 1.0, $bg_color = [1, 1, 1, 0])
     {
-
         if (!is_array($size)) {
             $size = strtolower($size);
 
             if (isset(CPDF::$PAPER_SIZES[$size])) {
                 $size = CPDF::$PAPER_SIZES[$size];
             } else {
-                $size = CPDF::$PAPER_SIZES["letter"];
+                $size = CPDF::$PAPER_SIZES['letter'];
             }
         }
 
-        if (strtolower($orientation) === "landscape") {
-            list($size[2], $size[3]) = array($size[3], $size[2]);
+        if (strtolower($orientation) === 'landscape') {
+            list($size[2], $size[3]) = [$size[3], $size[2]];
         }
 
         $this->_dompdf = $dompdf;
@@ -176,7 +174,7 @@ class GD implements Canvas
 
         if (is_null($bg_color) || !is_array($bg_color)) {
             // Pure white bg
-            $bg_color = array(1, 1, 1, 0);
+            $bg_color = [1, 1, 1, 0];
         }
 
         $this->_bg_color_array = $bg_color;
@@ -193,7 +191,7 @@ class GD implements Canvas
     }
 
     /**
-     * Return the GF image resource
+     * Return the GF image resource.
      *
      * @return resource
      */
@@ -203,7 +201,7 @@ class GD implements Canvas
     }
 
     /**
-     * Return the image's width in pixels
+     * Return the image's width in pixels.
      *
      * @return float
      */
@@ -213,7 +211,7 @@ class GD implements Canvas
     }
 
     /**
-     * Return the image's height in pixels
+     * Return the image's height in pixels.
      *
      * @return float
      */
@@ -223,7 +221,8 @@ class GD implements Canvas
     }
 
     /**
-     * Returns the current page number
+     * Returns the current page number.
+     *
      * @return int
      */
     public function get_page_number()
@@ -232,7 +231,8 @@ class GD implements Canvas
     }
 
     /**
-     * Returns the total number of pages in the document
+     * Returns the total number of pages in the document.
+     *
      * @return int
      */
     public function get_page_count()
@@ -241,7 +241,7 @@ class GD implements Canvas
     }
 
     /**
-     * Sets the current page number
+     * Sets the current page number.
      *
      * @param int $num
      */
@@ -251,7 +251,7 @@ class GD implements Canvas
     }
 
     /**
-     * Sets the page count
+     * Sets the page count.
      *
      * @param int $count
      */
@@ -261,12 +261,12 @@ class GD implements Canvas
     }
 
     /**
-     * Sets the opacity
+     * Sets the opacity.
      *
      * @param $opacity
      * @param $mode
      */
-    public function set_opacity($opacity, $mode = "Normal")
+    public function set_opacity($opacity, $mode = 'Normal')
     {
         // FIXME
     }
@@ -276,13 +276,14 @@ class GD implements Canvas
      * previously allocated colors in $this->_colors.
      *
      * @param array $color The new current color
-     * @return int           The allocated color
+     *
+     * @return int The allocated color
      */
     private function _allocate_color($color)
     {
-        $a = isset($color["alpha"]) ? $color["alpha"] : 1;
+        $a = isset($color['alpha']) ? $color['alpha'] : 1;
 
-        if (isset($color["c"])) {
+        if (isset($color['c'])) {
             $color = Helpers::cmyk_to_rgb($color);
         }
 
@@ -304,7 +305,7 @@ class GD implements Canvas
         $b = $b < 0 ? 0 : $b;
         $a = $a < 0 ? 0 : $a;
 
-        $key = sprintf("#%02X%02X%02X%02X", $r, $g, $b, $a);
+        $key = sprintf('#%02X%02X%02X%02X', $r, $g, $b, $a);
 
         if (isset($this->_colors[$key])) {
             return $this->_colors[$key];
@@ -320,9 +321,10 @@ class GD implements Canvas
     }
 
     /**
-     * Scales value up to the current canvas DPI from 72 DPI
+     * Scales value up to the current canvas DPI from 72 DPI.
      *
      * @param float $length
+     *
      * @return float
      */
     private function _upscale($length)
@@ -331,9 +333,10 @@ class GD implements Canvas
     }
 
     /**
-     * Scales value down from the current canvas DPI to 72 DPI
+     * Scales value down from the current canvas DPI to 72 DPI.
      *
      * @param float $length
+     *
      * @return float
      */
     private function _downscale($length)
@@ -342,7 +345,7 @@ class GD implements Canvas
     }
 
     /**
-     * Draws a line from x1,y1 to x2,y2
+     * Draws a line from x1,y1 to x2,y2.
      *
      * See {@link Style::munge_color()} for the format of the color array.
      * See {@link Cpdf::setLineStyle()} for a description of the format of the
@@ -370,7 +373,7 @@ class GD implements Canvas
 
         // Convert the style array if required
         if (is_array($style) && count($style) > 0) {
-            $gd_style = array();
+            $gd_style = [];
 
             if (count($style) == 1) {
                 for ($i = 0; $i < $style[0] * $this->_aa_factor; $i++) {
@@ -388,7 +391,6 @@ class GD implements Canvas
                         for ($i = 0; $i < $style[0] * $this->_aa_factor; $i++) {
                             $gd_style[] = $c;
                         }
-
                     } else {
                         // Off pattern
                         for ($i = 0; $i < $style[0] * $this->_aa_factor; $i++) {
@@ -421,13 +423,13 @@ class GD implements Canvas
      * @param float $width
      * @param array $style
      */
-    public function arc($x1, $y1, $r1, $r2, $astart, $aend, $color, $width, $style = array())
+    public function arc($x1, $y1, $r1, $r2, $astart, $aend, $color, $width, $style = [])
     {
         // @todo
     }
 
     /**
-     * Draws a rectangle at x1,y1 with width w and height h
+     * Draws a rectangle at x1,y1 with width w and height h.
      *
      * See {@link Style::munge_color()} for the format of the color array.
      * See {@link Cpdf::setLineStyle()} for a description of the $style
@@ -455,7 +457,7 @@ class GD implements Canvas
 
         // Convert the style array if required
         if (is_array($style) && count($style) > 0) {
-            $gd_style = array();
+            $gd_style = [];
 
             foreach ($style as $length) {
                 for ($i = 0; $i < $length; $i++) {
@@ -475,7 +477,7 @@ class GD implements Canvas
     }
 
     /**
-     * Draws a filled rectangle at x1,y1 with width w and height h
+     * Draws a filled rectangle at x1,y1 with width w and height h.
      *
      * See {@link Style::munge_color()} for the format of the color array.
      *
@@ -499,7 +501,7 @@ class GD implements Canvas
     }
 
     /**
-     * Starts a clipping rectangle at x1,y1 with width w and height h
+     * Starts a clipping rectangle at x1,y1 with width w and height h.
      *
      * @param float $x1
      * @param float $y1
@@ -517,24 +519,18 @@ class GD implements Canvas
     }
 
     /**
-     * Ends the last clipping shape
+     * Ends the last clipping shape.
      */
     public function clipping_end()
     {
         // @todo
     }
 
-    /**
-     *
-     */
     public function save()
     {
         $this->get_dompdf()->getOptions()->setDpi(72);
     }
 
-    /**
-     *
-     */
     public function restore()
     {
         $this->get_dompdf()->getOptions()->setDpi($this->dpi);
@@ -595,7 +591,7 @@ class GD implements Canvas
     }
 
     /**
-     * Draws a polygon
+     * Draws a polygon.
      *
      * The polygon is formed by joining all the points stored in the $points
      * array.  $points has the following structure:
@@ -616,7 +612,7 @@ class GD implements Canvas
      * @param array $color
      * @param float $width
      * @param array $style
-     * @param bool $fill Fills the polygon if true
+     * @param bool  $fill   Fills the polygon if true
      */
     public function polygon($points, $color, $width = null, $style = null, $fill = false)
     {
@@ -630,7 +626,7 @@ class GD implements Canvas
 
         // Convert the style array if required
         if (is_array($style) && count($style) > 0 && !$fill) {
-            $gd_style = array();
+            $gd_style = [];
 
             foreach ($style as $length) {
                 for ($i = 0; $i < $length; $i++) {
@@ -654,7 +650,7 @@ class GD implements Canvas
     }
 
     /**
-     * Draws a circle at $x,$y with radius $r
+     * Draws a circle at $x,$y with radius $r.
      *
      * See {@link Style::munge_color()} for the format of the color array.
      * See {@link Cpdf::setLineStyle()} for a description of the $style
@@ -666,7 +662,7 @@ class GD implements Canvas
      * @param array $color
      * @param float $width
      * @param array $style
-     * @param bool $fill Fills the circle if true
+     * @param bool  $fill  Fills the circle if true
      */
     public function circle($x, $y, $r, $color, $width = null, $style = null, $fill = false)
     {
@@ -679,7 +675,7 @@ class GD implements Canvas
 
         // Convert the style array if required
         if (is_array($style) && count($style) > 0 && !$fill) {
-            $gd_style = array();
+            $gd_style = [];
 
             foreach ($style as $length) {
                 for ($i = 0; $i < $length; $i++) {
@@ -707,18 +703,20 @@ class GD implements Canvas
      * The image is placed at the specified x and y coordinates with the
      * given width and height.
      *
-     * @param string $img_url the path to the image
-     * @param float $x x position
-     * @param float $y y position
-     * @param int $w width (in pixels)
-     * @param int $h height (in pixels)
+     * @param string $img_url    the path to the image
+     * @param float  $x          x position
+     * @param float  $y          y position
+     * @param int    $w          width (in pixels)
+     * @param int    $h          height (in pixels)
      * @param string $resolution
-     * @return void
      *
      * @throws \Exception
+     *
+     * @return void
+     *
      * @internal param string $img_type the type (e.g. extension) of the image
      */
-    public function image($img_url, $x, $y, $w, $h, $resolution = "normal")
+    public function image($img_url, $x, $y, $w, $h, $resolution = 'normal')
     {
         $img_type = Cache::detect_type($img_url, $this->get_dompdf()->getHttpContext());
 
@@ -731,7 +729,7 @@ class GD implements Canvas
             if (!method_exists("Dompdf\Helpers", $func_name)) {
                 throw new \Exception("Function $func_name() not found.  Cannot convert $type image: $img_url.  Please install the image PHP extension.");
             }
-            $func_name = "\\Dompdf\\Helpers::" . $func_name;
+            $func_name = '\\Dompdf\\Helpers::'.$func_name;
         }
         $src = @call_user_func($func_name, $img_url);
 
@@ -756,19 +754,19 @@ class GD implements Canvas
      * Writes text at the specified x and y coordinates
      * See {@link Style::munge_color()} for the format of the color array.
      *
-     * @param float $x
-     * @param float $y
-     * @param string $text the text to write
-     * @param string $font the font file to use
-     * @param float $size the font size, in points
-     * @param array $color
-     * @param float $word_spacing word spacing adjustment
-     * @param float $char_spacing
-     * @param float $angle Text angle
+     * @param float  $x
+     * @param float  $y
+     * @param string $text         the text to write
+     * @param string $font         the font file to use
+     * @param float  $size         the font size, in points
+     * @param array  $color
+     * @param float  $word_spacing word spacing adjustment
+     * @param float  $char_spacing
+     * @param float  $angle        Text angle
      *
      * @return void
      */
-    public function text($x, $y, $text, $font, $size, $color = array(0, 0, 0), $word_spacing = 0.0, $char_spacing = 0.0, $angle = 0.0)
+    public function text($x, $y, $text, $font, $size, $color = [0, 0, 0], $word_spacing = 0.0, $char_spacing = 0.0, $angle = 0.0)
     {
         // Scale by the AA factor and DPI
         $x = $this->_upscale($x);
@@ -784,7 +782,7 @@ class GD implements Canvas
         // eg: &amp;#160; will render &#160; rather than its character.
         $text = preg_replace('/&(#(?:x[a-fA-F0-9]+|[0-9]+);)/', '&#38;\1', $text);
 
-        $text = mb_encode_numericentity($text, array(0x0080, 0xff, 0, 0xff), 'UTF-8');
+        $text = mb_encode_numericentity($text, [0x0080, 0xff, 0, 0xff], 'UTF-8');
 
         $font = $this->get_ttf_file($font);
 
@@ -798,7 +796,7 @@ class GD implements Canvas
     }
 
     /**
-     * Add a named destination (similar to <a name="foo">...</a> in html)
+     * Add a named destination (similar to <a name="foo">...</a> in html).
      *
      * @param string $anchorname The name of the named destination
      */
@@ -808,13 +806,13 @@ class GD implements Canvas
     }
 
     /**
-     * Add a link to the pdf
+     * Add a link to the pdf.
      *
-     * @param string $url The url to link to
-     * @param float $x The x position of the link
-     * @param float $y The y position of the link
-     * @param float $width The width of the link
-     * @param float $height The height of the link
+     * @param string $url    The url to link to
+     * @param float  $x      The x position of the link
+     * @param float  $y      The y position of the link
+     * @param float  $width  The width of the link
+     * @param float  $height The height of the link
      */
     public function add_link($url, $x, $y, $width, $height)
     {
@@ -822,7 +820,7 @@ class GD implements Canvas
     }
 
     /**
-     * Add meta information to the PDF
+     * Add meta information to the PDF.
      *
      * @param string $label label of the value (Creator, Producer, etc.)
      * @param string $value the text to set
@@ -834,21 +832,21 @@ class GD implements Canvas
 
     /**
      * @param string $view
-     * @param array $options
+     * @param array  $options
      */
-    public function set_default_view($view, $options = array())
+    public function set_default_view($view, $options = [])
     {
         // N/A
     }
 
     /**
-     * Calculates text size, in points
+     * Calculates text size, in points.
      *
-     * @param string $text the text to be sized
-     * @param string $font the desired font
-     * @param float $size the desired font size
-     * @param float $word_spacing word spacing, if any
-     * @param float $char_spacing char spacing, if any
+     * @param string $text         the text to be sized
+     * @param string $font         the desired font
+     * @param float  $size         the desired font size
+     * @param float  $word_spacing word spacing, if any
+     * @param float  $char_spacing char spacing, if any
      *
      * @return float
      */
@@ -863,7 +861,7 @@ class GD implements Canvas
         // eg: &amp;#160; will render &#160; rather than its character.
         $text = preg_replace('/&(#(?:x[a-fA-F0-9]+|[0-9]+);)/', '&#38;\1', $text);
 
-        $text = mb_encode_numericentity($text, array(0x0080, 0xffff, 0, 0xffff), 'UTF-8');
+        $text = mb_encode_numericentity($text, [0x0080, 0xffff, 0, 0xffff], 'UTF-8');
 
         // FIXME: word spacing
         list($x1, , $x2) = imagettfbbox($size, 0, $font, $text);
@@ -874,26 +872,27 @@ class GD implements Canvas
 
     /**
      * @param $font
+     *
      * @return string
      */
     public function get_ttf_file($font)
     {
-        if ( stripos($font, ".ttf") === false ) {
-            $font .= ".ttf";
+        if (stripos($font, '.ttf') === false) {
+            $font .= '.ttf';
         }
 
         if (!file_exists($font)) {
             $font_metrics = $this->_dompdf->getFontMetrics();
-            $font = $font_metrics->getFont($this->_dompdf->getOptions()->getDefaultFont()) . ".ttf";
+            $font = $font_metrics->getFont($this->_dompdf->getOptions()->getDefaultFont()).'.ttf';
             if (!file_exists($font)) {
-                if (strpos($font, "mono")) {
-                    $font = $font_metrics->getFont("DejaVu Mono") . ".ttf";
-                } elseif (strpos($font, "sans") !== false) {
-                    $font = $font_metrics->getFont("DejaVu Sans") . ".ttf";
-                } elseif (strpos($font, "serif")) {
-                    $font = $font_metrics->getFont("DejaVu Serif") . ".ttf";
+                if (strpos($font, 'mono')) {
+                    $font = $font_metrics->getFont('DejaVu Mono').'.ttf';
+                } elseif (strpos($font, 'sans') !== false) {
+                    $font = $font_metrics->getFont('DejaVu Sans').'.ttf';
+                } elseif (strpos($font, 'serif')) {
+                    $font = $font_metrics->getFont('DejaVu Serif').'.ttf';
                 } else {
-                    $font = $font_metrics->getFont("DejaVu Sans") . ".ttf";
+                    $font = $font_metrics->getFont('DejaVu Sans').'.ttf';
                 }
             }
         }
@@ -902,10 +901,11 @@ class GD implements Canvas
     }
 
     /**
-     * Calculates font height, in points
+     * Calculates font height, in points.
      *
      * @param string $font
-     * @param float $size
+     * @param float  $size
+     *
      * @return float
      */
     public function get_font_height($font, $size)
@@ -923,23 +923,25 @@ class GD implements Canvas
         $ratio = $this->_dompdf->getOptions()->getFontHeightRatio();
 
         // FIXME: word spacing
-        list(, $y2, , , , $y1) = imagettfbbox($size, 0, $font, "MXjpqytfhl"); // Test string with ascenders, descenders and caps
+        list(, $y2, , , , $y1) = imagettfbbox($size, 0, $font, 'MXjpqytfhl'); // Test string with ascenders, descenders and caps
         return ($y2 - $y1) * $ratio;
     }
 
     /**
      * @param string $font
-     * @param float $size
+     * @param float  $size
+     *
      * @return float
      */
     public function get_font_baseline($font, $size)
     {
         $ratio = $this->_dompdf->getOptions()->getFontHeightRatio();
+
         return $this->get_font_height($font, $size) / $ratio;
     }
 
     /**
-     * Starts a new page
+     * Starts a new page.
      *
      * Subsequent drawing operations will appear on the new page.
      */
@@ -982,37 +984,41 @@ class GD implements Canvas
      * Streams the image to the client.
      *
      * @param string $filename The filename to present to the client.
-     * @param array $options Associative array: 'type' => jpeg|jpg|png; 'quality' => 0 - 100 (JPEG only);
-     *     'page' => Number of the page to output (defaults to the first); 'Attachment': 1 or 0 (default 1).
+     * @param array  $options  Associative array: 'type' => jpeg|jpg|png; 'quality' => 0 - 100 (JPEG only);
+     *                         'page' => Number of the page to output (defaults to the first); 'Attachment': 1 or 0 (default 1).
      */
-    public function stream($filename, $options = array())
+    public function stream($filename, $options = [])
     {
         if (headers_sent()) {
-            die("Unable to stream image: headers already sent");
+            die('Unable to stream image: headers already sent');
         }
 
-        if (!isset($options["type"])) $options["type"] = "png";
-        if (!isset($options["Attachment"])) $options["Attachment"] = true;
-        $type = strtolower($options["type"]);
+        if (!isset($options['type'])) {
+            $options['type'] = 'png';
+        }
+        if (!isset($options['Attachment'])) {
+            $options['Attachment'] = true;
+        }
+        $type = strtolower($options['type']);
 
         switch ($type) {
-            case "jpg":
-            case "jpeg":
-                $contentType = "image/jpeg";
-                $extension = ".jpg";
+            case 'jpg':
+            case 'jpeg':
+                $contentType = 'image/jpeg';
+                $extension = '.jpg';
                 break;
-            case "png":
+            case 'png':
             default:
-                $contentType = "image/png";
-                $extension = ".png";
+                $contentType = 'image/png';
+                $extension = '.png';
                 break;
         }
 
-        header("Cache-Control: private");
+        header('Cache-Control: private');
         header("Content-Type: $contentType");
 
-        $filename = str_replace(array("\n", "'"), "", basename($filename, ".$type")) . $extension;
-        $attachment = $options["Attachment"] ? "attachment" : "inline";
+        $filename = str_replace(["\n", "'"], '', basename($filename, ".$type")).$extension;
+        $attachment = $options['Attachment'] ? 'attachment' : 'inline';
         header(Helpers::buildContentDispositionHeader($attachment, $filename));
 
         $this->_output($options);
@@ -1023,10 +1029,11 @@ class GD implements Canvas
      * Returns the image as a string.
      *
      * @param array $options Associative array: 'type' => jpeg|jpg|png; 'quality' => 0 - 100 (JPEG only);
-     *     'page' => Number of the page to output (defaults to the first).
+     *                       'page' => Number of the page to output (defaults to the first).
+     *
      * @return string
      */
-    public function output($options = array())
+    public function output($options = [])
     {
         ob_start();
 
@@ -1039,16 +1046,20 @@ class GD implements Canvas
      * Outputs the image stream directly.
      *
      * @param array $options Associative array: 'type' => jpeg|jpg|png; 'quality' => 0 - 100 (JPEG only);
-     *     'page' => Number of the page to output (defaults to the first).
+     *                       'page' => Number of the page to output (defaults to the first).
      */
-    private function _output($options = array())
+    private function _output($options = [])
     {
-        if (!isset($options["type"])) $options["type"] = "png";
-        if (!isset($options["page"])) $options["page"] = 1;
-        $type = strtolower($options["type"]);
+        if (!isset($options['type'])) {
+            $options['type'] = 'png';
+        }
+        if (!isset($options['page'])) {
+            $options['page'] = 1;
+        }
+        $type = strtolower($options['type']);
 
-        if (isset($this->_imgs[$options["page"] - 1])) {
-            $img = $this->_imgs[$options["page"] - 1];
+        if (isset($this->_imgs[$options['page'] - 1])) {
+            $img = $this->_imgs[$options['page'] - 1];
         } else {
             $img = $this->_imgs[0];
         }
@@ -1066,15 +1077,15 @@ class GD implements Canvas
         }
 
         switch ($type) {
-            case "jpg":
-            case "jpeg":
-                if (!isset($options["quality"])) {
-                    $options["quality"] = 75;
+            case 'jpg':
+            case 'jpeg':
+                if (!isset($options['quality'])) {
+                    $options['quality'] = 75;
                 }
 
-                imagejpeg($dst, null, $options["quality"]);
+                imagejpeg($dst, null, $options['quality']);
                 break;
-            case "png":
+            case 'png':
             default:
                 imagepng($dst);
                 break;

@@ -1,5 +1,5 @@
 <?php require '../includes/config.php';
-$page_name = "SIGN UP";
+$page_name = 'SIGN UP';
 include '../views/special_header.php';
 ?>
 

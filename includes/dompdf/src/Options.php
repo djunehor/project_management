@@ -1,10 +1,11 @@
 <?php
+
 namespace Dompdf;
 
 class Options
 {
     /**
-     * The root of your DOMPDF installation
+     * The root of your DOMPDF installation.
      *
      * @var string
      */
@@ -22,7 +23,7 @@ class Options
     private $tempDir;
 
     /**
-     * The location of the DOMPDF font directory
+     * The location of the DOMPDF font directory.
      *
      * The location of the directory where DOMPDF will store fonts and font metrics
      * Note: This directory must exist and be writable by the webserver process.
@@ -32,7 +33,7 @@ class Options
     private $fontDir;
 
     /**
-     * The location of the DOMPDF font cache directory
+     * The location of the DOMPDF font cache directory.
      *
      * This directory contains the cached font metrics for the fonts used by DOMPDF.
      * This directory can be the same as $fontDir
@@ -44,7 +45,7 @@ class Options
     private $fontCache;
 
     /**
-     * dompdf's "chroot"
+     * dompdf's "chroot".
      *
      * Prevents dompdf from accessing system files or other files on the webserver.
      * All local files opened by dompdf must be in a subdirectory of this directory.
@@ -78,17 +79,18 @@ class Options
      *
      * @var string
      */
-    private $defaultMediaType = "screen";
+    private $defaultMediaType = 'screen';
 
     /**
      * The default paper size.
      *
      * North America standard is "letter"; other countries generally "a4"
+     *
      * @see \Dompdf\Adapter\CPDF::PAPER_SIZES for valid sizes
      *
      * @var string
      */
-    private $defaultPaperSize = "letter";
+    private $defaultPaperSize = 'letter';
 
     /**
      * The default paper orientation.
@@ -97,19 +99,19 @@ class Options
      *
      * @var string
      */
-    private $defaultPaperOrientation = "portrait";
+    private $defaultPaperOrientation = 'portrait';
 
     /**
-     * The default font family
+     * The default font family.
      *
      * Used if no suitable fonts can be found. This must exist in the font folder.
      *
      * @var string
      */
-    private $defaultFont = "serif";
+    private $defaultFont = 'serif';
 
     /**
-     * Image DPI setting
+     * Image DPI setting.
      *
      * This setting determines the default DPI setting for images and fonts.  The
      * DPI may be overridden for inline images by explictly setting the
@@ -132,14 +134,14 @@ class Options
     private $dpi = 96;
 
     /**
-     * A ratio applied to the fonts height to be more like browsers' line height
+     * A ratio applied to the fonts height to be more like browsers' line height.
      *
      * @var float
      */
     private $fontHeightRatio = 1.1;
 
     /**
-     * Enable embedded PHP
+     * Enable embedded PHP.
      *
      * If this setting is set to true then DOMPDF will automatically evaluate
      * embedded PHP contained within <script type="text/php"> ... </script> tags.
@@ -160,7 +162,7 @@ class Options
     private $isPhpEnabled = false;
 
     /**
-     * Enable remote file access
+     * Enable remote file access.
      *
      * If this setting is set to true, DOMPDF will access remote sites for
      * images and CSS files as required.
@@ -182,7 +184,7 @@ class Options
     private $isRemoteEnabled = false;
 
     /**
-     * Enable inline Javascript
+     * Enable inline Javascript.
      *
      * If this setting is set to true then DOMPDF will automatically insert
      * JavaScript code contained within <script type="text/javascript"> ... </script> tags.
@@ -192,7 +194,7 @@ class Options
     private $isJavascriptEnabled = true;
 
     /**
-     * Use the more-than-experimental HTML5 Lib parser
+     * Use the more-than-experimental HTML5 Lib parser.
      *
      * @var bool
      */
@@ -246,7 +248,7 @@ class Options
     private $debugLayoutPaddingBox = true;
 
     /**
-     * The PDF rendering backend to use
+     * The PDF rendering backend to use.
      *
      * Valid settings are 'PDFLib', 'CPDF', 'GD', and 'auto'. 'auto' will
      * look for PDFLib and use it if found, or if not it will fall back on
@@ -256,10 +258,10 @@ class Options
      *
      * @var string
      */
-    private $pdfBackend = "CPDF";
+    private $pdfBackend = 'CPDF';
 
     /**
-     * PDFlib license key
+     * PDFlib license key.
      *
      * If you are using a licensed, commercial version of PDFlib, specify
      * your license key here.  If you are using PDFlib-Lite or are evaluating
@@ -272,31 +274,33 @@ class Options
      *
      * @var string
      */
-    private $pdflibLicense = "";
+    private $pdflibLicense = '';
 
     /**
      * @var string
+     *
      * @deprecated
      */
-    private $adminUsername = "user";
+    private $adminUsername = 'user';
 
     /**
      * @var string
+     *
      * @deprecated
      */
-    private $adminPassword = "password";
+    private $adminPassword = 'password';
 
     /**
      * @param array $attributes
      */
     public function __construct(array $attributes = null)
     {
-        $this->setChroot(realpath(__DIR__ . "/../"));
+        $this->setChroot(realpath(__DIR__.'/../'));
         $this->setRootDir($this->getChroot());
         $this->setTempDir(sys_get_temp_dir());
-        $this->setFontDir($this->chroot . DIRECTORY_SEPARATOR . "lib" . DIRECTORY_SEPARATOR . "fonts");
+        $this->setFontDir($this->chroot.DIRECTORY_SEPARATOR.'lib'.DIRECTORY_SEPARATOR.'fonts');
         $this->setFontCache($this->getFontDir());
-        $this->setLogOutputFile($this->getTempDir() . DIRECTORY_SEPARATOR . "log.htm");
+        $this->setLogOutputFile($this->getTempDir().DIRECTORY_SEPARATOR.'log.htm');
 
         if (null !== $attributes) {
             $this->set($attributes);
@@ -305,13 +309,14 @@ class Options
 
     /**
      * @param array|string $attributes
-     * @param null|mixed $value
+     * @param null|mixed   $value
+     *
      * @return $this
      */
     public function set($attributes, $value = null)
     {
         if (!is_array($attributes)) {
-            $attributes = array($attributes => $value);
+            $attributes = [$attributes => $value];
         }
         foreach ($attributes as $key => $value) {
             if ($key === 'tempDir' || $key === 'temp_dir') {
@@ -372,11 +377,13 @@ class Options
                 $this->setAdminPassword($value);
             }
         }
+
         return $this;
     }
 
     /**
      * @param string $key
+     *
      * @return mixed
      */
     public function get($key)
@@ -438,16 +445,17 @@ class Options
         } elseif ($key === 'adminPassword' || $key === 'admin_password') {
             return $this->getAdminPassword();
         }
-        return null;
     }
 
     /**
      * @param string $adminPassword
+     *
      * @return $this
      */
     public function setAdminPassword($adminPassword)
     {
         $this->adminPassword = $adminPassword;
+
         return $this;
     }
 
@@ -461,11 +469,13 @@ class Options
 
     /**
      * @param string $adminUsername
+     *
      * @return $this
      */
     public function setAdminUsername($adminUsername)
     {
         $this->adminUsername = $adminUsername;
+
         return $this;
     }
 
@@ -479,11 +489,13 @@ class Options
 
     /**
      * @param string $pdfBackend
+     *
      * @return $this
      */
     public function setPdfBackend($pdfBackend)
     {
         $this->pdfBackend = $pdfBackend;
+
         return $this;
     }
 
@@ -497,11 +509,13 @@ class Options
 
     /**
      * @param string $pdflibLicense
+     *
      * @return $this
      */
     public function setPdflibLicense($pdflibLicense)
     {
         $this->pdflibLicense = $pdflibLicense;
+
         return $this;
     }
 
@@ -515,11 +529,13 @@ class Options
 
     /**
      * @param string $chroot
+     *
      * @return $this
      */
     public function setChroot($chroot)
     {
         $this->chroot = $chroot;
+
         return $this;
     }
 
@@ -532,17 +548,19 @@ class Options
     }
 
     /**
-     * @param boolean $debugCss
+     * @param bool $debugCss
+     *
      * @return $this
      */
     public function setDebugCss($debugCss)
     {
         $this->debugCss = $debugCss;
+
         return $this;
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function getDebugCss()
     {
@@ -550,17 +568,19 @@ class Options
     }
 
     /**
-     * @param boolean $debugKeepTemp
+     * @param bool $debugKeepTemp
+     *
      * @return $this
      */
     public function setDebugKeepTemp($debugKeepTemp)
     {
         $this->debugKeepTemp = $debugKeepTemp;
+
         return $this;
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function getDebugKeepTemp()
     {
@@ -568,17 +588,19 @@ class Options
     }
 
     /**
-     * @param boolean $debugLayout
+     * @param bool $debugLayout
+     *
      * @return $this
      */
     public function setDebugLayout($debugLayout)
     {
         $this->debugLayout = $debugLayout;
+
         return $this;
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function getDebugLayout()
     {
@@ -586,17 +608,19 @@ class Options
     }
 
     /**
-     * @param boolean $debugLayoutBlocks
+     * @param bool $debugLayoutBlocks
+     *
      * @return $this
      */
     public function setDebugLayoutBlocks($debugLayoutBlocks)
     {
         $this->debugLayoutBlocks = $debugLayoutBlocks;
+
         return $this;
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function getDebugLayoutBlocks()
     {
@@ -604,17 +628,19 @@ class Options
     }
 
     /**
-     * @param boolean $debugLayoutInline
+     * @param bool $debugLayoutInline
+     *
      * @return $this
      */
     public function setDebugLayoutInline($debugLayoutInline)
     {
         $this->debugLayoutInline = $debugLayoutInline;
+
         return $this;
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function getDebugLayoutInline()
     {
@@ -622,17 +648,19 @@ class Options
     }
 
     /**
-     * @param boolean $debugLayoutLines
+     * @param bool $debugLayoutLines
+     *
      * @return $this
      */
     public function setDebugLayoutLines($debugLayoutLines)
     {
         $this->debugLayoutLines = $debugLayoutLines;
+
         return $this;
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function getDebugLayoutLines()
     {
@@ -640,17 +668,19 @@ class Options
     }
 
     /**
-     * @param boolean $debugLayoutPaddingBox
+     * @param bool $debugLayoutPaddingBox
+     *
      * @return $this
      */
     public function setDebugLayoutPaddingBox($debugLayoutPaddingBox)
     {
         $this->debugLayoutPaddingBox = $debugLayoutPaddingBox;
+
         return $this;
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function getDebugLayoutPaddingBox()
     {
@@ -658,17 +688,19 @@ class Options
     }
 
     /**
-     * @param boolean $debugPng
+     * @param bool $debugPng
+     *
      * @return $this
      */
     public function setDebugPng($debugPng)
     {
         $this->debugPng = $debugPng;
+
         return $this;
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function getDebugPng()
     {
@@ -677,11 +709,13 @@ class Options
 
     /**
      * @param string $defaultFont
+     *
      * @return $this
      */
     public function setDefaultFont($defaultFont)
     {
         $this->defaultFont = $defaultFont;
+
         return $this;
     }
 
@@ -695,11 +729,13 @@ class Options
 
     /**
      * @param string $defaultMediaType
+     *
      * @return $this
      */
     public function setDefaultMediaType($defaultMediaType)
     {
         $this->defaultMediaType = $defaultMediaType;
+
         return $this;
     }
 
@@ -713,21 +749,25 @@ class Options
 
     /**
      * @param string $defaultPaperSize
+     *
      * @return $this
      */
     public function setDefaultPaperSize($defaultPaperSize)
     {
         $this->defaultPaperSize = $defaultPaperSize;
+
         return $this;
     }
 
     /**
      * @param string $defaultPaperOrientation
+     *
      * @return $this
      */
     public function setDefaultPaperOrientation($defaultPaperOrientation)
     {
         $this->defaultPaperOrientation = $defaultPaperOrientation;
+
         return $this;
     }
 
@@ -749,11 +789,13 @@ class Options
 
     /**
      * @param int $dpi
+     *
      * @return $this
      */
     public function setDpi($dpi)
     {
         $this->dpi = $dpi;
+
         return $this;
     }
 
@@ -767,11 +809,13 @@ class Options
 
     /**
      * @param string $fontCache
+     *
      * @return $this
      */
     public function setFontCache($fontCache)
     {
         $this->fontCache = $fontCache;
+
         return $this;
     }
 
@@ -785,11 +829,13 @@ class Options
 
     /**
      * @param string $fontDir
+     *
      * @return $this
      */
     public function setFontDir($fontDir)
     {
         $this->fontDir = $fontDir;
+
         return $this;
     }
 
@@ -803,11 +849,13 @@ class Options
 
     /**
      * @param float $fontHeightRatio
+     *
      * @return $this
      */
     public function setFontHeightRatio($fontHeightRatio)
     {
         $this->fontHeightRatio = $fontHeightRatio;
+
         return $this;
     }
 
@@ -820,17 +868,19 @@ class Options
     }
 
     /**
-     * @param boolean $isFontSubsettingEnabled
+     * @param bool $isFontSubsettingEnabled
+     *
      * @return $this
      */
     public function setIsFontSubsettingEnabled($isFontSubsettingEnabled)
     {
         $this->isFontSubsettingEnabled = $isFontSubsettingEnabled;
+
         return $this;
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function getIsFontSubsettingEnabled()
     {
@@ -838,7 +888,7 @@ class Options
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function isFontSubsettingEnabled()
     {
@@ -846,17 +896,19 @@ class Options
     }
 
     /**
-     * @param boolean $isHtml5ParserEnabled
+     * @param bool $isHtml5ParserEnabled
+     *
      * @return $this
      */
     public function setIsHtml5ParserEnabled($isHtml5ParserEnabled)
     {
         $this->isHtml5ParserEnabled = $isHtml5ParserEnabled;
+
         return $this;
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function getIsHtml5ParserEnabled()
     {
@@ -864,7 +916,7 @@ class Options
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function isHtml5ParserEnabled()
     {
@@ -872,17 +924,19 @@ class Options
     }
 
     /**
-     * @param boolean $isJavascriptEnabled
+     * @param bool $isJavascriptEnabled
+     *
      * @return $this
      */
     public function setIsJavascriptEnabled($isJavascriptEnabled)
     {
         $this->isJavascriptEnabled = $isJavascriptEnabled;
+
         return $this;
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function getIsJavascriptEnabled()
     {
@@ -890,7 +944,7 @@ class Options
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function isJavascriptEnabled()
     {
@@ -898,17 +952,19 @@ class Options
     }
 
     /**
-     * @param boolean $isPhpEnabled
+     * @param bool $isPhpEnabled
+     *
      * @return $this
      */
     public function setIsPhpEnabled($isPhpEnabled)
     {
         $this->isPhpEnabled = $isPhpEnabled;
+
         return $this;
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function getIsPhpEnabled()
     {
@@ -916,7 +972,7 @@ class Options
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function isPhpEnabled()
     {
@@ -924,17 +980,19 @@ class Options
     }
 
     /**
-     * @param boolean $isRemoteEnabled
+     * @param bool $isRemoteEnabled
+     *
      * @return $this
      */
     public function setIsRemoteEnabled($isRemoteEnabled)
     {
         $this->isRemoteEnabled = $isRemoteEnabled;
+
         return $this;
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function getIsRemoteEnabled()
     {
@@ -942,7 +1000,7 @@ class Options
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function isRemoteEnabled()
     {
@@ -951,11 +1009,13 @@ class Options
 
     /**
      * @param string $logOutputFile
+     *
      * @return $this
      */
     public function setLogOutputFile($logOutputFile)
     {
         $this->logOutputFile = $logOutputFile;
+
         return $this;
     }
 
@@ -969,11 +1029,13 @@ class Options
 
     /**
      * @param string $tempDir
+     *
      * @return $this
      */
     public function setTempDir($tempDir)
     {
         $this->tempDir = $tempDir;
+
         return $this;
     }
 
@@ -987,11 +1049,13 @@ class Options
 
     /**
      * @param string $rootDir
+     *
      * @return $this
      */
     public function setRootDir($rootDir)
     {
         $this->rootDir = $rootDir;
+
         return $this;
     }
 

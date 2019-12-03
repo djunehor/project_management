@@ -1,8 +1,8 @@
 <?php
-$page_name = "View Task";
+$page_name = 'View Task';
 include '../views/employee_header.php';
 $tid = $_GET['id'];
-$omo = mysqli_fetch_assoc(mysqli_query($con,"SELECT * FROM $assigned_table INNER JOIN $task_table
+$omo = mysqli_fetch_assoc(mysqli_query($con, "SELECT * FROM $assigned_table INNER JOIN $task_table
 ON $assigned_table.taskID=$task_table.taskID WHERE employeeEmail='".$employee['email']."' AND $assigned_table.taskID='$tid'"));
  ?>
 <link href="../lib/font-awesome/css/font-awesome.css" rel="stylesheet">
@@ -40,12 +40,12 @@ ON $assigned_table.taskID=$task_table.taskID WHERE employeeEmail='".$employee['e
 		  </thead>
 		  <tbody>
 		  <tr>
-		  <td><?php echo date('d-M-Y',$omo['startDate']); ?></td>
-		  <td><?php echo $omo['duration']." hours"; ?></td>
-		  <td><?php echo date('d-M-Y',($omo['startDate']+($omo['duration']*3600))); ?></td>
-		  <td><?php $s = mysqli_fetch_assoc(mysqli_query($con,"SELECT sdetail FROM $status_table WHERE statusID='".$omo['status']."'")); echo $s['sdetail']; ?></td>
+		  <td><?php echo date('d-M-Y', $omo['startDate']); ?></td>
+		  <td><?php echo $omo['duration'].' hours'; ?></td>
+		  <td><?php echo date('d-M-Y', ($omo['startDate'] + ($omo['duration'] * 3600))); ?></td>
+		  <td><?php $s = mysqli_fetch_assoc(mysqli_query($con, "SELECT sdetail FROM $status_table WHERE statusID='".$omo['status']."'")); echo $s['sdetail']; ?></td>
 		  <td><?php echo html_entity_decode(htmlspecialchars_decode($omo['comment'])); ?></td>
-		  <?php if($omo['astatus']==0) { ?>
+		  <?php if ($omo['astatus'] == 0) { ?>
                   <td><button onclick="start_task(this.value)" id="btnStart" type="submit" value="<?php echo $omo['id']; ?>" class="btn btn-success">Mark As started</button></td> <?php } ?>
                 
 		  </tr>

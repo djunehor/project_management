@@ -25,8 +25,8 @@
     <meta name="description" content="<?php echo $option['meta_desc']; ?>">
     <meta name="author" content="<?php echo $option['website_name']; ?>">
 
-    <title><?php echo $page_name." | ".$option['website_name']; 
-$_SESSION['MyCode'] = rand(0000,4444).rand(0000,9999); ?></title>
+    <title><?php echo $page_name.' | '.$option['website_name'];
+$_SESSION['MyCode'] = rand(0000, 4444).rand(0000, 9999); ?></title>
 
     <!-- vendor css -->
     <link href="../lib/font-awesome/css/font-awesome.css" rel="stylesheet">

@@ -1,18 +1,16 @@
 <?php
 require '../includes/config.php';
 require '../includes/functions.php';
-if(isset($_SESSION['employeeID']))
-{
-$detail = 'Last seen on <b>'.$_SERVER['HTTP_REFERER'].'</b>';
-ActivityLog($con,$detail,$_SESSION['employeeID'],$type=1);
-unset($_SESSION['employeeID']);
+if (isset($_SESSION['employeeID'])) {
+    $detail = 'Last seen on <b>'.$_SERVER['HTTP_REFERER'].'</b>';
+    ActivityLog($con, $detail, $_SESSION['employeeID'], $type = 1);
+    unset($_SESSION['employeeID']);
+} elseif (isset($_COOKIE['employeeID'])) {
+    $detail = 'Last seen on <b>'.$_SERVER['HTTP_REFERER'].'</b>';
+    ActivityLog($con, $detail, $_COOKIE['employeeID'], $type = 1);
+    setcookie('employeeID', '', time() - 3600);
 }
-elseif(isset($_COOKIE['employeeID'])){
-$detail = 'Last seen on <b>'.$_SERVER['HTTP_REFERER'].'</b>';
-ActivityLog($con,$detail,$_COOKIE['employeeID'],$type=1);	
-	setcookie("employeeID", "", time() - 3600);
-	}
-$page_name = "SIGN IN | Employee";
+$page_name = 'SIGN IN | Employee';
 include '../views/special_header.php';
 ?>
 

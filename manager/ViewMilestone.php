@@ -1,11 +1,13 @@
 <?php
 include '../includes/config.php';
 $tid = filter_var($_GET['id'], FILTER_SANITIZE_STRING);
-if(mysqli_num_rows(mysqli_query($con,"SELECT * FROM $milestone_table WHERE milestoneID='$tid'"))!=1) { header('HTTP/1.0 404 Forbidden');
-          exit;}
-$page_name = "View Milestone";
+if (mysqli_num_rows(mysqli_query($con, "SELECT * FROM $milestone_table WHERE milestoneID='$tid'")) != 1) {
+    header('HTTP/1.0 404 Forbidden');
+    exit;
+}
+$page_name = 'View Milestone';
 include '../views/manager_header.php';
-$omo = mysqli_fetch_assoc(mysqli_query($con,"SELECT * FROM $milestone_table INNER JOIN $project_table ON $milestone_table.projectID=$project_table.projectID WHERE milestoneID='$tid'"));
+$omo = mysqli_fetch_assoc(mysqli_query($con, "SELECT * FROM $milestone_table INNER JOIN $project_table ON $milestone_table.projectID=$project_table.projectID WHERE milestoneID='$tid'"));
  ?>
 <link href="../lib/font-awesome/css/font-awesome.css" rel="stylesheet">
     <link href="../lib/Ionicons/css/ionicons.css" rel="stylesheet">
@@ -38,9 +40,9 @@ $omo = mysqli_fetch_assoc(mysqli_query($con,"SELECT * FROM $milestone_table INNE
 		  <tbody>
 		  <tr>
 		  <td><a href="ViewProject?id=<?php echo $omo['projectID']; ?>"><?php echo $omo['title']; ?></a></td>
-		  <td><?php echo date('d-M-Y',$omo['startDate']); ?></td>
-		  <td><?php echo "NGN ".number_format($omo['budget']); ?></td>
-		  <td><?php $s = mysqli_fetch_assoc(mysqli_query($con,"SELECT detail FROM $tag_table WHERE tagID='".$omo['tagID']."'")); echo $s['detail']; ?></td>
+		  <td><?php echo date('d-M-Y', $omo['startDate']); ?></td>
+		  <td><?php echo 'NGN '.number_format($omo['budget']); ?></td>
+		  <td><?php $s = mysqli_fetch_assoc(mysqli_query($con, "SELECT detail FROM $tag_table WHERE tagID='".$omo['tagID']."'")); echo $s['detail']; ?></td>
 		  </tr>
 		  </tbody>
 		  </table>
@@ -64,25 +66,25 @@ $omo = mysqli_fetch_assoc(mysqli_query($con,"SELECT * FROM $milestone_table INNE
 		  </thead>
 		  <tbody>
 <?php
-$g = mysqli_query($con,"SELECT * FROM $task_table WHERE projectID='".$omo['projectID']."'");
-while($o = mysqli_fetch_assoc($g))
-{
-?>	
+$g = mysqli_query($con, "SELECT * FROM $task_table WHERE projectID='".$omo['projectID']."'");
+while ($o = mysqli_fetch_assoc($g)) {
+    ?>	
 <tr class="<?php echo $o['taskID']; ?>">
 		  <td><?php echo $o['taskID']; ?></td>
 		  <td><a href="ViewTask?id=<?php echo $o['taskID']; ?>"><?php echo $o['ttitle']; ?></a></td>
-		  <td><?php echo substr(html_entity_decode(htmlspecialchars_decode($o['tdetail'])),0,50); ?></td>
-		  <td><?php echo $o['duration']." hours"; ?></td>
-		  <td><?php $s = mysqli_fetch_assoc(mysqli_query($con,"SELECT * FROM $assigned_table LEFT JOIN $status_table ON $assigned_table.astatus=$status_table.statusID WHERE taskID='".$o['taskID']."'"));
-		  echo $s['sdetail']?$s['sdetail']:'Not Assigned'; ?></td>
+		  <td><?php echo substr(html_entity_decode(htmlspecialchars_decode($o['tdetail'])), 0, 50); ?></td>
+		  <td><?php echo $o['duration'].' hours'; ?></td>
+		  <td><?php $s = mysqli_fetch_assoc(mysqli_query($con, "SELECT * FROM $assigned_table LEFT JOIN $status_table ON $assigned_table.astatus=$status_table.statusID WHERE taskID='".$o['taskID']."'"));
+    echo $s['sdetail'] ? $s['sdetail'] : 'Not Assigned'; ?></td>
 		  
-		  <td><?php echo $s['startDate']?date('d-M-Y',$s['startDate']):'Not Assigned'; ?></td>
-		  <td><?php echo $s['employeeEmail']?$s['employeeEmail']:'Not Assigned';?></td>
+		  <td><?php echo $s['startDate'] ? date('d-M-Y', $s['startDate']) : 'Not Assigned'; ?></td>
+		  <td><?php echo $s['employeeEmail'] ? $s['employeeEmail'] : 'Not Assigned'; ?></td>
 		  <td><form action="EditTask?id=<?php echo $o['taskID']; ?>"><button id="btnEdit" type="submit" class="btn btn-info">Edit</button></form></td>
                   <td><button onclick="del_task(this.value)" id="btnDelete" type="submit" value="<?php echo $o['taskID']; ?>" class="btn btn-info">Delete</button></td>
                 
 		  </tr>
-<?php } ?>
+<?php
+} ?>
 		  </tbody><tfoot><tr><a style="text-align:right;" href="NewTask">Add New Task</a></tr></tfoot>
 				</table>
 				<br><hr>
@@ -97,14 +99,14 @@ while($o = mysqli_fetch_assoc($g))
 		  <tbody>
 		  <tr>
 <?php
-$l = mysqli_query($con,"SELECT * FROM $activity_table WHERE projectID='".$omo['projectID']."'");
-while($f = mysqli_fetch_assoc($l))
-{
-?>
+$l = mysqli_query($con, "SELECT * FROM $activity_table WHERE projectID='".$omo['projectID']."'");
+while ($f = mysqli_fetch_assoc($l)) {
+    ?>
 		  <td><?php echo html_entity_decode(htmlspecialchars_decode($f['adetail'])); ?></td>
-		  <td><?php echo date('d-M-Y g:i a',$f['addDate']); ?></td>
+		  <td><?php echo date('d-M-Y g:i a', $f['addDate']); ?></td>
 		  </tr>
-<?php } ?>
+<?php
+} ?>
 		  </tbody>
 				</table>
 				     <script src="../lib/jquery/jquery.js"></script>

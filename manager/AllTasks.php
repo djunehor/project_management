@@ -1,5 +1,5 @@
 <?php
-$page_name = "All Tasks";
+$page_name = 'All Tasks';
 include '../views/manager_header.php'; ?>
  <link href="../lib/font-awesome/css/font-awesome.css" rel="stylesheet">
     <link href="../lib/Ionicons/css/ionicons.css" rel="stylesheet">
@@ -37,19 +37,19 @@ include '../views/manager_header.php'; ?>
               </thead>
 			  <tbody>
 			  <?php
-			  $q8 = mysqli_query($con,"SELECT *,$task_table.taskID as tid FROM $task_table LEFT JOIN $assigned_table ON $task_table.taskID=$assigned_table.taskID WHERE $task_table.managerID='$managerID'");				
-			   while($v = mysqli_fetch_assoc($q8))
- {
-	 ?>
+              $q8 = mysqli_query($con, "SELECT *,$task_table.taskID as tid FROM $task_table LEFT JOIN $assigned_table ON $task_table.taskID=$assigned_table.taskID WHERE $task_table.managerID='$managerID'");
+               while ($v = mysqli_fetch_assoc($q8)) {
+                   ?>
                 <tr class="<?php echo $v['taskID']; ?>">
                   <td><a href="ViewTask?id=<?php echo $v['tid']; ?>"><?php echo $v['ttitle']; ?></a></td>
-                  <td><?php echo substr(html_entity_decode(htmlspecialchars_decode($v['tdetail'])),0,100); ?>...</td>
-                  <td><?php echo $v['duration']." hours"; ?></td>
-                  <td><?php echo $v['employeeEmail']?$v['employeeEmail']:'Not Assigned'; ?></td>
+                  <td><?php echo substr(html_entity_decode(htmlspecialchars_decode($v['tdetail'])), 0, 100); ?>...</td>
+                  <td><?php echo $v['duration'].' hours'; ?></td>
+                  <td><?php echo $v['employeeEmail'] ? $v['employeeEmail'] : 'Not Assigned'; ?></td>
                   <td><form action="EditTask?id=<?php echo $v['tid']; ?>"><button id="btnEdit" type="submit" class="btn btn-info">Edit</button></form></td>
                   <td><button onclick="del_task(this.value)" id="btnDelete" type="submit" value="<?php echo $v['tid']; ?>" class="btn btn-danger">Delete</button></td>
                 </tr>
- <?php } ?>
+ <?php
+               } ?>
 				 </tbody>
             </table>
           </div><!-- table-wrapper -->

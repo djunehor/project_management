@@ -1,5 +1,5 @@
 <?php
-$page_name = "All Projects";
+$page_name = 'All Projects';
 include '../views/manager_header.php'; ?>
  <link href="../lib/font-awesome/css/font-awesome.css" rel="stylesheet">
     <link href="../lib/Ionicons/css/ionicons.css" rel="stylesheet">
@@ -39,23 +39,23 @@ include '../views/manager_header.php'; ?>
               </thead>
 			  <tbody>
 			  <?php
-			  $q8 = mysqli_query($con,"SELECT * FROM $project_table INNER JOIN $status_table
-ON $project_table.projectStatus=$status_table.statusID WHERE managerID='$managerID'");				
-			   while($v = mysqli_fetch_assoc($q8))
- {
-	 ?>
+              $q8 = mysqli_query($con, "SELECT * FROM $project_table INNER JOIN $status_table
+ON $project_table.projectStatus=$status_table.statusID WHERE managerID='$managerID'");
+               while ($v = mysqli_fetch_assoc($q8)) {
+                   ?>
                 <tr class="<?php echo $v['projectID']; ?>">
                   <td><a href="ViewProject?id=<?php echo $v['projectID']; ?>"><?php echo $v['title']; ?></a></td>
-                  <td><?php echo substr(html_entity_decode(htmlspecialchars_decode($v['detail'])),0,100); ?>...</td>
-                  <td><?php echo "&#x20A6;".number_format($v['budget']); ?></td>
-                  <td><?php echo date('d M Y',$v['startDate'])." to ".date('d M Y',$v['endDate']); ?></td>
+                  <td><?php echo substr(html_entity_decode(htmlspecialchars_decode($v['detail'])), 0, 100); ?>...</td>
+                  <td><?php echo '&#x20A6;'.number_format($v['budget']); ?></td>
+                  <td><?php echo date('d M Y', $v['startDate']).' to '.date('d M Y', $v['endDate']); ?></td>
                   <td><?php echo $v['sdetail']; ?></td>
-				  <?php if($v['projectStatus']==0) { ?>
+				  <?php if ($v['projectStatus'] == 0) { ?>
                   <td><button onclick="start_project(this.value)" id="btnStart" type="submit" value="<?php echo $v['projectID']; ?>" class="btn btn-success">Mark As started</button></td> <?php } ?>
                   <td><form action="EditProject?id=<?php echo $v['projectID']; ?>"><button id="btnEdit" type="submit" class="btn btn-info">Edit</button></form></td>
                   <td><button onclick="del_project(this.value)" id="btnDelete" type="submit" value="<?php echo $v['projectID']; ?>" class="btn btn-danger">Delete</button></td>
                 </tr>
- <?php } ?>
+ <?php
+               } ?>
 				 </tbody>
             </table>
           </div><!-- table-wrapper -->

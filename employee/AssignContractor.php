@@ -1,5 +1,5 @@
 <?php
-$page_name = "Assign Contractor";
+$page_name = 'Assign Contractor';
 include '../views/manager_header.php'; ?>
 <link href="../lib/font-awesome/css/font-awesome.css" rel="stylesheet">
     <link href="../lib/Ionicons/css/ionicons.css" rel="stylesheet">
@@ -27,12 +27,11 @@ include '../views/manager_header.php'; ?>
             <section><label class="form-control-label">Project: <span class="tx-danger">*</span></label>
                 <select onblur="check_task(this.value)" id="project" class="form-control" name="projectid">
        <?php
-	  $oop  = mysqli_query($con,"SELECT * FROM $project_table WHERE managerID='$managerID'");
-	  while($ool = mysqli_fetch_assoc($oop))
-	  {
-	 echo '<option value="'.$ool['projectID'].'">'.$ool['title'].'</option>';
-	  }
-	  ?>
+      $oop = mysqli_query($con, "SELECT * FROM $project_table WHERE managerID='$managerID'");
+      while ($ool = mysqli_fetch_assoc($oop)) {
+          echo '<option value="'.$ool['projectID'].'">'.$ool['title'].'</option>';
+      }
+      ?>
 			 </select><div class="milestonep" style="display:none"></div><div class="taskp" style="display:none"></div>
             </section><br>
             <section>

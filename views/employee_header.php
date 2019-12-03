@@ -1,14 +1,15 @@
 <?php
 include_once '../includes/config.php';
-if(!isset($_SESSION['employeeID']) && !isset($_COOKIE['employeeID'])) {header("Location: SigninPage"); exit();}
-else
-{
-$employeeID = $_SESSION['employeeID'] ? $_SESSION['employeeID']: $_COOKIE['employeeID'];
-$lasturl = 'https://'.$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI'];
-$lastseen = time();
-$u2 = mysqli_query($con,"UPDATE $employee_table SET lastseen='$lastseen',lasturl='$lasturl' WHERE employeeID='$employeeID'");
-$u1 = mysqli_query($con,"SELECT * FROM $employee_table WHERE employeeID='$employeeID'");
-$employee = mysqli_fetch_assoc($u1);
+if (!isset($_SESSION['employeeID']) && !isset($_COOKIE['employeeID'])) {
+    header('Location: SigninPage');
+    exit();
+} else {
+    $employeeID = $_SESSION['employeeID'] ? $_SESSION['employeeID'] : $_COOKIE['employeeID'];
+    $lasturl = 'https://'.$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI'];
+    $lastseen = time();
+    $u2 = mysqli_query($con, "UPDATE $employee_table SET lastseen='$lastseen',lasturl='$lasturl' WHERE employeeID='$employeeID'");
+    $u1 = mysqli_query($con, "SELECT * FROM $employee_table WHERE employeeID='$employeeID'");
+    $employee = mysqli_fetch_assoc($u1);
 }
 ?>
 <!DOCTYPE html>
@@ -38,7 +39,7 @@ $employee = mysqli_fetch_assoc($u1);
     <meta name="description" content="<?php echo $option['meta_desc']; ?>">
     <meta name="author" content="<?php echo $option['website_name']; ?>">
 
-    <title><?php echo $page_name." | Employee Panel | ".$option['website_name']; ?></title>
+    <title><?php echo $page_name.' | Employee Panel | '.$option['website_name']; ?></title>
 
     <!-- vendor css -->
   

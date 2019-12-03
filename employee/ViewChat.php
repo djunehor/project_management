@@ -1,8 +1,8 @@
 <?php
-$page_name = "ChatBox";
-$chatid = filter_input(INPUT_GET,'id',FILTER_SANITIZE_STRING);
-include '../views/employee_header.php';	
-$chat = mysqli_fetch_assoc(mysqli_query($con,"SELECT * FROM $chat_table WHERE chatID='$chatid' ORDER BY sendDate ASC LIMIT 1"));
+$page_name = 'ChatBox';
+$chatid = filter_input(INPUT_GET, 'id', FILTER_SANITIZE_STRING);
+include '../views/employee_header.php';
+$chat = mysqli_fetch_assoc(mysqli_query($con, "SELECT * FROM $chat_table WHERE chatID='$chatid' ORDER BY sendDate ASC LIMIT 1"));
 ?>
 <link href="../lib/font-awesome/css/font-awesome.css" rel="stylesheet">
     <link href="../lib/Ionicons/css/ionicons.css" rel="stylesheet">

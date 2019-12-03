@@ -1,5 +1,5 @@
 <?php
-$page_name = "All Milestones";
+$page_name = 'All Milestones';
 include '../views/manager_header.php'; ?>
  <link href="../lib/font-awesome/css/font-awesome.css" rel="stylesheet">
     <link href="../lib/Ionicons/css/ionicons.css" rel="stylesheet">
@@ -36,19 +36,19 @@ include '../views/manager_header.php'; ?>
               </thead>
 			  <tbody>
 			  <?php
-			  $q8 = mysqli_query($con,"SELECT * FROM $milestone_table LEFT JOIN $project_table
-ON $project_table.projectID=$milestone_table.projectID WHERE $milestone_table.managerID='$managerID'");				
-			   while($v = mysqli_fetch_assoc($q8))
- {
-	 ?>
+              $q8 = mysqli_query($con, "SELECT * FROM $milestone_table LEFT JOIN $project_table
+ON $project_table.projectID=$milestone_table.projectID WHERE $milestone_table.managerID='$managerID'");
+               while ($v = mysqli_fetch_assoc($q8)) {
+                   ?>
                 <tr class="<?php echo $v['milestoneID']; ?>">
                   <td><a href="ViewMilestone?id=<?php echo $v['milestoneID']; ?>"><?php echo $v['mtitle']; ?></a></td>
-                  <td><?php echo substr(html_entity_decode(htmlspecialchars_decode($v['mdetail'])),0,100); ?>...</td>
-                  <td><?php echo date('d-M-Y',$v['startDate']); ?></td>
+                  <td><?php echo substr(html_entity_decode(htmlspecialchars_decode($v['mdetail'])), 0, 100); ?>...</td>
+                  <td><?php echo date('d-M-Y', $v['startDate']); ?></td>
                   <td><form action="EditMilestone?id=<?php echo $v['milestoneID']; ?>"><button id="btnEdit" type="submit" class="btn btn-info">Edit</button></form></td>
                   <td><button onclick="del_mile(this.value)" id="btnDelete" type="submit" value="<?php echo $v['milestoneID']; ?>" class="btn btn-danger">Delete</button></td>
                 </tr>
- <?php } ?>
+ <?php
+               } ?>
 				 </tbody>
             </table>
           </div><!-- table-wrapper -->

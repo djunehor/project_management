@@ -1,7 +1,7 @@
 <?php
 /**
- * @package dompdf
  * @link    http://dompdf.github.com/
+ *
  * @author  Benj Carson <benjcarson@digitaljunkies.ca>
  * @license http://www.gnu.org/copyleft/lesser.html GNU Lesser General Public License
  */
@@ -12,18 +12,16 @@ use Dompdf\Frame;
 use Dompdf\FrameDecorator\Block as BlockFrameDecorator;
 
 /**
- * Dummy reflower
- *
- * @package dompdf
+ * Dummy reflower.
  */
 class NullFrameReflower extends AbstractFrameReflower
 {
-
     /**
      * NullFrameReflower constructor.
+     *
      * @param Frame $frame
      */
-    function __construct(Frame $frame)
+    public function __construct(Frame $frame)
     {
         parent::__construct($frame);
     }
@@ -31,9 +29,7 @@ class NullFrameReflower extends AbstractFrameReflower
     /**
      * @param BlockFrameDecorator|null $block
      */
-    function reflow(BlockFrameDecorator $block = null)
+    public function reflow(BlockFrameDecorator $block = null)
     {
-        return;
     }
-
 }

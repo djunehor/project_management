@@ -1,5 +1,5 @@
 <?php
-$page_name = "Dashboard";
+$page_name = 'Dashboard';
 include '../views/manager_header.php'; ?>
   <link href="../lib/font-awesome/css/font-awesome.css" rel="stylesheet">
     <link href="../lib/Ionicons/css/ionicons.css" rel="stylesheet">
@@ -25,7 +25,7 @@ include '../views/manager_header.php'; ?>
                 <a class="tx-white-8 hover-white"><i class="icon ion-android-more-horizontal"></i></a>
               </div><!-- card-header -->
               <div class="d-flex align-items-center justify-content-between">
-                <h3 class="mg-b-0 tx-white tx-lato tx-bold"><?php echo mysqli_num_rows(mysqli_query($con,"SELECT * FROM $project_table WHERE managerID='$managerID'")); ?></h3>
+                <h3 class="mg-b-0 tx-white tx-lato tx-bold"><?php echo mysqli_num_rows(mysqli_query($con, "SELECT * FROM $project_table WHERE managerID='$managerID'")); ?></h3>
               </div><!-- card-body -->
          
             </div><!-- card -->
@@ -38,8 +38,8 @@ include '../views/manager_header.php'; ?>
               </div><!-- card-header -->
               <div class="d-flex align-items-center justify-content-between">
                 
-                <h3 class="mg-b-0 tx-white tx-lato tx-bold">&#x20A6;<?php $tb = mysqli_fetch_assoc(mysqli_query($con,"SELECT sum(budget) as tbudget FROM $project_table WHERE managerID='$managerID'"));
-		echo number_format($tb['tbudget']); ?></h3>
+                <h3 class="mg-b-0 tx-white tx-lato tx-bold">&#x20A6;<?php $tb = mysqli_fetch_assoc(mysqli_query($con, "SELECT sum(budget) as tbudget FROM $project_table WHERE managerID='$managerID'"));
+        echo number_format($tb['tbudget']); ?></h3>
               </div><!-- card-body -->
         
             </div><!-- card -->
@@ -52,7 +52,7 @@ include '../views/manager_header.php'; ?>
               </div><!-- card-header -->
               <div class="d-flex align-items-center justify-content-between">
          
-                <h3 class="mg-b-0 tx-white tx-lato tx-bold"><?php echo mysqli_num_rows(mysqli_query($con,"SELECT * FROM $milestone_table WHERE managerID='$managerID'")); ?></h3>
+                <h3 class="mg-b-0 tx-white tx-lato tx-bold"><?php echo mysqli_num_rows(mysqli_query($con, "SELECT * FROM $milestone_table WHERE managerID='$managerID'")); ?></h3>
               </div><!-- card-body -->
          
             </div><!-- card -->
@@ -65,7 +65,7 @@ include '../views/manager_header.php'; ?>
               </div><!-- card-header -->
               <div class="d-flex align-items-center justify-content-between">
          
-                <h3 class="mg-b-0 tx-white tx-lato tx-bold"><?php echo mysqli_num_rows(mysqli_query($con,"select * from $task_table where managerID='$managerID'")); ?></h3>
+                <h3 class="mg-b-0 tx-white tx-lato tx-bold"><?php echo mysqli_num_rows(mysqli_query($con, "select * from $task_table where managerID='$managerID'")); ?></h3>
               </div><!-- card-body -->
       
             </div><!-- card -->
@@ -87,12 +87,11 @@ include '../views/manager_header.php'; ?>
                   </tr>
                 </thead>
                 <tbody>
-				<?php	
-$q7 = mysqli_query($con,"SELECT * FROM $project_table INNER JOIN $status_table
-ON $project_table.projectStatus=$status_table.statusID WHERE managerID='$managerID'");				
- while($v = mysqli_fetch_assoc($q7))
- {
-?>	 <tr>
+				<?php
+$q7 = mysqli_query($con, "SELECT * FROM $project_table INNER JOIN $status_table
+ON $project_table.projectStatus=$status_table.statusID WHERE managerID='$managerID'");
+ while ($v = mysqli_fetch_assoc($q7)) {
+     ?>	 <tr>
                     <td>
 					
 				<!-- <a href="" class="btn btn-info pd-x-20" data-toggle="modal" data-target="#modaldemo1">View Live Demo</a> -->
@@ -120,12 +119,13 @@ ON $project_table.projectStatus=$status_table.statusID WHERE managerID='$manager
       </div><!-- modal-dialog -->
     </div>
                     <td class="tx-12">
-                      <?php echo "&#x20A6;".number_format($v['budget']); ?>
+                      <?php echo '&#x20A6;'.number_format($v['budget']); ?>
                     </td>
-                    <td><?php echo date('d M Y',$v['startDate']), " to ".date('d M Y',$v['endDate']); ?></td>
+                    <td><?php echo date('d M Y', $v['startDate']), ' to '.date('d M Y', $v['endDate']); ?></td>
                     <td><?php echo $v['sdetail']; ?></td>
                   </tr>
-				  <?php } ?>
+				  <?php
+ } ?>
                 </tbody>
               </table>
               <div class="card-footer tx-12 pd-y-15 bg-transparent bd-t bd-gray-200">
@@ -148,13 +148,12 @@ ON $project_table.projectStatus=$status_table.statusID WHERE managerID='$manager
                 </thead>
                 <tbody>
 								<?php
-$q2 = mysqli_query($con,"SELECT * FROM $chat_table WHERE senderID='".$manager['email']."' OR recipientID='".$manager['email']."' and sendDate>=(select lastLogin from $user_table where managerID='$managerID') GROUP BY chatID DESC LIMIT 5");				
- while($b = mysqli_fetch_assoc($q2))
- {
-?>
+$q2 = mysqli_query($con, "SELECT * FROM $chat_table WHERE senderID='".$manager['email']."' OR recipientID='".$manager['email']."' and sendDate>=(select lastLogin from $user_table where managerID='$managerID') GROUP BY chatID DESC LIMIT 5");
+ while ($b = mysqli_fetch_assoc($q2)) {
+     ?>
                   <tr>
                     <td>
-                      <a href="ViewChat?id=<?php echo strtolower($b['chatID']); ?>" class="tx-inverse tx-14 tx-medium d-block"><?php echo $b['message']?html_entity_decode(htmlspecialchars_decode(substr($b['message'],0,50))):"<a target=\"_blank\" href=\"".$b['attachment']."\">View Image</a>"; ?></a>
+                      <a href="ViewChat?id=<?php echo strtolower($b['chatID']); ?>" class="tx-inverse tx-14 tx-medium d-block"><?php echo $b['message'] ? html_entity_decode(htmlspecialchars_decode(substr($b['message'], 0, 50))) : '<a target="_blank" href="'.$b['attachment'].'">View Image</a>'; ?></a>
                    <!--   <span class="tx-11 d-block"><span class="square-8 bg-danger mg-r-5 rounded-circle"></span> 20 remaining</span>  -->
                     </td>
                     <td class="valign-middle"><span class="tx-success"></span> <?php echo $b['recipientID']; ?></td>
@@ -162,7 +161,8 @@ $q2 = mysqli_query($con,"SELECT * FROM $chat_table WHERE senderID='".$manager['e
                       <?php echo time_elapsed_string('@'.$b['sendDate']); ?>
                     </td>
                   </tr>
- <?php } ?>
+ <?php
+ } ?>
                 </tbody>
               </table>
               <div class="card-footer tx-12 pd-y-15 bg-transparent bd-t bd-b-200">
@@ -187,16 +187,16 @@ $q2 = mysqli_query($con,"SELECT * FROM $chat_table WHERE senderID='".$manager['e
                 </thead>
                 <tbody>
 				<?php
-$q6 = mysqli_query($con,"SELECT * FROM $projectlog WHERE managerID='$managerID' and addDate>=(select LastLogin from $user_table where managerID='$managerID') order by logID desc limit 5");
-while($m=mysqli_fetch_assoc($q6))
- {
-?>	 <tr>
+$q6 = mysqli_query($con, "SELECT * FROM $projectlog WHERE managerID='$managerID' and addDate>=(select LastLogin from $user_table where managerID='$managerID') order by logID desc limit 5");
+while ($m = mysqli_fetch_assoc($q6)) {
+    ?>	 <tr>
                     <td>
                     <?php echo $m['detail']; ?></span>
                     </td>
                     <td><?php echo time_elapsed_string('@'.$m['addDate']); ?></td>
                   </tr>
-				  <?php } ?>
+				  <?php
+} ?>
                 </tbody>
               </table>
               <div class="card-footer tx-12 pd-y-15 bg-transparent bd-t bd-gray-200">
@@ -218,10 +218,9 @@ while($m=mysqli_fetch_assoc($q6))
                 </thead>
                 <tbody>
 								<?php
-$q3 = mysqli_query($con,"SELECT * FROM $activity_table WHERE userID='$managerID' and addDate>=(select LastLogin from $user_table where managerID='$managerID') order by activityID desc LIMIT 5");				
- while($l = mysqli_fetch_assoc($q3))
- {
-?>
+$q3 = mysqli_query($con, "SELECT * FROM $activity_table WHERE userID='$managerID' and addDate>=(select LastLogin from $user_table where managerID='$managerID') order by activityID desc LIMIT 5");
+ while ($l = mysqli_fetch_assoc($q3)) {
+     ?>
                   <tr>
                     <td>
                       <a class="tx-inverse tx-14 tx-medium d-block"><?php echo $l['adetail']; ?></a>
@@ -230,7 +229,8 @@ $q3 = mysqli_query($con,"SELECT * FROM $activity_table WHERE userID='$managerID'
                     <td class="valign-middle"> <?php echo time_elapsed_string('@'.$l['addDate']); ?></td>
                     
                   </tr>
- <?php } ?>
+ <?php
+ } ?>
                 </tbody>
               </table>
               <div class="card-footer tx-12 pd-y-15 bg-transparent bd-t bd-b-200">

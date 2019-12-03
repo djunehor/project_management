@@ -1,6 +1,6 @@
 <?php
 include '../includes/config.php';
-$page_name = "Project Activities";
+$page_name = 'Project Activities';
 include '../views/manager_header.php';
  ?>
 <link href="../lib/font-awesome/css/font-awesome.css" rel="stylesheet">
@@ -31,14 +31,14 @@ include '../views/manager_header.php';
 		  <tbody>
 		  <tr>
 <?php
-$q6 = mysqli_query($con,"SELECT * FROM $projectlog WHERE managerID='$managerID' order by logID desc limit 100");
-while($f = mysqli_fetch_assoc($q6))
-{
-?>
+$q6 = mysqli_query($con, "SELECT * FROM $projectlog WHERE managerID='$managerID' order by logID desc limit 100");
+while ($f = mysqli_fetch_assoc($q6)) {
+    ?>
 		  <td><?php echo html_entity_decode(htmlspecialchars_decode($f['detail'])); ?></td>
-		  <td><?php echo date('d-M-Y g:i a',$f['addDate']); ?></td>
+		  <td><?php echo date('d-M-Y g:i a', $f['addDate']); ?></td>
 		  </tr>
-<?php } ?>
+<?php
+} ?>
 		  </tbody>
 				</table>
 				     <script src="../lib/jquery/jquery.js"></script>

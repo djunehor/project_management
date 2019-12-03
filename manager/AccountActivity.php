@@ -1,6 +1,6 @@
 <?php
 include '../includes/config.php';
-$page_name = "Account Activities";
+$page_name = 'Account Activities';
 include '../views/manager_header.php';
  ?>
 <link href="../lib/font-awesome/css/font-awesome.css" rel="stylesheet">
@@ -31,14 +31,14 @@ include '../views/manager_header.php';
 		  <tbody>
 		  <tr>
 <?php
-$q3 = mysqli_query($con,"SELECT * FROM $activity_table WHERE userID='$managerID' and addDate>=(select lastLogin from $user_table where managerID='$managerID') order by activityID desc LIMIT 5");				
-while($f = mysqli_fetch_assoc($q3))
-{
-?>
+$q3 = mysqli_query($con, "SELECT * FROM $activity_table WHERE userID='$managerID' and addDate>=(select lastLogin from $user_table where managerID='$managerID') order by activityID desc LIMIT 5");
+while ($f = mysqli_fetch_assoc($q3)) {
+    ?>
 		  <td><?php echo html_entity_decode(htmlspecialchars_decode($f['adetail'])); ?></td>
-		  <td><?php echo date('d-M-Y g:i a',$f['addDate']); ?></td>
+		  <td><?php echo date('d-M-Y g:i a', $f['addDate']); ?></td>
 		  </tr>
-<?php } ?>
+<?php
+} ?>
 		  </tbody>
 				</table>
 				     <script src="../lib/jquery/jquery.js"></script>

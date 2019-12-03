@@ -1,33 +1,32 @@
 <?php
 /**
- * @package dompdf
  * @link    http://dompdf.github.com/
+ *
  * @author  Benj Carson <benjcarson@digitaljunkies.ca>
  * @license http://www.gnu.org/copyleft/lesser.html GNU Lesser General Public License
  */
 
 namespace Dompdf\Positioner;
 
+use Dompdf\Exception;
 use Dompdf\FrameDecorator\AbstractFrameDecorator;
 use Dompdf\FrameDecorator\Inline as InlineFrameDecorator;
-use Dompdf\Exception;
 
 /**
- * Positions inline frames
- *
- * @package dompdf
+ * Positions inline frames.
  */
 class Inline extends AbstractPositioner
 {
-
     /**
      * @param AbstractFrameDecorator $frame
+     *
      * @throws Exception
      */
-    function position(AbstractFrameDecorator $frame)
+    public function position(AbstractFrameDecorator $frame)
     {
         /**
          * Find our nearest block level parent and access its lines property.
+         *
          * @var BlockFrameDecorator
          */
         $p = $frame->find_block_parent();
@@ -41,7 +40,7 @@ class Inline extends AbstractPositioner
         // End debugging
 
         if (!$p) {
-            throw new Exception("No block-level parent found.  Not good.");
+            throw new Exception('No block-level parent found.  Not good.');
         }
 
         $f = $frame;
@@ -52,7 +51,7 @@ class Inline extends AbstractPositioner
         // Skip the page break if in a fixed position element
         $is_fixed = false;
         while ($f = $f->get_parent()) {
-            if ($f->get_style()->position === "fixed") {
+            if ($f->get_style()->position === 'fixed') {
                 $is_fixed = true;
                 break;
             }
@@ -67,11 +66,11 @@ class Inline extends AbstractPositioner
             $min_max = $f->get_reflower()->get_min_max_width();
 
             // If the frame doesn't fit in the current line, a line break occurs
-            if ($min_max["min"] > ($cb["w"] - $line->left - $line->w - $line->right)) {
+            if ($min_max['min'] > ($cb['w'] - $line->left - $line->w - $line->right)) {
                 $p->add_line();
             }
         }
 
-        $f->set_position($cb["x"] + $line->w, $line->y);
+        $f->set_position($cb['x'] + $line->w, $line->y);
     }
 }

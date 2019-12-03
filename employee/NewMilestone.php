@@ -1,5 +1,5 @@
 <?php
-$page_name = "New Milestone";
+$page_name = 'New Milestone';
 include '../views/manager_header.php'; ?>
 <link href="../lib/font-awesome/css/font-awesome.css" rel="stylesheet">
     <link href="../lib/Ionicons/css/ionicons.css" rel="stylesheet">
@@ -33,12 +33,11 @@ include '../views/manager_header.php'; ?>
                 <label class="form-control-label">Project: <span class="tx-danger">*</span></label>
                 <select class="form-control" name="projectid">
        <?php
-	  $oop  = mysqli_query($con,"SELECT * FROM $project_table WHERE managerID='$managerID'");
-	  while($ool = mysqli_fetch_assoc($oop))
-	  {
-	 echo '<option value="'.$ool['projectID'].'">'.$ool['title'].'</option>';
-	  }
-	  ?>
+      $oop = mysqli_query($con, "SELECT * FROM $project_table WHERE managerID='$managerID'");
+      while ($ool = mysqli_fetch_assoc($oop)) {
+          echo '<option value="'.$ool['projectID'].'">'.$ool['title'].'</option>';
+      }
+      ?>
 			 </select>
             </section><br>
             <section>
@@ -55,12 +54,11 @@ include '../views/manager_header.php'; ?>
 			<label class="form-control-label">Phase: <span class="tx-danger">*</span></label>
 			<select class="form-control" name="tag">
 			<?php
-	  $oopl  = mysqli_query($con,"SELECT * FROM $tag_table");
-	  while($ol = mysqli_fetch_assoc($oopl))
-	  {
-	 echo '<option value="'.$ol['tagID'].'">'.$ol['detail'].'</option>';
-	  }
-	  ?>
+      $oopl = mysqli_query($con, "SELECT * FROM $tag_table");
+      while ($ol = mysqli_fetch_assoc($oopl)) {
+          echo '<option value="'.$ol['tagID'].'">'.$ol['detail'].'</option>';
+      }
+      ?>
 			</select><br>
           </div>
 		  <input name="managername" type="hidden" value="<?php echo $manager['fullname']; ?>" />

@@ -1,7 +1,7 @@
 <?php
 /**
- * @package dompdf
  * @link    http://dompdf.github.com/
+ *
  * @author  Benj Carson <benjcarson@digitaljunkies.ca>
  * @author  Helmut Tischer <htischer@weihenstephan.org>
  * @author  Fabien Ménager <fabien.menager@gmail.com>
@@ -13,19 +13,18 @@ namespace Dompdf;
 use FontLib\Font;
 
 /**
- * The font metrics class
+ * The font metrics class.
  *
  * This class provides information about fonts and text.  It can resolve
  * font names into actual installed font files, as well as determine the
  * size of text in a particular font and size.
  *
  * @static
- * @package dompdf
  */
 class FontMetrics
 {
     /**
-     * Name of the font cache file
+     * Name of the font cache file.
      *
      * This file must be writable by the webserver process only to update it
      * with save_font_families() after adding the .afm file references of a new font family
@@ -33,29 +32,30 @@ class FontMetrics
      * This is typically done only from command line with load_font.php on converting
      * ttf fonts to ufm with php-font-lib.
      */
-    const CACHE_FILE = "dompdf_font_family_cache.php";
+    const CACHE_FILE = 'dompdf_font_family_cache.php';
 
     /**
      * @var Canvas
+     *
      * @deprecated
      */
     protected $pdf;
 
     /**
-     * Underlying {@link Canvas} object to perform text size calculations
+     * Underlying {@link Canvas} object to perform text size calculations.
      *
      * @var Canvas
      */
     protected $canvas;
 
     /**
-     * Array of font family names to font files
+     * Array of font family names to font files.
      *
      * Usually cached by the {@link load_font.php} script
      *
      * @var array
      */
-    protected $fontLookup = array();
+    protected $fontLookup = [];
 
     /**
      * @var Options
@@ -63,7 +63,7 @@ class FontMetrics
     private $options;
 
     /**
-     * Class initialization
+     * Class initialization.
      */
     public function __construct(Canvas $canvas, Options $options)
     {
@@ -81,10 +81,9 @@ class FontMetrics
     }
 
     /**
-     * Saves the stored font family cache
+     * Saves the stored font family cache.
      *
-     * The name and location of the cache file are determined by {@link
-     * FontMetrics::CACHE_FILE}. This file should be writable by the
+     * The name and location of the cache file are determined by {@link * FontMetrics::CACHE_FILE}. This file should be writable by the
      * webserver process.
      *
      * @see FontMetrics::loadFontFamilies()
@@ -92,18 +91,18 @@ class FontMetrics
     public function saveFontFamilies()
     {
         // replace the path to the DOMPDF font directories with the corresponding constants (allows for more portability)
-        $cacheData = sprintf("<?php return array (%s", PHP_EOL);
+        $cacheData = sprintf('<?php return array (%s', PHP_EOL);
         foreach ($this->fontLookup as $family => $variants) {
             $cacheData .= sprintf("  '%s' => array(%s", addslashes($family), PHP_EOL);
             foreach ($variants as $variant => $path) {
                 $path = sprintf("'%s'", $path);
-                $path = str_replace('\'' . $this->getOptions()->getFontDir() , '$fontDir . \'' , $path);
-                $path = str_replace('\'' . $this->getOptions()->getRootDir() , '$rootDir . \'' , $path);
+                $path = str_replace('\''.$this->getOptions()->getFontDir(), '$fontDir . \'', $path);
+                $path = str_replace('\''.$this->getOptions()->getRootDir(), '$rootDir . \'', $path);
                 $cacheData .= sprintf("    '%s' => %s,%s", $variant, $path, PHP_EOL);
             }
-            $cacheData .= sprintf("  ),%s", PHP_EOL);
+            $cacheData .= sprintf('  ),%s', PHP_EOL);
         }
-        $cacheData .= ") ?>";
+        $cacheData .= ') ?>';
         file_put_contents($this->getCacheFile(), $cacheData);
     }
 
@@ -116,7 +115,7 @@ class FontMetrics
     }
 
     /**
-     * Loads the stored font family cache
+     * Loads the stored font family cache.
      *
      * @see FontMetrics::saveFontFamilies()
      */
@@ -126,20 +125,25 @@ class FontMetrics
         $rootDir = $this->getOptions()->getRootDir();
 
         // FIXME: tempoarary define constants for cache files <= v0.6.2
-        if (!defined("DOMPDF_DIR")) { define("DOMPDF_DIR", $rootDir); }
-        if (!defined("DOMPDF_FONT_DIR")) { define("DOMPDF_FONT_DIR", $fontDir); }
+        if (!defined('DOMPDF_DIR')) {
+            define('DOMPDF_DIR', $rootDir);
+        }
+        if (!defined('DOMPDF_FONT_DIR')) {
+            define('DOMPDF_FONT_DIR', $fontDir);
+        }
 
-        $file = $rootDir . "/lib/fonts/dompdf_font_family_cache.dist.php";
+        $file = $rootDir.'/lib/fonts/dompdf_font_family_cache.dist.php';
         $distFonts = require $file;
 
         if (!is_readable($this->getCacheFile())) {
             $this->fontLookup = $distFonts;
+
             return;
         }
 
         $cacheData = require $this->getCacheFile();
 
-        $this->fontLookup = array();
+        $this->fontLookup = [];
         if (is_array($this->fontLookup)) {
             foreach ($cacheData as $key => $value) {
                 $this->fontLookup[stripslashes($key)] = $value;
@@ -151,10 +155,12 @@ class FontMetrics
     }
 
     /**
-     * @param array $style
-     * @param string $remote_file
+     * @param array    $style
+     * @param string   $remote_file
      * @param resource $context
+     *
      * @return bool
+     *
      * @deprecated
      */
     public function register_font($style, $remote_file, $context = null)
@@ -163,17 +169,18 @@ class FontMetrics
     }
 
     /**
-     * @param array $style
-     * @param string $remoteFile
+     * @param array    $style
+     * @param string   $remoteFile
      * @param resource $context
+     *
      * @return bool
      */
     public function registerFont($style, $remoteFile, $context = null)
     {
-        $fontname = mb_strtolower($style["family"]);
+        $fontname = mb_strtolower($style['family']);
         $families = $this->getFontFamilies();
 
-        $entry = array();
+        $entry = [];
         if (isset($families[$fontname])) {
             $entry = $families[$fontname];
         }
@@ -185,11 +192,11 @@ class FontMetrics
 
         $fontDir = $this->getOptions()->getFontDir();
         $remoteHash = md5($remoteFile);
-        $localFile = $fontDir . DIRECTORY_SEPARATOR . $remoteHash;
-        $localTempFile = tempnam($this->options->get("tempDir"), "dompdf-font-");
+        $localFile = $fontDir.DIRECTORY_SEPARATOR.$remoteHash;
+        $localTempFile = tempnam($this->options->get('tempDir'), 'dompdf-font-');
 
         $cacheEntry = $localFile;
-        $localFile .= ".".strtolower(pathinfo(parse_url($remoteFile, PHP_URL_PATH),PATHINFO_EXTENSION));
+        $localFile .= '.'.strtolower(pathinfo(parse_url($remoteFile, PHP_URL_PATH), PATHINFO_EXTENSION));
 
         $entry[$styleString] = $cacheEntry;
 
@@ -204,6 +211,7 @@ class FontMetrics
 
         if (!$font) {
             unlink($localTempFile);
+
             return false;
         }
 
@@ -213,15 +221,16 @@ class FontMetrics
 
         unlink($localTempFile);
 
-        if ( !file_exists("$cacheEntry.ufm") ) {
+        if (!file_exists("$cacheEntry.ufm")) {
             return false;
         }
 
         // Save the changes
         file_put_contents($localFile, $remoteFileContent);
 
-        if ( !file_exists($localFile) ) {
+        if (!file_exists($localFile)) {
             unlink("$cacheEntry.ufm");
+
             return false;
         }
 
@@ -237,7 +246,9 @@ class FontMetrics
      * @param $size
      * @param float $word_spacing
      * @param float $char_spacing
+     *
      * @return float
+     *
      * @deprecated
      */
     public function get_text_width($text, $font, $size, $word_spacing = 0.0, $char_spacing = 0.0)
@@ -247,23 +258,24 @@ class FontMetrics
     }
 
     /**
-     * Calculates text size, in points
+     * Calculates text size, in points.
      *
-     * @param string $text the text to be sized
-     * @param string $font the desired font
-     * @param float $size  the desired font size
-     * @param float $wordSpacing
-     * @param float $charSpacing
+     * @param string $text        the text to be sized
+     * @param string $font        the desired font
+     * @param float  $size        the desired font size
+     * @param float  $wordSpacing
+     * @param float  $charSpacing
      *
      * @internal param float $spacing word spacing, if any
+     *
      * @return float
      */
     public function getTextWidth($text, $font, $size, $wordSpacing = 0.0, $charSpacing = 0.0)
     {
         // @todo Make sure this cache is efficient before enabling it
-        static $cache = array();
+        static $cache = [];
 
-        if ($text === "") {
+        if ($text === '') {
             return 0;
         }
 
@@ -288,7 +300,9 @@ class FontMetrics
     /**
      * @param $font
      * @param $size
+     *
      * @return float
+     *
      * @deprecated
      */
     public function get_font_height($font, $size)
@@ -297,10 +311,10 @@ class FontMetrics
     }
 
     /**
-     * Calculates font height
+     * Calculates font height.
      *
      * @param string $font
-     * @param float $size
+     * @param float  $size
      *
      * @return float
      */
@@ -312,10 +326,12 @@ class FontMetrics
     /**
      * @param $family_raw
      * @param string $subtype_raw
+     *
      * @return string
+     *
      * @deprecated
      */
-    public function get_font($family_raw, $subtype_raw = "normal")
+    public function get_font($family_raw, $subtype_raw = 'normal')
     {
         return $this->getFont($family_raw, $subtype_raw);
     }
@@ -332,9 +348,9 @@ class FontMetrics
      *
      * @return string
      */
-    public function getFont($familyRaw, $subtypeRaw = "normal")
+    public function getFont($familyRaw, $subtypeRaw = 'normal')
     {
-        static $cache = array();
+        static $cache = [];
 
         if (isset($cache[$familyRaw][$subtypeRaw])) {
             return $cache[$familyRaw][$subtypeRaw];
@@ -351,23 +367,23 @@ class FontMetrics
         $subtype = strtolower($subtypeRaw);
 
         if ($familyRaw) {
-            $family = str_replace(array("'", '"'), "", strtolower($familyRaw));
+            $family = str_replace(["'", '"'], '', strtolower($familyRaw));
 
             if (isset($this->fontLookup[$family][$subtype])) {
                 return $cache[$familyRaw][$subtypeRaw] = $this->fontLookup[$family][$subtype];
             }
 
-            return null;
+            return;
         }
 
-        $family = "serif";
+        $family = 'serif';
 
         if (isset($this->fontLookup[$family][$subtype])) {
             return $cache[$familyRaw][$subtypeRaw] = $this->fontLookup[$family][$subtype];
         }
 
         if (!isset($this->fontLookup[$family])) {
-            return null;
+            return;
         }
 
         $family = $this->fontLookup[$family];
@@ -378,26 +394,26 @@ class FontMetrics
             }
         }
 
-        if ($subtype !== "normal") {
+        if ($subtype !== 'normal') {
             foreach ($family as $sub => $font) {
-                if ($sub !== "normal") {
+                if ($sub !== 'normal') {
                     return $cache[$familyRaw][$subtypeRaw] = $font;
                 }
             }
         }
 
-        $subtype = "normal";
+        $subtype = 'normal';
 
         if (isset($family[$subtype])) {
             return $cache[$familyRaw][$subtypeRaw] = $family[$subtype];
         }
-
-        return null;
     }
 
     /**
      * @param $family
+     *
      * @return null|string
+     *
      * @deprecated
      */
     public function get_family($family)
@@ -407,22 +423,23 @@ class FontMetrics
 
     /**
      * @param string $family
+     *
      * @return null|string
      */
     public function getFamily($family)
     {
-        $family = str_replace(array("'", '"'), "", mb_strtolower($family));
+        $family = str_replace(["'", '"'], '', mb_strtolower($family));
 
         if (isset($this->fontLookup[$family])) {
             return $this->fontLookup[$family];
         }
-
-        return null;
     }
 
     /**
      * @param $type
+     *
      * @return string
+     *
      * @deprecated
      */
     public function get_type($type)
@@ -432,20 +449,21 @@ class FontMetrics
 
     /**
      * @param string $type
+     *
      * @return string
      */
     public function getType($type)
     {
-        if (preg_match("/bold/i", $type)) {
-            if (preg_match("/italic|oblique/i", $type)) {
-                $type = "bold_italic";
+        if (preg_match('/bold/i', $type)) {
+            if (preg_match('/italic|oblique/i', $type)) {
+                $type = 'bold_italic';
             } else {
-                $type = "bold";
+                $type = 'bold';
             }
-        } elseif (preg_match("/italic|oblique/i", $type)) {
-            $type = "italic";
+        } elseif (preg_match('/italic|oblique/i', $type)) {
+            $type = 'italic';
         } else {
-            $type = "normal";
+            $type = 'normal';
         }
 
         return $type;
@@ -453,6 +471,7 @@ class FontMetrics
 
     /**
      * @return array
+     *
      * @deprecated
      */
     public function get_font_families()
@@ -461,7 +480,7 @@ class FontMetrics
     }
 
     /**
-     * Returns the current font lookup table
+     * Returns the current font lookup table.
      *
      * @return array
      */
@@ -472,7 +491,8 @@ class FontMetrics
 
     /**
      * @param string $fontname
-     * @param mixed $entry
+     * @param mixed  $entry
+     *
      * @deprecated
      */
     public function set_font_family($fontname, $entry)
@@ -482,7 +502,7 @@ class FontMetrics
 
     /**
      * @param string $fontname
-     * @param mixed $entry
+     * @param mixed  $entry
      */
     public function setFontFamily($fontname, $entry)
     {
@@ -494,16 +514,18 @@ class FontMetrics
      */
     public function getCacheFile()
     {
-        return $this->getOptions()->getFontDir() . DIRECTORY_SEPARATOR . self::CACHE_FILE;
+        return $this->getOptions()->getFontDir().DIRECTORY_SEPARATOR.self::CACHE_FILE;
     }
 
     /**
      * @param Options $options
+     *
      * @return $this
      */
     public function setOptions(Options $options)
     {
         $this->options = $options;
+
         return $this;
     }
 
@@ -517,6 +539,7 @@ class FontMetrics
 
     /**
      * @param Canvas $canvas
+     *
      * @return $this
      */
     public function setCanvas(Canvas $canvas)
@@ -524,6 +547,7 @@ class FontMetrics
         $this->canvas = $canvas;
         // Still write deprecated pdf for now. It might be used by a parent class.
         $this->pdf = $canvas;
+
         return $this;
     }
 

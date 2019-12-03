@@ -1,5 +1,5 @@
 <?php
-$page_name = "New Project";
+$page_name = 'New Project';
 include '../views/manager_header.php'; ?>
 <link href="../lib/font-awesome/css/font-awesome.css" rel="stylesheet">
     <link href="../lib/Ionicons/css/ionicons.css" rel="stylesheet">

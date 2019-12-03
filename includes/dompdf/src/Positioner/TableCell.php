@@ -1,7 +1,7 @@
 <?php
 /**
- * @package dompdf
  * @link    http://dompdf.github.com/
+ *
  * @author  Benj Carson <benjcarson@digitaljunkies.ca>
  * @license http://www.gnu.org/copyleft/lesser.html GNU Lesser General Public License
  */
@@ -12,17 +12,14 @@ use Dompdf\FrameDecorator\AbstractFrameDecorator;
 use Dompdf\FrameDecorator\Table;
 
 /**
- * Positions table cells
- *
- * @package dompdf
+ * Positions table cells.
  */
 class TableCell extends AbstractPositioner
 {
-
     /**
      * @param AbstractFrameDecorator $frame
      */
-    function position(AbstractFrameDecorator $frame)
+    public function position(AbstractFrameDecorator $frame)
     {
         $table = Table::find_parent_table($frame);
         $cellmap = $table->get_cellmap();
